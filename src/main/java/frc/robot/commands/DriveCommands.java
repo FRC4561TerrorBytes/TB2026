@@ -33,7 +33,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -48,7 +47,6 @@ public class DriveCommands {
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
 
   private DriveCommands() {}
 
@@ -77,18 +75,17 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier
-     ) {
+      DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
-          double x = xSupplier.getAsDouble()/4;
-          double y = ySupplier.getAsDouble()/4;
+          double x = xSupplier.getAsDouble() / 4;
+          double y = ySupplier.getAsDouble() / 4;
 
           // Get linear velocity
           Translation2d linearVelocity = getLinearVelocityFromJoysticks(x, y);
 
           // Apply rotation deadband
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND)/4;
+          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND) / 4;
 
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);

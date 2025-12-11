@@ -51,8 +51,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.RobotContainer.ElevatorPosition;
-import frc.robot.RobotContainer.ReefScorePositions;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
@@ -100,11 +98,6 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private ReefScorePositions selectedPosition = ReefScorePositions.FRONT;
-  private double autoAlignOffsetX = 0;
-  private double distanceAway = Units.inchesToMeters(-29);
-  private boolean scoreBack;
-  private boolean pathFinished;
 
   private Field2d field = new Field2d();
 
@@ -232,48 +225,6 @@ public class Drive extends SubsystemBase {
 
     field.setRobotPose(getPose());
     SmartDashboard.putData("Field", field);
-
-    switch (selectedPosition) {
-      case FRONT:
-        if (autoAlignOffsetX == Units.inchesToMeters(Constants.SCORING_POSITION_OFFSET))
-          SmartDashboard.putString("Auto Lineup/Reef Position", "B");
-        else SmartDashboard.putString("Auto Lineup/Reef Position", "A");
-        break;
-
-      case FRONTRIGHT:
-        if (autoAlignOffsetX == Units.inchesToMeters(Constants.SCORING_POSITION_OFFSET))
-          SmartDashboard.putString("Auto Lineup/Reef Position", "D");
-        else SmartDashboard.putString("Auto Lineup/Reef Position", "C");
-        break;
-
-      case BACKRIGHT:
-        if (autoAlignOffsetX == Units.inchesToMeters(Constants.SCORING_POSITION_OFFSET))
-          SmartDashboard.putString("Auto Lineup/Reef Position", "F");
-        else SmartDashboard.putString("Auto Lineup/Reef Position", "E");
-        break;
-
-      case BACK:
-        if (autoAlignOffsetX == Units.inchesToMeters(Constants.SCORING_POSITION_OFFSET))
-          SmartDashboard.putString("Auto Lineup/Reef Position", "H");
-        else SmartDashboard.putString("Auto Lineup/Reef Position", "G");
-        break;
-
-      case BACKLEFT:
-        if (autoAlignOffsetX == Units.inchesToMeters(Constants.SCORING_POSITION_OFFSET))
-          SmartDashboard.putString("Auto Lineup/Reef Position", "J");
-        else SmartDashboard.putString("Auto Lineup/Reef Position", "I");
-        break;
-
-      case FRONTLEFT:
-        if (autoAlignOffsetX == Units.inchesToMeters(Constants.SCORING_POSITION_OFFSET))
-          SmartDashboard.putString("Auto Lineup/Reef Position", "L");
-        else SmartDashboard.putString("Auto Lineup/Reef Position", "K");
-        break;
-
-      default:
-        SmartDashboard.putString("Auto Lineup/Reef Position", "URMOM");
-        break;
-    }
   }
 
   /**
@@ -384,76 +335,6 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
-  }
-
-  public ReefScorePositions getSelectedScorePosition() {
-    return selectedPosition;
-  }
-
-  @AutoLogOutput(key = "AutoLineup/Selected Pose")
-  public Pose2d getSelectedPose() {
-    return AllianceFlipUtil.apply(getSelectedScorePosition().scorePosition);
-  }
-
-  public Pose2d getFinalTargetPose() {
-    Pose2d targetPose =
-        new Pose2d(
-            Math.cos(getSelectedPose().getRotation().getRadians()) * distanceAway
-                - Math.sin(getSelectedPose().getRotation().getRadians()) * getAutoAlignOffsetX()
-                + getSelectedPose().getTranslation().getX(),
-            Math.sin(getSelectedPose().getRotation().getRadians()) * distanceAway
-                + Math.cos(getSelectedPose().getRotation().getRadians()) * getAutoAlignOffsetX()
-                + getSelectedPose().getTranslation().getY(),
-            getSelectedPose().getRotation());
-
-    if (Math.abs(targetPose.getRotation().getDegrees() - getRotation().getDegrees()) > 90
-        && Math.abs(targetPose.getRotation().getDegrees() - getRotation().getDegrees()) <= 270) {
-      targetPose = targetPose.rotateAround(targetPose.getTranslation(), Rotation2d.k180deg);
-      scoreBack = false;
-    } else {
-      scoreBack = true;
-    }
-
-    return targetPose;
-  }
-
-  public boolean getScoreBack() {
-    return scoreBack;
-  }
-
-  public void setPathFinished(boolean pathFinished) {
-    this.pathFinished = pathFinished;
-  }
-
-  @AutoLogOutput(key = "TEST/Path Finished")
-  public boolean getPathFinished() {
-    return this.pathFinished;
-  }
-
-  public void setSelectedScorePosition(ReefScorePositions position) {
-    selectedPosition = position;
-  }
-
-  public void setSelectedPose(Pose2d pose) {
-    selectedPosition.scorePosition = pose;
-  }
-
-  public ElevatorPosition getAlgaePosition() {
-    if (selectedPosition.scorePosition.equals(ReefScorePositions.FRONT.scorePosition)
-        || selectedPosition.scorePosition.equals(ReefScorePositions.BACKRIGHT.scorePosition)
-        || selectedPosition.scorePosition.equals(ReefScorePositions.BACKLEFT.scorePosition)) {
-      return ElevatorPosition.L3ALGAE;
-    } else {
-      return ElevatorPosition.L2ALGAE;
-    }
-  }
-
-  public void setAutoAlignOffsetX(double offset) {
-    autoAlignOffsetX = offset;
-  }
-
-  public double getAutoAlignOffsetX() {
-    return autoAlignOffsetX;
   }
 
   /** Returns the current odometry rotation. */
