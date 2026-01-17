@@ -44,33 +44,31 @@ public final class Constants {
 
   public static final double MOTOR_MOI = 0.5 * 0.27 * Math.pow(0.05, 2);
 
-  public static final int INTAKE_MOTOR_ID = 41;
   public static final int ALGAE_MANIPULATOR_ID = 42;
   public static final int CANRANGE_ID = 21;
-  public static final int INTAKE_CURRENT_LIMIT = 35;
   public static final int LEFT_PIVOT_ID_1 = 31;
   public static final int LEFT_PIVOT_ID_2 = 32;
   public static final int RIGHT_PIVOT_ID_1 = 33;
   public static final int RIGHT_PIVOT_ID_2 = 34;
   public static final int PIVOT_STATOR_CURRENT_LIMIT = 60;
   public static final int PIVOT_SUPPLY_CURRENT_LIMIT = 50;
-  public static final int EXTENSION_STATOR_CURRENT_LIMIT = 30;
-  public static final int EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
   public static final int CLIMBER_ID = 43;
   public static final int CLIMBER_STATOR_CURRENT_LIMIT = 30;
   public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 25;
 
-  public static final int WRIST_ID = 51;
-  public static final int WRIST_CANCODER_ID = 50;
-  public static final double WRIST_GEAR_RATIO = 110.2;
-  public static final int WRIST_STATOR_CURRENT_LIMIT = 30;
-  public static final int WRIST_SUPPLY_CURRENT_LIMIT = 25;
+  public static final int INTAKE_ID = 51;
+  public static final double INTAKE_GEAR_RATIO = 110.2;
+  public static final int INTAKE_STATOR_CURRENT_LIMIT = 30;
+  public static final int INTAKE_SUPPLY_CURRENT_LIMIT = 25;
 
   public static final int ALGAE_MANIPULATOR_MOTOR_ID = 61;
 
   public static final double SCORING_POSITION_OFFSET = 6.47; // in inches
 
   public static final int EXTENSION_ID = 40;
+  public static final int EXTENSION_STATOR_CURRENT_LIMIT = 30;
+  public static final int EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
+  public static final int EXTENSION_CANCODER_ID = 50;
   // Gears are 12:44:60 tooth gears in a line
   // Determine Gear Ratio 12/44 * 44/60
   // Sprockets are 1:1 22 teeth
