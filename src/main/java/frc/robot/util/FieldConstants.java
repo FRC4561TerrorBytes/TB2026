@@ -1,4 +1,4 @@
-// Copyright (c) 2025 FRC 6328
+// Copyright (c) 2026 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // Use of this source code is governed by an MIT-style
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
  * have a blue alliance origin.
  */
 public class FieldConstants {
-  public static final FieldType fieldType = FieldType.WELDED;
+  public static final FieldType fieldType = FieldType.ANDYMARK;
 
   public static final double fieldLength = AprilTagLayoutType.OFFICIAL.getLayout().getFieldLength();
   public static final double fieldWidth = AprilTagLayoutType.OFFICIAL.getLayout().getFieldWidth();
@@ -195,15 +195,12 @@ public class FieldConstants {
 
   public static final double aprilTagWidth = Units.inchesToMeters(6.50);
   public static final int aprilTagCount = 22;
-  public static final AprilTagLayoutType defaultAprilTagType = AprilTagLayoutType.NO_BARGE;
+  public static final AprilTagLayoutType defaultAprilTagType = AprilTagLayoutType.OFFICIAL;
 
   @Getter
   public enum AprilTagLayoutType {
-    OFFICIAL("2025-official"),
-    NO_BARGE("2025-no-barge"),
-    BLUE_REEF("2025-blue-reef"),
-    RED_REEF("2025-red-reef"),
-    NONE("2025-none");
+    OFFICIAL("2026-official"),
+    NONE("2026-none");
 
     AprilTagLayoutType(String name) {
       if (Constants.currentMode == Mode.SIM) {
@@ -216,7 +213,7 @@ public class FieldConstants {
                       "deploy",
                       "apriltags",
                       fieldType.getJsonFolder(),
-                      "2025-official.json"));
+                      "2026-official.json"));
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
