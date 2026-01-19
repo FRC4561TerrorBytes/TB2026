@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.alphashooter.AlphaShooter;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -52,6 +53,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final AlphaShooter shooter;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -76,6 +78,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
+        shooter = new AlphaShooter();
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -87,6 +90,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        shooter = new AlphaShooter();
         break;
 
       default:
@@ -99,6 +103,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        shooter = new AlphaShooter();
         break;
     }
 
@@ -149,10 +154,11 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Default Commands
-
+    shooter.setDefaultCommand(Commands.run(() -> shooter.stopShooter(), shooter));
     // Triggers
 
     // Driver Controls
+    driverController.rightTrigger().whileTrue(Commands.run(() -> shooter.shoot(), shooter));
 
     // Reset gyro to 0° when RS and LS are pressed
     driverController
