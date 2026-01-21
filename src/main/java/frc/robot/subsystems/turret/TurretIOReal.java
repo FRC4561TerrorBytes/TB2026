@@ -56,6 +56,7 @@ public class TurretIOReal implements TurretIO {
             hoodCurrent
         );
 
+        //HI MOMBIR :D
         inputs.turretConnected = turretStatus.isOK();
         inputs.hoodConnected = turretStatus.isOK();
 
