@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
@@ -25,13 +27,10 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake/Io", inputs);
-    IntakeDisconnectedAlert.set(!inputs.IntakeMotorConnected);
+    IntakeDisconnectedAlert.set(!inputs.intakeMotorConnected);
   }
   
-  public void setExtensionSetpoint(double extensionSetpoint) {
-    io.setExtensionSetpoint(extensionSetpoint);
-  }
-
+  
   public void setOutput(double speed) {
     io.setOutput(speed);
   }

@@ -33,8 +33,6 @@ import frc.robot.Constants;
 /** Add your docs here. */
 public class IntakeIOReal implements IntakeIO{
     private TalonFX intakeMotor = new TalonFX(Constants.INTAKE_ID);
-  private CANcoder extensionEncoder = new CANcoder(Constants.EXTENSION_CANCODER_ID);
-  private TalonFX extensionMotor = new TalonFX(Constants.EXTENSION_ID);
 
   private final StatusSignal<Current> intakeStatorCurrent;
   private final StatusSignal<Current> intakeSupplyCurrent;
@@ -42,76 +40,12 @@ public class IntakeIOReal implements IntakeIO{
   private final StatusSignal<Voltage> intakeVoltage;
   private final StatusSignal<Temperature> intakeTemp;   
 
- private final StatusSignal<Angle> extensionAngle;
-  private final StatusSignal<Current> extensionStatorCurrent;
-  private final StatusSignal<Current> extensionSupplyCurrent;
-  private final StatusSignal<AngularVelocity> extensionSpeed;
-  private final StatusSignal<Voltage> extensionVoltage;
-  private final StatusSignal<Temperature> extensionTemp;
+ 
 
-  private double extensionSetpoint = 0.0;
-  private double extensionFeedForward = 0.0;
-
-  private final MotionMagicVoltage m_request_extension = new MotionMagicVoltage(0);
-
-  private final Alert intakeAlert = new Alert("Extension Disconnected.", AlertType.kWarning);
-  private final Alert intakeEncoderAlert =
-      new Alert("Extension Encoder Disconnected.", AlertType.kWarning);
+  private final Alert intakeAlert = new Alert("Intake Disconnected.", AlertType.kWarning);
+  
 
   public IntakeIOReal() {
-    var ExtensionPIDConfig = new Slot0Configs();
-    ExtensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
-    // pivotPIDConfig.kS = 0.28;
-    ExtensionPIDConfig.kV = 0;
-    ExtensionPIDConfig.kA = 0;
-    ExtensionPIDConfig.kP = 75; // 75
-    ExtensionPIDConfig.kI = 0;
-    ExtensionPIDConfig.kD = 0;
-
-    var cancoderConfig = new CANcoderConfiguration();
-    cancoderConfig.MagnetSensor.withMagnetOffset(0);
-    cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    tryUntilOk(5, () -> extensionEncoder.getConfigurator().apply(cancoderConfig, 0.25));
-
-    var extensionConfig = new TalonFXConfiguration();
-    extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    extensionConfig.Slot0 = ExtensionPIDConfig;
-    extensionConfig.Feedback.RotorToSensorRatio = Constants.EXTENSION_GEAR_RATIO;
-    extensionConfig.Feedback.FeedbackRemoteSensorID = extensionEncoder.getDeviceID();
-    extensionConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 100 / Constants.EXTENSION_GEAR_RATIO;
-    extensionConfig.MotionMagic.MotionMagicAcceleration =
-        extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.050;
-    extensionConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * Constants.EXTENSION_GEAR_RATIO;
-    extensionConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
-    extensionConfig.ClosedLoopGeneral.ContinuousWrap = false;
-    extensionConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.EXTENSION_STATOR_CURRENT_LIMIT;
-    extensionConfig.CurrentLimits.SupplyCurrentLimit = Constants.EXTENSION_SUPPLY_CURRENT_LIMIT;
-    extensionConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    extensionConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    tryUntilOk(5, () -> extensionMotor.getConfigurator().apply(extensionConfig, 0.25));
-
-    extensionAngle = extensionEncoder.getPosition();
-    extensionStatorCurrent = extensionMotor.getStatorCurrent();
-    extensionSupplyCurrent = extensionMotor.getSupplyCurrent();
-    extensionSpeed = extensionMotor.getVelocity();
-    extensionVoltage = extensionMotor.getMotorVoltage();
-    extensionTemp = extensionMotor.getDeviceTemp();
-
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        50.0,
-        extensionAngle,
-        extensionStatorCurrent,
-        extensionSupplyCurrent,
-        extensionSpeed,
-        extensionVoltage,
-        extensionTemp);
-
-    ParentDevice.optimizeBusUtilizationForAll(extensionMotor);
-
-
-//dont change stuff below
 
 
      var intakeConfig = new TalonFXConfiguration();
@@ -159,17 +93,11 @@ public class IntakeIOReal implements IntakeIO{
     inputs.intakeSupplyCurrent = intakeSupplyCurrent.getValueAsDouble();
     inputs.intakeSpeed = intakeMotor.getVelocity().getValueAsDouble();
     inputs.intakeVoltage = intakeMotor.getMotorVoltage().getValueAsDouble();
-    inputs.extensionSetpoint = extensionSetpoint;
 
-    intakeEncoderAlert.set(!inputs.intakeEncoderConnected);
     intakeAlert.set(!inputs.intakeMotorConnected);
   }
 
-  @Override
-  public void setExtensionSetpoint(double position) {
-    extensionSetpoint = Units.degreesToRotations(position);
-    intakeMotor.setControl(m_request_extension.withPosition(extensionSetpoint));
-  }
+ 
 
   @Override
   public void setOutput(double speed) {
