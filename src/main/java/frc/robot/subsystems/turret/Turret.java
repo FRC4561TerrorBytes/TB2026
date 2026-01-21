@@ -10,6 +10,5 @@ public class Turret extends SubsystemBase{
 // hi ananya
 //hi sam
 
-  private final TalonFX driveTalon;
 }
 
