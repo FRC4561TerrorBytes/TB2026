@@ -1,9 +1,10 @@
-package frc.robot.subsystems.flywheels;
+package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -12,23 +13,33 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
-import frc.robot.subsystems.flywheels.FlywheelsIO.FlywheelsIOInputs;
+import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
-public class FlywheelsIOReal implements FlywheelsIO {
-    private final TalonFX flywheelsTalon = new TalonFX(Constants.TURRET_FLYWHEELS_ID);
+public class ShooterIOReal implements ShooterIO {
+    private final TalonFX flywheelsTalon = new TalonFX(Constants.FLYWHEELS_ID);
+    private final TalonFX hoodTalon = new TalonFX(Constants.HOOD_ID);
 
-    private final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+    private final MotionMagicVelocityVoltage flywheelsControl = new MotionMagicVelocityVoltage(0);
+    private final MotionMagicVoltage hoodControl = new MotionMagicVoltage(0);
 
     private final StatusSignal<AngularVelocity> flywheelsVelocity;
     private final StatusSignal<Voltage> flywheelsVoltage;
     private final StatusSignal<Current> flywheelsCurrent;
 
-    public FlywheelsIOReal () { 
+    private final StatusSignal<AngularVelocity> hoodVelocity;
+    private final StatusSignal<Voltage> hoodVoltage;
+    private final StatusSignal<Current> hoodCurrent;
+
+    public ShooterIOReal () { 
         //constructor go brrrrrrr
         var flywheelsConfig = new TalonFXConfiguration();
+        var hoodConfig = new TalonFXConfiguration();
 
         flywheelsConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         flywheelsConfig.CurrentLimits.SupplyCurrentLimit = Constants.FLYWHEELS_SUPPLY_CURRENT_LIMIT;
+
+        hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        hoodConfig.CurrentLimits.SupplyCurrentLimit = Constants.HOOD_SUPPLY_CURRENT_LIMIT;
 
         flywheelsConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         flywheelsConfig.CurrentLimits.StatorCurrentLimit = Constants.FLYWHEELS_STATOR_CURRENT_LIMIT;
@@ -53,36 +64,59 @@ public class FlywheelsIOReal implements FlywheelsIO {
         flywheelsVoltage = flywheelsTalon.getMotorVoltage();
         flywheelsCurrent = flywheelsTalon.getStatorCurrent();
 
+        hoodVelocity = hoodTalon.getVelocity();
+        hoodVoltage = hoodTalon.getMotorVoltage();
+        hoodCurrent = hoodTalon.getStatorCurrent();
+
         BaseStatusSignal.setUpdateFrequencyForAll(50.0, 
             flywheelsVelocity,
             flywheelsVoltage,
-            flywheelsCurrent );
+            flywheelsCurrent,
+            hoodVelocity,
+            hoodVoltage,
+            hoodCurrent
+            );
 
         ParentDevice.optimizeBusUtilizationForAll(flywheelsTalon);
     }
 
     @Override
-    public void updateInputs(FlywheelsIOInputs inputs) {
+    public void updateInputs(ShooterIOInputs inputs) {
         var flywheelsStatus = BaseStatusSignal.refreshAll(
             flywheelsVelocity,
             flywheelsVoltage,
             flywheelsCurrent
         );
 
-        inputs.flywheelsConnected = flywheelsStatus.isOK();
+        var hoodStatus = BaseStatusSignal.refreshAll(
+             hoodVelocity,
+             hoodVoltage,
+             hoodCurrent );
 
+        inputs.flywheelsConnected = flywheelsStatus.isOK();
+        inputs.hoodConnected = hoodStatus.isOK();
+
+        //yiiiiipppppppppppppppppppppeeeeeeeeeeeeeeeeee - tyler
         inputs.flywheelsVelocity = flywheelsVelocity.getValueAsDouble();
         inputs.flywheelsVoltage = flywheelsVoltage.getValueAsDouble();
         inputs.flywheelsCurrent = flywheelsCurrent.getValueAsDouble();
+
+        inputs.hoodVelocity = hoodVelocity.getValueAsDouble();
+        inputs.hoodVoltage = hoodVoltage.getValueAsDouble();
+        inputs.hoodCurrent = hoodCurrent.getValueAsDouble();
     }
         public void setFlywheelsSpeed(double velocity){
         // VELOCITY IN MPS
         velocity = velocity/Constants.FLYWHEELS_CIRCUMFERENCE;
-        flywheelsTalon.setControl(m_request.withVelocity(velocity));
+        flywheelsTalon.setControl(flywheelsControl.withVelocity(velocity));
+        }
+
+        public void setHoodAngle(double angle){
+        // ANGLE IN SMTH
+        hoodTalon.setControl(hoodControl.withPosition(angle));
         }
 
         public void stopFlywheels(){
-        flywheelsTalon.set(0);
+        flywheelsTalon.set(0); 
     }
 }
-
