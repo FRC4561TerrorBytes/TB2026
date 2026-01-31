@@ -35,12 +35,10 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
-  public static final int TURRET_ID = 0;
 
   public static final int HOOD_ID = 0;
   public static final double HOOD_SUPPLY_CURRENT_LIMIT = 15;
   public static final double HOOD_STATOR_CURRENT_LIMIT = 30;
-
 
   public static final int FLYWHEELS_ID = 0;
   public static final double FLYWHEELS_CIRCUMFERENCE = 0;
@@ -57,4 +55,8 @@ public final class Constants {
   public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
   public static final int EXTENSION_CANCODER_ID = 0;
+
+  public static final int INDEXER_MOTOR_ID = 67; // Please look over these idk what the limits should be - Sam🔥
+  public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
+  public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;
 }

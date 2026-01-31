@@ -43,6 +43,9 @@ import frc.robot.subsystems.extension.Extension;
 import frc.robot.subsystems.extension.ExtensionIO;
 import frc.robot.subsystems.extension.ExtensionIOReal;
 import frc.robot.subsystems.extension.ExtensionIOSim;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
@@ -68,6 +71,7 @@ public class RobotContainer {
   private final Intake intake;
   private final Extension extension;
   private final Shooter shooter;
+  private final Indexer indexer;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -99,6 +103,8 @@ public class RobotContainer {
         shooter =
             new Shooter(
               new ShooterIOReal());
+        indexer =
+            new Indexer(new IndexerIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -117,6 +123,8 @@ public class RobotContainer {
         shooter =
             new Shooter(
               new ShooterIO() {});
+        indexer =
+            new Indexer(new IndexerIO() {});
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -135,6 +143,8 @@ public class RobotContainer {
         shooter =
             new Shooter(
               new ShooterIO() {});
+        indexer =
+            new Indexer(new IndexerIO() {});
         break;
     }
 
@@ -188,6 +198,10 @@ public class RobotContainer {
     // Default Commands
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
+
+    indexer.setDefaultCommand(
+      indexer.stop()
+    );
     // Triggers
 
     // Driver Controls
