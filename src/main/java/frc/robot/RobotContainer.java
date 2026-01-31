@@ -198,6 +198,10 @@ public class RobotContainer {
     // Default Commands
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
+
+    indexer.setDefaultCommand(
+      indexer.stop()
+    );
     // Triggers
 
     // Driver Controls
