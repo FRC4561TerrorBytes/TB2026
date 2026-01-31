@@ -2,10 +2,8 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
-
 public interface ShooterIO {
-        @AutoLog
+    @AutoLog
     public class ShooterIOInputs {
         public boolean flywheelsConnected = false;
         public double flywheelsVelocity = 0.0;

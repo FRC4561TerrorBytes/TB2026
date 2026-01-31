@@ -16,7 +16,10 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -44,10 +47,12 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -62,6 +67,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Intake intake;
   private final Extension extension;
+  private final Shooter shooter;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -90,6 +96,9 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
+        shooter =
+            new Shooter(
+              new ShooterIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -105,6 +114,9 @@ public class RobotContainer {
             new Intake(new IntakeIOSim()); //for actual code use intake IO sim
         extension = 
             new Extension(new ExtensionIOSim());
+        shooter =
+            new Shooter(
+              new ShooterIO() {});
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -120,6 +132,9 @@ public class RobotContainer {
             new Intake(new IntakeIO() {});
         extension = 
             new Extension(new ExtensionIO() {});
+        shooter =
+            new Shooter(
+              new ShooterIO() {});
         break;
     }
 
@@ -168,6 +183,7 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+    shooter.setDefaultCommand(shooter.stop());
 
     // Default Commands
     intake.setDefaultCommand(
@@ -200,7 +216,10 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    
+    driverController.rightTrigger().whileTrue(shooter.shoot());
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
