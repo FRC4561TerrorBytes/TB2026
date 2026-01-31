@@ -42,6 +42,14 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
+import frc.robot.subsystems.extension.Extension;
+import frc.robot.subsystems.extension.ExtensionIO;
+import frc.robot.subsystems.extension.ExtensionIOReal;
+import frc.robot.subsystems.extension.ExtensionIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -58,6 +66,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Shooter shooter;
+  private final Intake intake;
+  private final Extension extension;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -77,6 +87,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        intake = 
+            new Intake(new IntakeIOReal());
+        extension = 
+            new Extension(new ExtensionIOReal());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -99,8 +113,11 @@ public class RobotContainer {
         shooter =
             new Shooter(
               new ShooterIO() {});
+        intake = 
+            new Intake(new IntakeIOSim()); //for actual code use intake IO sim
+        extension = 
+            new Extension(new ExtensionIOSim());
         break;
-
       default:
         // Replayed robot, disable IO implementations
         drive =
@@ -114,6 +131,10 @@ public class RobotContainer {
         shooter =
             new Shooter(
               new ShooterIO() {});
+        intake = 
+            new Intake(new IntakeIO() {});
+        extension = 
+            new Extension(new ExtensionIO() {});
         break;
     }
 
@@ -165,11 +186,25 @@ public class RobotContainer {
     shooter.setDefaultCommand(shooter.stop());
 
     // Default Commands
-
+    intake.setDefaultCommand(
+        Commands.run( () -> intake.setOutput(0), intake));
     // Triggers
 
     // Driver Controls
+    driverController
+        .leftTrigger() //extend and run intake
+        .onTrue(
+            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+        ) 
+        .toggleOnTrue(
+            Commands.run(() -> intake.setOutput(1), intake)
+        );
 
+    driverController
+        .b() //retract intake
+        .onTrue(
+            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+        );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
