@@ -36,6 +36,14 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.extension.Extension;
+import frc.robot.subsystems.extension.ExtensionIO;
+import frc.robot.subsystems.extension.ExtensionIOReal;
+import frc.robot.subsystems.extension.ExtensionIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -52,6 +60,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final Intake intake;
+  private final Extension extension;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -71,6 +81,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        intake = 
+            new Intake(new IntakeIOReal());
+        extension = 
+            new Extension(new ExtensionIOReal());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -87,8 +101,11 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        intake = 
+            new Intake(new IntakeIOSim()); //for actual code use intake IO sim
+        extension = 
+            new Extension(new ExtensionIOSim());
         break;
-
       default:
         // Replayed robot, disable IO implementations
         drive =
@@ -99,6 +116,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        intake = 
+            new Intake(new IntakeIO() {});
+        extension = 
+            new Extension(new ExtensionIO() {});
         break;
     }
 
@@ -149,11 +170,25 @@ public class RobotContainer {
             () -> -driverController.getRightX()));
 
     // Default Commands
-
+    intake.setDefaultCommand(
+        Commands.run( () -> intake.setOutput(0), intake));
     // Triggers
 
     // Driver Controls
+    driverController
+        .leftTrigger() //extend and run intake
+        .onTrue(
+            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+        ) 
+        .toggleOnTrue(
+            Commands.run(() -> intake.setOutput(1), intake)
+        );
 
+    driverController
+        .b() //retract intake
+        .onTrue(
+            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+        );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
