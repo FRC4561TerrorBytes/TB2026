@@ -30,6 +30,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOReal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -52,6 +55,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final Climber climber;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -76,6 +80,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
+        climber =
+            new Climber(new ClimberIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -87,8 +93,9 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        climber = 
+            new Climber(new ClimberIO() {});
         break;
-
       default:
         // Replayed robot, disable IO implementations
         drive =
@@ -99,6 +106,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        climber = 
+            new Climber(new ClimberIO() {});
         break;
     }
 
@@ -165,6 +174,20 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    
+    driverController
+        .rightBumper()
+        .onTrue(
+            Commands.runOnce(
+              () ->
+                  climber.setClimberPosition(0), climber));
+    
+    driverController
+        .leftBumper()
+        .onTrue(
+            Commands.runOnce(
+              () ->
+                  climber.setClimberPosition(10), climber));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
