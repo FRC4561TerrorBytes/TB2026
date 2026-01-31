@@ -47,4 +47,14 @@ public final class Constants {
   public static final double FLYWHEELS_SUPPLY_CURRENT_LIMIT = 30;
   public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
 
+  public static final int INTAKE_ID = 0;
+  public static final double INTAKE_GEAR_RATIO = 0;
+  public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double INTAKE_STATOR_CURRENT_LIMIT = 45;
+
+  public static final int EXTENSION_ID = 0;
+  public static final double EXTENSION_GEAR_RATIO = 0;
+  public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
+  public static final int EXTENSION_CANCODER_ID = 0;
 }
