@@ -4,7 +4,9 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Climber extends SubsystemBase{
 
@@ -31,5 +33,13 @@ public class Climber extends SubsystemBase{
 
     public void setClimberPosition(double position) {
             io.setClimberPosition(position);
+    }
+    
+    public Command climbUp(){    
+        return this.runOnce(() -> setClimberPosition(Constants.CLIMBER_UP_POSITION));
+    }
+
+    public Command climbDown(){    
+        return this.runOnce(() -> setClimberPosition(Constants.CLIMBER_DOWN_POSITION));
     }
 }

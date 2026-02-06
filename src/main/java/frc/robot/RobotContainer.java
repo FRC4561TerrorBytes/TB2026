@@ -177,17 +177,12 @@ public class RobotContainer {
     
     driverController
         .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-              () ->
-                  climber.setClimberPosition(0), climber));
+        .onTrue(climber.climbUp());
     
     driverController
         .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-              () ->
-                  climber.setClimberPosition(10), climber));
+        .onTrue(climber.climbDown());
+
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
