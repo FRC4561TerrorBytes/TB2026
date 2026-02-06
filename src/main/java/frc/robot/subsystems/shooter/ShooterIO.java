@@ -17,7 +17,7 @@ public interface ShooterIO {
         public double hoodVelocity = 0.0;
         public double hoodVoltage = 0.0;
         public double hoodCurrent = 0.0;
-        public double hoodAngle = 0.0;
+        public double hoodRelativePosition = 0.0;
     }
 
     public default void updateInputs(ShooterIOInputs inputs) {}
