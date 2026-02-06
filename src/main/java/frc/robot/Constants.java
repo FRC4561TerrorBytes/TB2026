@@ -60,4 +60,8 @@ public final class Constants {
   public static final int INDEXER_MOTOR_ID = 67; // Please look over these idk what the limits should be - Sam🔥
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
   public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;
+
+  public static final int INDEXER_LEFT_MOTOR_ID = 0;
+  public static final int INDEXER_RIGHT_MOTOR_ID = 0;
+  public static final int FUEL_KICKER_MOTOR_ID = 0;
 }

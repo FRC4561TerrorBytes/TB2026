@@ -18,56 +18,120 @@ import frc.robot.Constants;
 
 public class IndexerIOReal implements IndexerIO {
 
-  private TalonFX indexerMotor = new TalonFX(Constants.INDEXER_MOTOR_ID);
-  private final StatusSignal<Current> IndexerStatorCurrent;
-  private final StatusSignal<Current> IndexerSupplyCurrent;
-  private final StatusSignal<AngularVelocity> IndexerSpeed;
-  private final StatusSignal<Voltage> IndexerVoltage;
-  private final StatusSignal<Temperature> IndexerTemp;
+  private TalonFX indexerLeftMotor = new TalonFX(Constants.INDEXER_LEFT_MOTOR_ID);
+  private final StatusSignal<Current> IndexerLeftStatorCurrent;
+  private final StatusSignal<Current> IndexerLeftSupplyCurrent;
+  private final StatusSignal<AngularVelocity> IndexerLeftSpeed;
+  private final StatusSignal<Voltage> IndexerLeftVoltage;
+  private final StatusSignal<Temperature> IndexerLeftTemp;
+
+  private TalonFX indexerRightMotor = new TalonFX(Constants.INDEXER_RIGHT_MOTOR_ID);
+  private final StatusSignal<Current> IndexerRightStatorCurrent;
+  private final StatusSignal<Current> IndexerRightSupplyCurrent;
+  private final StatusSignal<AngularVelocity> IndexerRightSpeed;
+  private final StatusSignal<Voltage> IndexerRightVoltage;
+  private final StatusSignal<Temperature> IndexerRightTemp;
+
+  private TalonFX fuelKickerMotor = new TalonFX(Constants.FUEL_KICKER_MOTOR_ID);
+  private final StatusSignal<Current> FuelKickerStatorCurrent;
+  private final StatusSignal<Current> FuelKickerSupplyCurrent;
+  private final StatusSignal<AngularVelocity> FuelKickerSpeed;
+  private final StatusSignal<Voltage> FuelKickerVoltage;
+  private final StatusSignal<Temperature> FuelKickerTemp;
 
   public IndexerIOReal() {
 
-    var indexerConfig = new TalonFXConfiguration();
-    indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    indexerConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
-    indexerConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
-    indexerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    indexerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    tryUntilOk(5, () -> indexerMotor.getConfigurator().apply(indexerConfig, 0.25));
+    var indexerRightConfig = new TalonFXConfiguration();
+    indexerRightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    indexerRightConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
+    indexerRightConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
+    indexerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    indexerRightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    tryUntilOk(5, () -> indexerRightMotor.getConfigurator().apply(indexerRightConfig, 0.25));
 
-    IndexerStatorCurrent = indexerMotor.getStatorCurrent();
-    IndexerSupplyCurrent = indexerMotor.getSupplyCurrent();
-    IndexerSpeed = indexerMotor.getVelocity();
-    IndexerVoltage = indexerMotor.getMotorVoltage();
-    IndexerTemp = indexerMotor.getDeviceTemp();
+    IndexerRightStatorCurrent = indexerRightMotor.getStatorCurrent();
+    IndexerRightSupplyCurrent = indexerRightMotor.getSupplyCurrent();
+    IndexerRightSpeed = indexerRightMotor.getVelocity();
+    IndexerRightVoltage = indexerRightMotor.getMotorVoltage();
+    IndexerRightTemp = indexerRightMotor.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
-        IndexerStatorCurrent,
-        IndexerSupplyCurrent,
-        IndexerSpeed,
-        IndexerVoltage,
-        IndexerTemp);
+        IndexerRightStatorCurrent,
+        IndexerRightSupplyCurrent,
+        IndexerRightSpeed,
+        IndexerRightVoltage,
+        IndexerRightTemp);
 
-    ParentDevice.optimizeBusUtilizationForAll(indexerMotor);
+    ParentDevice.optimizeBusUtilizationForAll(indexerRightMotor);
+
+    var indexerLeftConfig = new TalonFXConfiguration();
+    indexerLeftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    indexerLeftConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
+    indexerLeftConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
+    indexerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    indexerLeftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    tryUntilOk(5, () -> indexerLeftMotor.getConfigurator().apply(indexerLeftConfig, 0.25));
+
+    IndexerLeftStatorCurrent = indexerLeftMotor.getStatorCurrent();
+    IndexerLeftSupplyCurrent = indexerLeftMotor.getSupplyCurrent();
+    IndexerLeftSpeed = indexerLeftMotor.getVelocity();
+    IndexerLeftVoltage = indexerLeftMotor.getMotorVoltage();
+    IndexerLeftTemp = indexerLeftMotor.getDeviceTemp();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0,
+        IndexerLeftStatorCurrent,
+        IndexerLeftSupplyCurrent,
+        IndexerLeftSpeed,
+        IndexerLeftVoltage,
+        IndexerLeftTemp);
+
+    ParentDevice.optimizeBusUtilizationForAll(indexerLeftMotor);
+
+    var fuelKickerConfig = new TalonFXConfiguration();
+    fuelKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
+    fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
+    fuelKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    fuelKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    tryUntilOk(5, () -> fuelKickerMotor.getConfigurator().apply(fuelKickerConfig, 0.25));
+
+    FuelKickerStatorCurrent = fuelKickerMotor.getStatorCurrent();
+    FuelKickerSupplyCurrent = fuelKickerMotor.getSupplyCurrent();
+    FuelKickerSpeed = fuelKickerMotor.getVelocity();
+    FuelKickerVoltage = fuelKickerMotor.getMotorVoltage();
+    FuelKickerTemp = fuelKickerMotor.getDeviceTemp();
+
+    BaseStatusSignal.setUpdateFrequencyForAll(
+        50.0,
+        FuelKickerStatorCurrent,
+        FuelKickerSupplyCurrent,
+        FuelKickerSpeed,
+        FuelKickerVoltage,
+        FuelKickerTemp);
+
+    ParentDevice.optimizeBusUtilizationForAll(fuelKickerMotor);
   }
 
   public void updateInputs(IndexerIOInputs inputs){
-    var indexerStatus =
+    var fuelKickerStatus =
         BaseStatusSignal.refreshAll(
-            IndexerStatorCurrent,
-            IndexerSupplyCurrent,
-            IndexerSpeed,
-            IndexerVoltage,
-            IndexerTemp);
+            FuelKickerStatorCurrent,
+            FuelKickerSupplyCurrent,
+            FuelKickerSpeed,
+            FuelKickerVoltage,
+            FuelKickerTemp);
 
-    inputs.indexerVelocity = indexerMotor.getVelocity().getValueAsDouble();
-    inputs.indexerCurrentAmps = IndexerStatorCurrent.getValueAsDouble();
-    inputs.indexerVoltage = indexerMotor.getMotorVoltage().getValueAsDouble();
-    inputs.indexerConnected = indexerStatus.isOK();
+    inputs.fuelKickerVelocity = fuelKickerMotor.getVelocity().getValueAsDouble();
+    inputs.fuelKickerCurrentAmps = FuelKickerStatorCurrent.getValueAsDouble();
+    inputs.fuelKickerVoltage = fuelKickerMotor.getMotorVoltage().getValueAsDouble();
+    inputs.fuelKickerConnected = fuelKickerStatus.isOK();
   }
 
-  public void setOutput(double speed){
-    indexerMotor.set(speed);
+  public void setThroughput(double indexerSpeed, double kickerSpeed){
+    indexerRightMotor.set(indexerSpeed);
+    indexerLeftMotor.set(indexerSpeed);
+    fuelKickerMotor.set(kickerSpeed);
   }
 }
