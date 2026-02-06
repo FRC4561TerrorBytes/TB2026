@@ -44,7 +44,9 @@ public final class Constants {
 
   public static final double MOTOR_MOI = 0.5 * 0.27 * Math.pow(0.05, 2);
 
-  private static final int INDEXER_MOTOR_ID = 67;
+  public static final int INDEXER_LEFT_MOTOR_ID = 67;
+  public static final int INDEXER_RIGHT_MOTOR_ID = 67;
+  public static final int FUEL_KICKER_MOTOR_ID = 67;
 
   public static final int INTAKE_MOTOR_ID = 41;
   public static final int ALGAE_MANIPULATOR_ID = 42;
