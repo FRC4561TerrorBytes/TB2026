@@ -13,23 +13,27 @@ public class Shooter extends SubsystemBase{
     
   private ShooterIO io;
   private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-  private final Alert shooterDisconnectedAlert;
+  private final Alert shooterLeftDisconnectedAlert;
+  private final Alert shooterRightDisconnectedAlert;
 
   public Shooter(ShooterIO io) {
     this.io = io;
-    shooterDisconnectedAlert = new Alert("Shooter Freaking Disconnected Bruh", AlertType.kError);
+    shooterLeftDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
+    shooterRightDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/IO", inputs);
-    shooterDisconnectedAlert.set(!inputs.flywheelsConnected);
+    shooterLeftDisconnectedAlert.set(!inputs.flywheelLeftConnected);
+    shooterRightDisconnectedAlert.set(!inputs.flywheelRightConnected);
     // This method will be called once per scheduler run
   }
 
   public void setFlywheelsVoltage(double speed) {
-    io.setFlywheelsVoltage(speed);
+    io.setFlywheelLeftVoltage(speed);
+    io.setFlywheelRightVoltage(speed);
   }
 
   public Command shoot(){
