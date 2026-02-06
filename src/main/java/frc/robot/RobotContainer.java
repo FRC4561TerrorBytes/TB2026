@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.snap45;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -232,6 +233,7 @@ public class RobotContainer {
                 .ignoringDisable(true));
     
     driverController.rightTrigger().whileTrue(shooter.shoot());
+    driverController.a().onTrue(new snap45(drive));
   }
 
   /**
