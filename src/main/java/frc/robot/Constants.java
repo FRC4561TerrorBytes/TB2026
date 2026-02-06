@@ -41,7 +41,8 @@ public final class Constants {
   public static final double HOOD_SUPPLY_CURRENT_LIMIT = 15;
   public static final double HOOD_STATOR_CURRENT_LIMIT = 30;
 
-  public static final int FLYWHEELS_ID = 0;
+  public static final int FLYWHEELLEFT_ID = 0;
+  public static final int FLYWHEELRIGHT_ID = 0;
   public static final double FLYWHEELS_CIRCUMFERENCE = 0;
   public static final double FLYWHEELS_SUPPLY_CURRENT_LIMIT = 30;
   public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;

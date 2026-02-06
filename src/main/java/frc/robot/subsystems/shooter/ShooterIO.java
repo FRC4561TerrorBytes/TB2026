@@ -5,10 +5,14 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterIO {
     @AutoLog
     public class ShooterIOInputs {
-        public boolean flywheelsConnected = false;
-        public double flywheelsVelocity = 0.0;
-        public double flywheelsVoltage = 0.0;
-        public double flywheelsCurrent = 0.0;
+        public boolean flywheelLeftConnected = false;
+        public double flywheelLeftVelocity = 0.0;
+        public double flywheelLeftVoltage = 0.0;
+        public double flywheelLeftCurrent = 0.0;
+        public boolean flywheelRightConnected = false;
+        public double flywheelRightVelocity = 0.0;
+        public double flywheelRightVoltage = 0.0;
+        public double flywheelRightCurrent = 0.0;
         public boolean hoodConnected = false;
         public double hoodVelocity = 0.0;
         public double hoodVoltage = 0.0;
@@ -18,8 +22,25 @@ public interface ShooterIO {
 
     public default void updateInputs(ShooterIOInputs inputs) {}
 
-    public default void setFlywheelsVoltage(double voltage){}
+    public default void setFlywheelLeftVoltage(double voltage){}
+
+    public default void setFlywheelRightVoltage(double voltage){}
     
     public default void setHoodPosition(double position){}
 
 }
+
+/*
+
+       X  |       |
+          |    O  |X
+    ---------------------
+          |       |
+      X   |  X    | O
+    ---------------------
+          |       | 
+         O|    X  |  O
+
+    -Tyer + Tyler 🦖
+    bleh
+*/
