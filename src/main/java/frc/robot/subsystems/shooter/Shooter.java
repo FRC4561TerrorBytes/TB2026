@@ -18,8 +18,8 @@ public class Shooter extends SubsystemBase{
 
   public Shooter(ShooterIO io) {
     this.io = io;
-    shooterLeftDisconnectedAlert = new Alert("Left Flywheel Freaking Disconnected Bruh", AlertType.kError);
-    shooterRightDisconnectedAlert = new Alert("Right Flywheel Freaking Disconnected Bruh", AlertType.kError);
+    shooterLeftDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
+    shooterRightDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
   }
 
   @Override
