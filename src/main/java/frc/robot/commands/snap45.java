@@ -4,10 +4,12 @@
 
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
@@ -17,6 +19,10 @@ public class snap45 extends Command {
 
   final Drive drive;
   final PIDController m_pidController = new PIDController(0.025, 0.01, 0);
+  double startAngle;
+  double degreesClosestTo;
+  private final Alert snapToDiagonal =
+      new Alert("it isnt goin to 45° :( do it manually now ", AlertType.kError); //hi manbir
 
   public snap45(Drive drive) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -33,33 +39,28 @@ public class snap45 extends Command {
     //final double absAngle = Math.abs(drive.getPose().getRotation().getDegrees());
     final double angle = drive.getPose().getRotation().getDegrees() + 180;
     double degreesClosestTo = 0;
-    double closest = 999.0;
-    double targetAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
-    
-    
-    if (Math.abs(angle - (targetAngle - 360)) < closest){
-      closest = Math.abs(angle - (targetAngle - 360));
-      degreesClosestTo = (targetAngle - 360);
+    startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
+    double correctedAngle = angle - startAngle;
+    if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
+        degreesClosestTo = 90;
     }
-    if (Math.abs(angle - (targetAngle - 270)) < closest){
-      closest = Math.abs(angle - (targetAngle)) - 270;
-      degreesClosestTo = (targetAngle) - 270;
+    else if ((90 - startAngle) < correctedAngle && correctedAngle < (180 - startAngle)){
+        degreesClosestTo = 180;
     }
-    if (Math.abs(angle - (targetAngle - 180)) < closest){
-      closest = Math.abs(angle - (targetAngle - 180));
-      degreesClosestTo = targetAngle - 180;
+    else if ((180 - startAngle) < correctedAngle && correctedAngle < (270 - startAngle)){
+      degreesClosestTo = 270;
     }
-    if (Math.abs(angle - (targetAngle - 90)) < closest){
-      closest = Math.abs(angle - (targetAngle - 90));
-      degreesClosestTo = targetAngle - 90;
-    }
-    if(Math.abs(angle - targetAngle) < closest){
-      closest = Math.abs(angle);
+    else if ((270 - startAngle) < correctedAngle && correctedAngle < (-startAngle)){
       degreesClosestTo = 0;
     }
+    else {
+      degreesClosestTo = 0;
+      snapToDiagonal.set(true);
+    }
+    
     SmartDashboard.putNumber("Angle", angle);
-    SmartDashboard.putNumber("rotating to", degreesClosestTo);
-    m_pidController.setSetpoint(degreesClosestTo);
+    SmartDashboard.putNumber("rotating to", (degreesClosestTo - startAngle));
+    m_pidController.setSetpoint(degreesClosestTo - startAngle);
 
     //final boolean closerTo0 = (180.0 - absAngle) > absAngle;
     //m_pidController.setSetpoint(closerTo0 ? 0.0 : 180.0);
@@ -68,9 +69,8 @@ public class snap45 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double rawAngle = drive.getPose().getRotation().getDegrees();
-    double rotationRate = m_pidController.calculate(rawAngle + 180);    
-    rotationRate += 1.2 * Math.signum(rotationRate);
+    Logger.recordOutput("Target Angle", degreesClosestTo - startAngle);
+    double rotationRate = m_pidController.calculate(degreesClosestTo - startAngle);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
 
     drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(0.0, 0.0, rotationRate), drive.getPose().getRotation()));
@@ -78,11 +78,8 @@ public class snap45 extends Command {
     System.out.println("rotation from pose: " + (drive.getPose().getRotation().getDegrees() + 180));
     // System.out.println("rotation from pigeon: " + drive.getPigeonYaw());
 
-    SmartDashboard.putNumber("Raw Angle", rawAngle);
     SmartDashboard.putNumber("Rotation Rate", rotationRate);
   }
-
-
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
