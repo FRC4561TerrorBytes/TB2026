@@ -71,7 +71,7 @@ public class snap45 extends Command {
   @Override
   public void execute() {
     Logger.recordOutput("Target Angle", degreesClosestTo - startAngle);
-    double rotationRate = m_pidController.calculate(angle);  
+    double rotationRate = m_pidController.calculate(drive.getPose().getRotation().getDegrees() + 180);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
 
     drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(0.0, 0.0, rotationRate), drive.getPose().getRotation()));
