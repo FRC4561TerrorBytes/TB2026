@@ -14,6 +14,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -71,6 +72,26 @@ public class DriveCommands {
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).
    */
+  public static Command alignToHub(
+    Drive drive,
+    Supplier<Rotation2d> targetAngle){
+      double kP = 0;
+      double kI = 0;
+      double kD = 0;
+      double toleranceDegrees = 0;
+
+      PIDController controller = new PIDController(kP, kI, kD, 0.02);
+      controller.setTolerance(toleranceDegrees);
+      controller.enableContinuousInput(-180, 180);
+      controller.setSetpoint(targetAngle.get().getDegrees()+180);
+
+      return  Commands.run(() -> {
+        double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees()), -30, 30);
+        drive.runVelocity(
+          new ChassisSpeeds(0, 0,rotationSpeed));
+      } ).until(() -> controller.atSetpoint())
+      .andThen(() -> controller.close());
+  }
   public static Command joystickDrive(
       Drive drive,
       DoubleSupplier xSupplier,
