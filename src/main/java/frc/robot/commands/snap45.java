@@ -23,13 +23,11 @@ public class snap45 extends Command {
   double degreesClosestTo;
   double angle;
   private final Alert snapToDiagonal =
-      new Alert("it isnt goin to 45° :( do it manually now ", AlertType.kError); //hi manbir
+      new Alert("it isnt goin to 45° :( do it manually now ", AlertType.kError); 
 
   public snap45(Drive drive) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.drive = drive;
     m_pidController.enableContinuousInput(0, 360);
-    //m_pidController.setSetpoint(0.0);
     m_pidController.setTolerance(1);
   }
 
@@ -37,7 +35,6 @@ public class snap45 extends Command {
   @Override
   public void initialize() {
     m_pidController.reset();
-    //final double absAngle = Math.abs(drive.getPose().getRotation().getDegrees());
     double degreesClosestTo = 0;
     startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
     angle = drive.getPose().getRotation().getDegrees() + 180;
@@ -62,9 +59,6 @@ public class snap45 extends Command {
     SmartDashboard.putNumber("Angle", angle);
     SmartDashboard.putNumber("rotating to", (degreesClosestTo - startAngle));
     m_pidController.setSetpoint(degreesClosestTo - startAngle);
-
-    //final boolean closerTo0 = (180.0 - absAngle) > absAngle;
-    //m_pidController.setSetpoint(closerTo0 ? 0.0 : 180.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -77,7 +71,7 @@ public class snap45 extends Command {
     drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(0.0, 0.0, rotationRate), drive.getPose().getRotation()));
 
     System.out.println("rotation from pose: " + (drive.getPose().getRotation().getDegrees() + 180));
-    // System.out.println("rotation from pigeon: " + drive.getPigeonYaw());
+    
 
     SmartDashboard.putNumber("Rotation Rate", rotationRate);
   }
