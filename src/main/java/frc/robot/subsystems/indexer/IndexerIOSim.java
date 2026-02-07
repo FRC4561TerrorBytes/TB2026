@@ -21,8 +21,8 @@ public class IndexerIOSim implements IndexerIO {
   public void updateInputs(IndexerIOInputs inputs) {
     intakeMotor.update(LOOP_PERIOD_SECS);
     inputs.indexerVelocity = Units.radiansToDegrees(intakeMotor.getAngularVelocityRadPerSec());
-    inputs.intakeVoltage = intakeAppliedVolts;
-    inputs.intakeCurrentAmps = Math.abs(intakeMotor.getCurrentDrawAmps());
+    //inputs.intakeVoltage = intakeAppliedVolts;
+    //inputs.intakeCurrentAmps = Math.abs(intakeMotor.getCurrentDrawAmps());
   }
 
   public void setOutput(double speed) {
