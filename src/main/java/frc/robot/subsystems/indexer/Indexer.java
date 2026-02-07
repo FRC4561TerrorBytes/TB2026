@@ -47,16 +47,16 @@ public class Indexer extends SubsystemBase {
     io.setFuelKickerOutput(speed);
   }
 
-  public void setThoughput(double indexerSpeed, double kickerSpeed) {
+  public void setThroughput(double indexerSpeed, double kickerSpeed) {
     setFuelKickerOutput(kickerSpeed);
     setIndexerOutput(indexerSpeed);
   }
 
   public Command spin(){
-    return Commands.run(() -> this.setThoughput(1.0, 1.0), this);
+    return Commands.run(() -> this.setThroughput(1.0, 1.0), this);
   }
 
   public Command stop(){
-    return Commands.run(() -> this.setThoughput(0.0, 0.0), this);
+    return Commands.run(() -> this.setThroughput(0.0, 0.0), this);
   }
 }
