@@ -21,13 +21,14 @@ public class snap45 extends Command {
   final PIDController m_pidController = new PIDController(0.025, 0.01, 0);
   double startAngle;
   double degreesClosestTo;
+  double angle;
   private final Alert snapToDiagonal =
       new Alert("it isnt goin to 45° :( do it manually now ", AlertType.kError); //hi manbir
 
   public snap45(Drive drive) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drive = drive;
-    m_pidController.enableContinuousInput(-180.0, 180.0);
+    m_pidController.enableContinuousInput(0, 360);
     //m_pidController.setSetpoint(0.0);
     m_pidController.setTolerance(1);
   }
@@ -37,9 +38,9 @@ public class snap45 extends Command {
   public void initialize() {
     m_pidController.reset();
     //final double absAngle = Math.abs(drive.getPose().getRotation().getDegrees());
-    final double angle = drive.getPose().getRotation().getDegrees() + 180;
     double degreesClosestTo = 0;
     startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
+    angle = drive.getPose().getRotation().getDegrees() + 180;
     double correctedAngle = angle - startAngle;
     if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
         degreesClosestTo = 90;
@@ -70,7 +71,7 @@ public class snap45 extends Command {
   @Override
   public void execute() {
     Logger.recordOutput("Target Angle", degreesClosestTo - startAngle);
-    double rotationRate = m_pidController.calculate(degreesClosestTo - startAngle);  
+    double rotationRate = m_pidController.calculate(angle);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
 
     drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(0.0, 0.0, rotationRate), drive.getPose().getRotation()));
