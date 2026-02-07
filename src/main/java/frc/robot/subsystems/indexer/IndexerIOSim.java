@@ -10,23 +10,38 @@ public class IndexerIOSim implements IndexerIO {
 
   private static final double LOOP_PERIOD_SECS = 0.02;
 
-  private double intakeAppliedVolts = 0.0;
+  private double leftIndexerAppliedVolts = 0.0;
+  private double rightIndexerAppliedVolts = 0.0;
+  private double kickerAppliedVolts = 0.0;
 
-  private DCMotorSim intakeMotor =
+  private DCMotorSim leftIndexerMotor =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getNeo550(1), 0.01, 1.0),
-          DCMotor.getNeo550(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.01, 1.0),
+          DCMotor.getKrakenX44(1));
+
+  private DCMotorSim rightIndexerMotor =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.01, 1.0),
+          DCMotor.getKrakenX44(1));
+
+  private DCMotorSim kickerMotor =
+      new DCMotorSim(
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.01, 1.0),
+          DCMotor.getKrakenX60(1));
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
-    intakeMotor.update(LOOP_PERIOD_SECS);
-    inputs.indexerVelocity = Units.radiansToDegrees(intakeMotor.getAngularVelocityRadPerSec());
-    //inputs.intakeVoltage = intakeAppliedVolts;
-    //inputs.intakeCurrentAmps = Math.abs(intakeMotor.getCurrentDrawAmps());
+    leftIndexerMotor.update(LOOP_PERIOD_SECS);
+    rightIndexerMotor.update(LOOP_PERIOD_SECS);
+    kickerMotor.update(LOOP_PERIOD_SECS);
   }
 
-  public void setOutput(double speed) {
-    intakeAppliedVolts = MathUtil.clamp(speed * 12, -12, 12);
-    intakeMotor.setInputVoltage(intakeAppliedVolts);
+  public void setThroughput(double indexerSpeed, double kickerSpeed) {
+    leftIndexerAppliedVolts = MathUtil.clamp(indexerSpeed * 12, -12, 12);
+    leftIndexerMotor.setInputVoltage(leftIndexerAppliedVolts);
+    rightIndexerAppliedVolts = MathUtil.clamp(-indexerSpeed * 12, -12, 12);
+    rightIndexerMotor.setInputVoltage(rightIndexerAppliedVolts);
+    kickerAppliedVolts = MathUtil.clamp(kickerSpeed * 12, -12, 12);
+    kickerMotor.setInputVoltage(kickerAppliedVolts);
   }
 }

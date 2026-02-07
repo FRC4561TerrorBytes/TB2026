@@ -130,7 +130,7 @@ public class IndexerIOReal implements IndexerIO {
   }
 
   public void setThroughput(double indexerSpeed, double kickerSpeed){
-    indexerRightMotor.set(indexerSpeed);
+    indexerRightMotor.set(-indexerSpeed); //this is a guess, but it might be the other side
     indexerLeftMotor.set(indexerSpeed);
     fuelKickerMotor.set(kickerSpeed);
   }
