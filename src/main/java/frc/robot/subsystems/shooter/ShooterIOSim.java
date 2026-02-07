@@ -12,18 +12,18 @@ private static final double LOOP_PERIOD_SECS = 0.02;
 
   private DCMotorSim flywheelRightMotor =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.01, 1.0),
-          DCMotor.getKrakenX44(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(2), 0.01, 1.0),
+          DCMotor.getKrakenX44(2));
 
   private DCMotorSim hoodMotor =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.01, 1.0),
-          DCMotor.getKrakenX44(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.01, 1.0),
+          DCMotor.getKrakenX60(1));
 
   private DCMotorSim flywheelLeftMotor =
       new DCMotorSim(
-          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 0.01, 1.0),
-          DCMotor.getKrakenX60(1));
+          LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(2), 0.01, 1.0),
+          DCMotor.getKrakenX44(2));
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
@@ -32,13 +32,16 @@ private static final double LOOP_PERIOD_SECS = 0.02;
     flywheelLeftMotor.update(LOOP_PERIOD_SECS);
   }
 
-  public void setflywheelLeftVoltage(double flywheelLeftAppliedVolts) {
-    this.flywheelLeftAppliedVolts = flywheelLeftAppliedVolts;
+  public void setflywheelLeftVoltage(double voltage) {
+    flywheelLeftMotor.setInputVoltage(voltage);
+    this.flywheelLeftAppliedVolts = voltage;
   }
-  public void setFlywheelRightVoltage(double flywheelRightAppliedVolts) {
-    this.flywheelRightAppliedVolts = flywheelRightAppliedVolts;
+  public void setFlywheelRightVoltage(double voltage) {
+    flywheelRightMotor.setInputVoltage(voltage);
+    this.flywheelRightAppliedVolts = voltage;
   }
-    public void setHoodPosition(double hoodAppliedVolts) {
-    this.hoodAppliedVolts = hoodAppliedVolts;
+    public void setHoodPosition(double voltage) {
+    hoodMotor.setInputVoltage(voltage);
+    this.hoodAppliedVolts = voltage;
 }
 }
