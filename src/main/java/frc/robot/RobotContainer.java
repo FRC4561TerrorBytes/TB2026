@@ -232,7 +232,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     
-    driverController.rightTrigger().whileTrue(DriveCommands.alignToHub(drive,() -> drive.getRotationToHub()));
+    driverController.rightTrigger().whileTrue(drive.alignToHub(() -> drive.getRotationToHub()));
     driverController.a().whileTrue(new snap45(drive));
   }
 

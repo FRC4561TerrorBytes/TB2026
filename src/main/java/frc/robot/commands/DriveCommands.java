@@ -68,30 +68,7 @@ public class DriveCommands {
         .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
         .getTranslation();
   }
-
-  /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
-   */
-  public static Command alignToHub(
-    Drive drive,
-    Supplier<Rotation2d> targetAngle){
-      double kP = 0;
-      double kI = 0;
-      double kD = 0;
-      double toleranceDegrees = 0;
-
-      PIDController controller = new PIDController(kP, kI, kD, 0.02);
-      controller.setTolerance(toleranceDegrees);
-      controller.enableContinuousInput(-180, 180);
-      controller.setSetpoint(targetAngle.get().getDegrees()+180);
-
-      return  Commands.run(() -> {
-        double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees()), -30, 30);
-        drive.runVelocity(
-          new ChassisSpeeds(0, 0,rotationSpeed));
-      } ).until(() -> controller.atSetpoint())
-      .andThen(() -> controller.close());
-  }
+  
   public static Command joystickDrive(
       Drive drive,
       DoubleSupplier xSupplier,

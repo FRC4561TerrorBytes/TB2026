@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
-import frc.robot.util.FieldConstants;
+import frc.robot.FieldConstants;
 import frc.robot.util.GeomUtil;
 import java.util.HashMap;
 import java.util.LinkedList;
