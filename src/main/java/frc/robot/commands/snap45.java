@@ -93,11 +93,6 @@ public class snap45 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_pidController.atSetpoint()) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    return m_pidController.atSetpoint();
   }
 }
