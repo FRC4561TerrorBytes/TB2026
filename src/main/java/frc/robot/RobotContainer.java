@@ -233,7 +233,9 @@ public class RobotContainer {
                 .ignoringDisable(true));
     
     driverController.rightTrigger().whileTrue(shooter.shoot());
-    driverController.a().whileTrue(new snap45(drive));
+    driverController.a().whileTrue(new snap45(drive,
+      () -> -driverController.getLeftY(),
+      () -> -driverController.getLeftX()));
   }
 
   /**

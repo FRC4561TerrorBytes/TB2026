@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -12,21 +14,31 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.drive.Drive;
 
 public class snap45 extends Command {
   /** Creates a new AutoRotate. */
 
   final Drive drive;
+  final DoubleSupplier xSupplier;
+  final DoubleSupplier ySupplier;
+  DoubleSupplier rotationSupplier;
   final PIDController m_pidController = new PIDController(0.025, 0.01, 0);
   double startAngle;
   double degreesClosestTo;
   double angle;
   private final Alert snapToDiagonal =
-      new Alert("it isnt goin to 45° :( do it manually now ", AlertType.kError); 
-
-  public snap45(Drive drive) {
+      new Alert("it isnt goin to 45° :( do it manually now ", AlertType.kError);
+      
+   public snap45(
+    Drive drive,
+    DoubleSupplier xSupplier, 
+    DoubleSupplier ySupplier) {
     this.drive = drive;
+    this.xSupplier = xSupplier;
+    this.ySupplier = ySupplier;
     m_pidController.enableContinuousInput(0, 360);
     m_pidController.setTolerance(1);
   }
@@ -67,12 +79,9 @@ public class snap45 extends Command {
     Logger.recordOutput("Target Angle", degreesClosestTo - startAngle);
     double rotationRate = m_pidController.calculate(drive.getPose().getRotation().getDegrees() + 180);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
-
-    drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(0.0, 0.0, rotationRate), drive.getPose().getRotation()));
-
     System.out.println("rotation from pose: " + (drive.getPose().getRotation().getDegrees() + 180));
-    
-
+    DoubleSupplier rotationSupplier = () -> (rotationRate-180)/360; //returns a value between -1 and 1
+    DriveCommands.joystickDrive(drive, xSupplier, ySupplier, rotationSupplier);
     SmartDashboard.putNumber("Rotation Rate", rotationRate);
   }
   // Called once the command ends or is interrupted.
