@@ -24,7 +24,7 @@ public class snap45 extends Command {
   final Drive drive;
   final DoubleSupplier xSupplier;
   final DoubleSupplier ySupplier;
-  DoubleSupplier rotationSupplier;
+  final Supplier<Rotation2D> rotationSupplier;
   final PIDController m_pidController = new PIDController(0.025, 0.01, 0);
   double startAngle;
   double degreesClosestTo;
@@ -80,8 +80,8 @@ public class snap45 extends Command {
     double rotationRate = m_pidController.calculate(drive.getPose().getRotation().getDegrees() + 180);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
     System.out.println("rotation from pose: " + (drive.getPose().getRotation().getDegrees() + 180));
-    DoubleSupplier rotationSupplier = () -> (rotationRate-180)/360; //returns a value between -1 and 1
-    DriveCommands.joystickDrive(drive, xSupplier, ySupplier, rotationSupplier);
+    Supplier<Rotation2D> rotationSupplier = () -> Rotation2D.fromDegrees(rotationRate-180); 
+    DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, rotationSupplier);
     SmartDashboard.putNumber("Rotation Rate", rotationRate);
   }
   // Called once the command ends or is interrupted.
