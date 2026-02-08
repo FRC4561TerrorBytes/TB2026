@@ -5,9 +5,11 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
@@ -24,7 +26,6 @@ public class snap45 extends Command {
   final Drive drive;
   final DoubleSupplier xSupplier;
   final DoubleSupplier ySupplier;
-  final Supplier<Rotation2D> rotationSupplier;
   final PIDController m_pidController = new PIDController(0.025, 0.01, 0);
   double startAngle;
   double degreesClosestTo;
@@ -80,19 +81,23 @@ public class snap45 extends Command {
     double rotationRate = m_pidController.calculate(drive.getPose().getRotation().getDegrees() + 180);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
     System.out.println("rotation from pose: " + (drive.getPose().getRotation().getDegrees() + 180));
-    Supplier<Rotation2D> rotationSupplier = () -> Rotation2D.fromDegrees(rotationRate-180); 
-    DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, rotationSupplier);
-    SmartDashboard.putNumber("Rotation Rate", rotationRate);
+      DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> Rotation2d.fromDegrees(rotationRate));
+      SmartDashboard.putNumber("Rotation Rate", rotationRate);
   }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drive.stop();
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_pidController.atSetpoint();
+    if (m_pidController.atSetpoint()) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }
