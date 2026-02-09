@@ -2,6 +2,8 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +31,15 @@ public class Shooter extends SubsystemBase{
     shooterLeftDisconnectedAlert.set(!inputs.flywheelLeftConnected);
     shooterRightDisconnectedAlert.set(!inputs.flywheelRightConnected);
     // This method will be called once per scheduler run
+  }
+
+  private void setHoodAngleMap(){
+    //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
+    //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
+  }
+
+  public double interpolateHoodAngle(double distanceMeters){
+    return hoodAngleMap.get(distanceMeters);
   }
 
   public void setFlywheelsVoltage(double speed) {
