@@ -5,12 +5,8 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -26,7 +22,6 @@ public class snap45 extends Command {
   final Drive drive;
   final DoubleSupplier xSupplier;
   final DoubleSupplier ySupplier;
-  final PIDController m_pidController = new PIDController(0.025, 0.01, 0);
   double startAngle;
   double degreesClosestTo;
   double angle;
@@ -40,14 +35,11 @@ public class snap45 extends Command {
     this.drive = drive;
     this.xSupplier = xSupplier;
     this.ySupplier = ySupplier;
-    m_pidController.enableContinuousInput(0, 360);
-    m_pidController.setTolerance(1);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_pidController.reset();
     double degreesClosestTo = 0;
     startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
     angle = drive.getPose().getRotation().getDegrees() + 180;
@@ -71,18 +63,15 @@ public class snap45 extends Command {
     
     SmartDashboard.putNumber("Angle", angle);
     SmartDashboard.putNumber("rotating to", (degreesClosestTo - startAngle));
-    m_pidController.setSetpoint(degreesClosestTo - startAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     Logger.recordOutput("Target Angle", degreesClosestTo - startAngle);
-    double rotationRate = m_pidController.calculate(drive.getPose().getRotation().getDegrees() + 180);  
     System.out.println(drive.getPose().getRotation().getDegrees() + 180);
     System.out.println("rotation from pose: " + (drive.getPose().getRotation().getDegrees() + 180));
-      DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> Rotation2d.fromDegrees(rotationRate - 180));
-      SmartDashboard.putNumber("Rotation Rate", rotationRate);
+      DriveCommands.joystickDriveAtAngle(drive, xSupplier, ySupplier, () -> Rotation2d.fromDegrees((degreesClosestTo - startAngle) % 360)); 
   }
   // Called once the command ends or is interrupted.
   @Override
@@ -93,6 +82,6 @@ public class snap45 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_pidController.atSetpoint();
+    return ((Math.abs(drive.getPose().getRotation().getDegrees() - (degreesClosestTo - startAngle))) < 1.0);
   }
 }
