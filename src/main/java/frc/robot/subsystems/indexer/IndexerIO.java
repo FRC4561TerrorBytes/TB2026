@@ -7,15 +7,28 @@ public interface IndexerIO {
   @AutoLog
   public static class IndexerIOInputs {
 
-    public double indexerVelocity = 0.0;
-    public double indexerCurrentAmps = 0.0;
-    public double indexerVoltage = 0.0;
-    public boolean indexerConnected = true;
+    public double indexerRightVelocity = 0.0;
+    public double indexerRightCurrentAmps = 0.0;
+    public double indexerRightVoltage = 0.0;
+    public boolean indexerRightConnected = true;
+
+    public double indexerLeftVelocity = 0.0;
+    public double indexerLeftCurrentAmps = 0.0;
+    public double indexerLeftVoltage = 0.0;
+    public boolean indexerLeftConnected = true;
+
+    public double fuelKickerVelocity = 0.0;
+    public double fuelKickerCurrentAmps = 0.0;
+    public double fuelKickerVoltage = 0.0;
+    public boolean fuelKickerConnected = true;
   }
 
   public default void updateInputs(IndexerIOInputs inputs) {}
 
-  public default void setOutput(double speed) {}
+  public default void setIndexerOutput(double speed) {}
+  public default void setFuelKickerOutput(double speed) {}
+
+  
 }
 
 /*
