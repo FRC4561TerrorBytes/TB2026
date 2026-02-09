@@ -403,6 +403,8 @@ public class Drive extends SubsystemBase {
         double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees(),targetAngle.get().getDegrees()), -30, 30);
         this.runVelocity(
           new ChassisSpeeds(0, 0,rotationSpeed));
-      } ).beforeStarting(() -> controller.reset());
+      } )
+      .until(() -> controller.atSetpoint())
+      .beforeStarting(() -> controller.reset());
   }
 }
