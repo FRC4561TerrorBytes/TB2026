@@ -383,7 +383,7 @@ public class Drive extends SubsystemBase {
   public Rotation2d getRotationToHub(){
     return new Rotation2d(
       AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX()-getPose().getX(),
-      AllianceFlipUtil.applyY(FieldConstants.Hub.topCenterPoint.getY()-getPose().getY())
+      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getY()-getPose().getY()
     );
   }
   // Field relative drive command using two joysticks (controlling linear and angular velocities).
@@ -403,7 +403,6 @@ public class Drive extends SubsystemBase {
         double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees(),targetAngle.get().getDegrees()), -30, 30);
         this.runVelocity(
           new ChassisSpeeds(0, 0,rotationSpeed));
-      } ).until(() -> controller.atSetpoint())
-      .andThen(() -> controller.close());
+      } ).beforeStarting(() -> controller.reset());
   }
 }
