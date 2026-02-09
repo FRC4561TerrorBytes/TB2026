@@ -39,6 +39,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -332,6 +333,29 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+  public Rotation2d snap45() {
+    double degreesClosestTo = 0;
+    double startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
+    double angle = getPose().getRotation().getDegrees() + 180;
+    double correctedAngle = angle - startAngle;
+    if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
+        degreesClosestTo = 90;
+    }
+    else if ((90 - startAngle) < correctedAngle && correctedAngle < (180 - startAngle)){
+        degreesClosestTo = 180;
+    }
+    else if ((180 - startAngle) < correctedAngle && correctedAngle < (270 - startAngle)){
+      degreesClosestTo = 270;
+    }
+    else if ((270 - startAngle) < correctedAngle && correctedAngle < (-startAngle)){
+      degreesClosestTo = 0;
+    }
+    else {
+      degreesClosestTo = 0;
+    }
+
+    return Rotation2d.fromDegrees(degreesClosestTo - startAngle);
   }
 
   /** Returns the current odometry rotation. */
