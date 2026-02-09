@@ -387,7 +387,7 @@ public class Drive extends SubsystemBase {
     );
   }
   // Field relative drive command using two joysticks (controlling linear and angular velocities).
-  public Command alignToHub(
+  public Command alignToAngle(
     Supplier<Rotation2d> targetAngle){
       double kP = 0.1;
       double kI = 0;
