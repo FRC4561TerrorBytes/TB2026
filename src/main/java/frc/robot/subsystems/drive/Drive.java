@@ -399,9 +399,8 @@ public class Drive extends SubsystemBase {
       controller.enableContinuousInput(-180, 180);
 
       return Commands.run(() -> {
-        controller.setSetpoint(this.getRotationToHub().getDegrees()+180);
         Logger.recordOutput("targetAlignToHub", getRotationToHub().getDegrees()+180);
-        double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees()), -30, 30);
+        double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees(),targetAngle.get().getDegrees()), -30, 30);
         this.runVelocity(
           new ChassisSpeeds(0, 0,rotationSpeed));
       } ).until(() -> controller.atSetpoint())
