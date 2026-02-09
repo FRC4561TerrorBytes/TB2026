@@ -26,7 +26,9 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -46,14 +48,19 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -371,5 +378,33 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+  @AutoLogOutput
+  public Rotation2d getRotationToHub(){
+    return new Rotation2d(
+      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX()-getPose().getX(),
+      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getY()-getPose().getY()
+    );
+  }
+  // Field relative drive command using two joysticks (controlling linear and angular velocities).
+  public Command alignToAngle(
+    Supplier<Rotation2d> targetAngle){
+      double kP = 0.1;
+      double kI = 0;
+      double kD = 0;
+      double toleranceDegrees = 1.5;
+
+      PIDController controller = new PIDController(kP, kI, kD, 0.02);
+      controller.setTolerance(toleranceDegrees);
+      controller.enableContinuousInput(-180, 180);
+
+      return Commands.run(() -> {
+        Logger.recordOutput("targetAlignToHub", getRotationToHub().getDegrees()+180);
+        double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees(),targetAngle.get().getDegrees()), -30, 30);
+        this.runVelocity(
+          new ChassisSpeeds(0, 0,rotationSpeed));
+      } )
+      .until(() -> controller.atSetpoint())
+      .beforeStarting(() -> controller.reset());
   }
 }
