@@ -55,6 +55,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -339,6 +341,9 @@ public class Drive extends SubsystemBase {
     double startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
     double angle = getPose().getRotation().getDegrees() + 180;
     double correctedAngle = angle - startAngle;
+    boolean snapBool = true;
+    Rotation2d snapDegrees;
+    
     if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
         degreesClosestTo = 90;
     }
@@ -354,9 +359,17 @@ public class Drive extends SubsystemBase {
     else {
       degreesClosestTo = 0;
     }
-
-    return Rotation2d.fromDegrees(degreesClosestTo - startAngle);
+    if (Math.abs(getPose().getRotation().getDegrees() - (degreesClosestTo - startAngle)) < 1.0){
+      snapBool = false;
+    }
+    if (snapBool) {
+      snapDegrees = Rotation2d.fromDegrees(degreesClosestTo - startAngle);
+      return snapDegrees;
+    }
+    else return Rotation2d.fromDegrees(getPose().getRotation().getDegrees());
+    
   }
+
 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
