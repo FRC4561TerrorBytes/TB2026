@@ -17,11 +17,14 @@ public class Shooter extends SubsystemBase{
   private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   private final Alert shooterLeftDisconnectedAlert;
   private final Alert shooterRightDisconnectedAlert;
+  private InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
   public Shooter(ShooterIO io) {
     this.io = io;
     shooterLeftDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
     shooterRightDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
+
+    setHoodAngleMap();
   }
 
   @Override
