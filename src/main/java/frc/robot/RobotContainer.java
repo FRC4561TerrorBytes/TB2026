@@ -236,9 +236,10 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     
-    driverController.rightTrigger().whileTrue(shooter.shoot());
     driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
+    
+    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
   }
 
   /**
