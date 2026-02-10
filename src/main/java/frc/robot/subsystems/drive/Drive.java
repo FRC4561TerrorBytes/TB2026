@@ -358,7 +358,7 @@ public class Drive extends SubsystemBase {
     else {
       degreesClosestTo = 0;
     }
-    return Rotation2d.fromDegrees(degreesClosestTo - startAngle);
+    return Rotation2d.fromDegrees(degreesClosestTo - startAngle - 180);
   }
 
 
