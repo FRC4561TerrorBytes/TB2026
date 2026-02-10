@@ -39,6 +39,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -341,7 +342,6 @@ public class Drive extends SubsystemBase {
     double angle = getPose().getRotation().getDegrees() + 180;
     double correctedAngle = angle - startAngle;
     boolean snapBool = true;
-    Rotation2d snapDegrees;
     
     if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
         degreesClosestTo = 90;
@@ -358,15 +358,7 @@ public class Drive extends SubsystemBase {
     else {
       degreesClosestTo = 0;
     }
-    if (Math.abs(getPose().getRotation().getDegrees() - (degreesClosestTo - startAngle)) < 1.0){
-      snapBool = false;
-    }
-    if (snapBool) {
-      snapDegrees = Rotation2d.fromDegrees(degreesClosestTo - startAngle);
-      return snapDegrees;
-    }
-    else return Rotation2d.fromDegrees(getPose().getRotation().getDegrees());
-    
+    return Rotation2d.fromDegrees(degreesClosestTo - startAngle);
   }
 
 

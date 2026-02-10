@@ -77,6 +77,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Indexer indexer;
 
+  Rotation2d snapRotation;
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -236,9 +237,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
     
     driverController.rightTrigger().whileTrue(shooter.shoot());
-    driverController.a().whileTrue(new snap45(drive,
-      () -> -driverController.getLeftY(),
-      () -> -driverController.getLeftX()));
+    driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
+    driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
   }
 
   /**
