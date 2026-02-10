@@ -28,13 +28,13 @@ public interface ShooterIO {
 
     public default void setFlywheelRightVoltage(double voltage){}
 
-    public default void setLeftFlywheelSpeed(double speed){}
+    public default void setLeftFlywheelSpeed(double velocityRPS){}
 
-    public default void setRightFlywheelSpeed(double speed){}
+    public default void setRightFlywheelSpeed(double velocityRPS){}
 
-    public default boolean leftFlywheelUpToSpeed(double mps) {return false;}
+    public default boolean leftFlywheelUpToSpeed(double rotationsPerSecond) {return false;}
 
-    public default boolean rightFlywheelUpToSpeed(double mps) {return false;}
+    public default boolean rightFlywheelUpToSpeed(double rotationsPerSecond) {return false;}
     
     public default void setHoodAngle(double angle){}
 

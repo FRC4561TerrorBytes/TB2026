@@ -39,6 +39,12 @@ public class Shooter extends SubsystemBase{
   private void setHoodAngleMap(){
     //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
+
+    hoodAngleMap.put(Units.inchesToMeters(41), 10.0);
+    hoodAngleMap.put(Units.inchesToMeters(67), 20.0);
+    hoodAngleMap.put(Units.inchesToMeters(76), 30.0);
+    hoodAngleMap.put(Units.inchesToMeters(81), 40.0);
+    hoodAngleMap.put(Units.inchesToMeters(96), 50.0);
   }
 
   public double interpolateHoodAngle(double distanceMeters){
@@ -54,19 +60,20 @@ public class Shooter extends SubsystemBase{
     io.setFlywheelRightVoltage(speed);
   }
 
-  public void setFlywheelSpeed(double speed){
-    io.setLeftFlywheelSpeed(speed);
-    io.setRightFlywheelSpeed(speed);
+  public void setFlywheelSpeed(double velocityRPS){
+    io.setLeftFlywheelSpeed(velocityRPS);
+    io.setRightFlywheelSpeed(velocityRPS);
   }
 
-  public boolean leftFlywheelUpToSpeed(double mps){
-    return io.flywheelLeftVelocity >= (mps*0.95);
+  public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
+    return io.flywheelLeftVelocity >= (rotationsPerSecond*0.90);
   }
 
   public void idleFlywheels(){
     io.setLeftFlywheelSpeed(0.3);
     io.setRightFlywheelSpeed(0.3);
   }
+  
 
   public Command shoot(){
     return Commands.run(() -> this.setFlywheelVoltage(1), this);

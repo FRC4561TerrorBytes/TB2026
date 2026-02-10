@@ -16,7 +16,7 @@ public class AutoShootCommand extends Command {
     public double distanceToHub;
 
     public double targetAngle;
-    public double targetMPS = 5;
+    public double shootSpeedRPS = 5;
 
     public AutoShootCommand(Drive drive, Indexer indexer, Shooter shooter) {
         this.drive = drive;
@@ -33,8 +33,10 @@ public class AutoShootCommand extends Command {
     public void execute() {
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
-        shooter.setFlywheelSpeed(targetMPS);
-        
+        shooter.setFlywheelSpeed(shootSpeedRPS);
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS)){
+            indexer.spin();
+        }
     }
 
     @Override
@@ -42,6 +44,7 @@ public class AutoShootCommand extends Command {
         shooter.stop();
         indexer.stop();
     }
+
 
     @Override
     public boolean isFinished() {
