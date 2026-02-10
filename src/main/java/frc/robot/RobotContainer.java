@@ -223,6 +223,9 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
         );
+        driverController
+           .x() 
+            .whileTrue(Commands.run(()-> drive.stopWithX()));
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
