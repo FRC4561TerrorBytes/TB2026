@@ -45,16 +45,34 @@ public class Shooter extends SubsystemBase{
     return hoodAngleMap.get(distanceMeters);
   }
 
-  public void setFlywheelsVoltage(double speed) {
+  public void setHoodAngle(double angle){
+    io.setHoodAngle(angle);
+  }
+
+  public void setFlywheelVoltage(double speed) {
     io.setFlywheelLeftVoltage(speed);
     io.setFlywheelRightVoltage(speed);
   }
 
+  public void setFlywheelSpeed(double speed){
+    io.setLeftFlywheelSpeed(speed);
+    io.setRightFlywheelSpeed(speed);
+  }
+
+  public boolean leftFlywheelUpToSpeed(double mps){
+    return io.flywheelLeftVelocity >= (mps*0.95);
+  }
+
+  public void idleFlywheels(){
+    io.setLeftFlywheelSpeed(0.3);
+    io.setRightFlywheelSpeed(0.3);
+  }
+
   public Command shoot(){
-    return Commands.run(() -> this.setFlywheelsVoltage(1), this);
+    return Commands.run(() -> this.setFlywheelVoltage(1), this);
   }
 
   public Command stop(){
-    return Commands.run(() -> this.setFlywheelsVoltage(0), this);
+    return Commands.run(() -> this.setFlywheelVoltage(0), this);
   }
 }

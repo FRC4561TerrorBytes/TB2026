@@ -32,8 +32,9 @@ public class AutoShootCommand extends Command {
     @Override
     public void execute() {
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
-        //shooter.setHood(hoodAngleInterpolated);
-        //shooter.setFlywheelsVoltage(targetMPS); - setFlywheelsSpeed instead
+        shooter.setHoodAngle(hoodAngleInterpolated);
+        shooter.setFlywheelSpeed(targetMPS);
+        
     }
 
     @Override
