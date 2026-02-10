@@ -2,6 +2,8 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,5 +44,9 @@ public class Shooter extends SubsystemBase{
 
   public Command stop(){
     return Commands.run(() -> this.setFlywheelsVoltage(0), this);
+  }
+
+  public Pose3d getHoodPose(){
+    return new Pose3d(-0.084,0,0.39, new Rotation3d(0,(182*Math.PI)/180,0));
   }
 }
