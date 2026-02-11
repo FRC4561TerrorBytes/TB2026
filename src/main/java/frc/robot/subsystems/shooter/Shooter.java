@@ -23,10 +23,10 @@ public class Shooter extends SubsystemBase{
 
   public Shooter(ShooterIO io) {
     this.io = io;
-    shooterLeftTopDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
-    shooterLeftBottomDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
-    shooterRightTopDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
-    shooterRightBottomDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
+    shooterLeftTopDisconnectedAlert = new Alert("Left Top Flywheel Disconnected", AlertType.kError);
+    shooterLeftBottomDisconnectedAlert = new Alert("Left Bottom Flywheel Disconnected", AlertType.kError);
+    shooterRightTopDisconnectedAlert = new Alert("Right Top Flywheel Disconnected", AlertType.kError);
+    shooterRightBottomDisconnectedAlert = new Alert("Right Bottom Flywheel Disconnected", AlertType.kError);
 
     setHoodAngleMap();
   }
