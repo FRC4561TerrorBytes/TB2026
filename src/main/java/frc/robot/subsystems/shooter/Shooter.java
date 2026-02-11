@@ -66,7 +66,7 @@ public class Shooter extends SubsystemBase{
   }
 
   public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
-    return io.flywheelLeftVelocity >= (rotationsPerSecond*0.90);
+    return inputs.flywheelLeftVelocity >= (rotationsPerSecond*0.90);
   }
 
   public void idleFlywheels(){
