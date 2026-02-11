@@ -15,14 +15,18 @@ public class Shooter extends SubsystemBase{
     
   private ShooterIO io;
   private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
-  private final Alert shooterLeftDisconnectedAlert;
-  private final Alert shooterRightDisconnectedAlert;
+  private final Alert shooterLeftTopDisconnectedAlert;
+  private final Alert shooterLeftBottomDisconnectedAlert;
+  private final Alert shooterRightTopDisconnectedAlert;
+  private final Alert shooterRightBottomDisconnectedAlert;
   private InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
   public Shooter(ShooterIO io) {
     this.io = io;
-    shooterLeftDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
-    shooterRightDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
+    shooterLeftTopDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
+    shooterLeftBottomDisconnectedAlert = new Alert("Left Flywheel Disconnected", AlertType.kError);
+    shooterRightTopDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
+    shooterRightBottomDisconnectedAlert = new Alert("Right Flywheel Disconnected", AlertType.kError);
 
     setHoodAngleMap();
   }
@@ -31,8 +35,10 @@ public class Shooter extends SubsystemBase{
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter/IO", inputs);
-    shooterLeftDisconnectedAlert.set(!inputs.flywheelLeftConnected);
-    shooterRightDisconnectedAlert.set(!inputs.flywheelRightConnected);
+    shooterLeftTopDisconnectedAlert.set(!inputs.flywheelLeftTopConnected);
+    shooterLeftBottomDisconnectedAlert.set(!inputs.flywheelLeftBottomConnected);
+    shooterRightTopDisconnectedAlert.set(!inputs.flywheelRightTopConnected);
+    shooterRightBottomDisconnectedAlert.set(!inputs.flywheelRightBottomConnected);
     // This method will be called once per scheduler run
   }
 
@@ -56,8 +62,8 @@ public class Shooter extends SubsystemBase{
   }
 
   public void setFlywheelVoltage(double speed) {
-    io.setFlywheelLeftVoltage(speed);
-    io.setFlywheelRightVoltage(speed);
+    io.setLeftFlywheelVoltage(speed);
+    io.setRightFlywheelVoltage(speed);
   }
 
   public void setFlywheelSpeed(double velocityRPS){
@@ -66,20 +72,19 @@ public class Shooter extends SubsystemBase{
   }
 
   public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
-    return inputs.flywheelLeftVelocity >= (rotationsPerSecond*0.90);
+    return inputs.flywheelLeftTopVelocity >= (rotationsPerSecond*0.95);
+  }
+  public boolean rightFlywheelUpToSpeed(double rotationsPerSecond){
+    return inputs.flywheelRightTopVelocity >= (rotationsPerSecond*0.95);
   }
 
   public void idleFlywheels(){
-    io.setLeftFlywheelSpeed(0.3);
-    io.setRightFlywheelSpeed(0.3);
+    io.setLeftFlywheelVoltage(0.3);
+    io.setRightFlywheelVoltage(0.3);
   }
   
 
-  public Command shoot(){
-    return Commands.run(() -> this.setFlywheelVoltage(1), this);
-  }
-
-  public Command stop(){
-    return Commands.run(() -> this.setFlywheelVoltage(0), this);
+  public void stop(){
+    setFlywheelVoltage(0);
   }
 }

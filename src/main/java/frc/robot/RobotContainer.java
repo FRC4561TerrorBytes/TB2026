@@ -197,15 +197,13 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-    shooter.setDefaultCommand(shooter.stop());
+            
 
     // Default Commands
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
-
-    indexer.setDefaultCommand(
-      indexer.stop()
-    );
+    indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
+    shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
     // Triggers
 
     // Driver Controls
