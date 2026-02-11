@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 
@@ -163,16 +164,16 @@ public class ShooterIOReal implements ShooterIO {
         inputs.hoodRelativePosition = hoodRelativePosition.getValueAsDouble();
     }
 
-    public void setflywheelLeftSpeed(double velocity){
+    public void setflywheelLeftSpeed(double velocityRPS){
         // VELOCITY IN MPS
-        velocity = velocity/Constants.FLYWHEELS_CIRCUMFERENCE;
-        flywheelLeftMotor.setControl(flywheelLeftControl.withVelocity(velocity));
+        velocityRPS = velocityRPS/Constants.FLYWHEELS_CIRCUMFERENCE;
+        flywheelLeftMotor.setControl(flywheelLeftControl.withVelocity(velocityRPS));
     }
 
-    public void setflywheelRightSpeed(double velocity){
+    public void setflywheelRightSpeed(double velocityRPS){
         // VELOCITY IN MPS
-        velocity = velocity/Constants.FLYWHEELS_CIRCUMFERENCE;
-        flywheelRightMotor.setControl(flywheelRightControl.withVelocity(velocity));
+        velocityRPS = velocityRPS/Constants.FLYWHEELS_CIRCUMFERENCE;
+        flywheelRightMotor.setControl(flywheelRightControl.withVelocity(velocityRPS));
     }
 
     public void setHoodAngle(double position){
