@@ -16,6 +16,9 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
+import java.util.Set;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -32,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.snap45;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -74,6 +76,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Indexer indexer;
 
+  Rotation2d snapRotation;
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -220,6 +223,9 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
         );
+        driverController
+           .x() 
+            .whileTrue(Commands.run(()-> drive.stopWithX()));
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -232,8 +238,10 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     
-    driverController.rightTrigger().whileTrue(shooter.shoot());
-    driverController.a().whileTrue(new snap45(drive));
+    driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
+    driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
+    
+    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
   }
 
   /**
