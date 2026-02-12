@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -221,9 +222,16 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
         );
-        driverController
-           .x() 
-            .whileTrue(Commands.run(()-> drive.stopWithX()));
+    driverController
+        .x() 
+        .whileTrue(Commands.run(()-> drive.stopWithX()));
+
+    driverController 
+        .rightTrigger()
+        .whileTrue(
+            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+            new AutoShootCommand(drive, indexer, shooter))
+        );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -238,8 +246,6 @@ public class RobotContainer {
     
     driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
-    
-    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
   }
 
   /**
