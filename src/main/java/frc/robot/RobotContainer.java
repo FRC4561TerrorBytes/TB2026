@@ -16,12 +16,9 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
-<<<<<<< HEAD
-=======
 import java.util.Set;
 import java.util.function.Supplier;
 
->>>>>>> origin/main
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -79,14 +76,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-<<<<<<< HEAD
-  private final Climber climber;
-=======
   private final Intake intake;
   private final Extension extension;
   private final Shooter shooter;
   private final Indexer indexer;
->>>>>>> origin/main
+  private final Climber climber;
 
   Rotation2d snapRotation;
   // Controller
@@ -116,16 +110,13 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
-<<<<<<< HEAD
-        climber =
-            new Climber(new ClimberIOReal());
-=======
         shooter =
             new Shooter(
               new ShooterIOReal());
         indexer =
             new Indexer(new IndexerIOReal());
->>>>>>> origin/main
+        climber =
+            new Climber(new ClimberIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -137,10 +128,6 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-<<<<<<< HEAD
-        climber =
-            new Climber(new ClimberIOSim());
-=======
         intake = 
             new Intake(new IntakeIOSim()); //for actual code use intake IO sim
         extension = 
@@ -150,7 +137,8 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
->>>>>>> origin/main
+        climber =
+            new Climber(new ClimberIOSim());
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -162,10 +150,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-<<<<<<< HEAD
-        climber =
-            new Climber(new ClimberIO() {});
-=======
         intake = 
             new Intake(new IntakeIO() {});
         extension = 
@@ -175,7 +159,8 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
->>>>>>> origin/main
+        climber =
+            new Climber(new ClimberIO() {});
         break;
     }
 
@@ -216,16 +201,8 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-<<<<<<< HEAD
-    ;
-    // Triggers
-
-    // Driver Controls
-=======
             
-
-    // Default Commands
-    intake.setDefaultCommand(
+    ;    intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
     indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
     shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
@@ -256,7 +233,6 @@ public class RobotContainer {
             Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
             new AutoShootCommand(drive, indexer, shooter))
         );
->>>>>>> origin/main
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
