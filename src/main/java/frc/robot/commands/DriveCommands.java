@@ -14,6 +14,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -67,10 +68,7 @@ public class DriveCommands {
         .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
         .getTranslation();
   }
-
-  /**
-   * Field relative drive command using two joysticks (controlling linear and angular velocities).
-   */
+  
   public static Command joystickDrive(
       Drive drive,
       DoubleSupplier xSupplier,
@@ -78,14 +76,14 @@ public class DriveCommands {
       DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
-          double x = xSupplier.getAsDouble() / 4;
-          double y = ySupplier.getAsDouble() / 4;
+          double x = xSupplier.getAsDouble();
+          double y = ySupplier.getAsDouble();
 
           // Get linear velocity
           Translation2d linearVelocity = getLinearVelocityFromJoysticks(x, y);
 
           // Apply rotation deadband
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND) / 4;
+          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
 
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);

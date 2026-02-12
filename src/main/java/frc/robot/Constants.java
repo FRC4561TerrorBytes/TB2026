@@ -24,6 +24,7 @@ public final class Constants {
 
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+  public static boolean disableHAL = false;
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -36,6 +37,36 @@ public final class Constants {
     REPLAY
   }
 
+  public static final int HOOD_ID = 0;
+  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 15;
+  public static final double HOOD_STATOR_CURRENT_LIMIT = 30;
+
+  public static final int FLYWHEEL_LEFT_TOP_ID = 0;
+  public static final int FLYWHEEL_LEFT_BOTTOM_ID = 0;
+  public static final int FLYWHEEL_RIGHT_TOP_ID = 0;
+  public static final int FLYWHEEL_RIGHT_BOTTOM_ID = 0;
+  public static final double FLYWHEELS_CIRCUMFERENCE = 0;
+  public static final double FLYWHEELS_SUPPLY_CURRENT_LIMIT = 30;
+  public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
+
+  public static final int INTAKE_ID = 0;
+  public static final double INTAKE_GEAR_RATIO = 0;
+  public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double INTAKE_STATOR_CURRENT_LIMIT = 45;
+
+  public static final int EXTENSION_ID = 0;
+  public static final double EXTENSION_GEAR_RATIO = 0;
+  public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
+  public static final int EXTENSION_CANCODER_ID = 0;
+
+  public static final int INDEXER_MOTOR_ID = 67; // Please look over these idk what the limits should be - Sam🔥
+  public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
+  public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;
+
+  public static final int INDEXER_LEFT_MOTOR_ID = 0;
+  public static final int INDEXER_RIGHT_MOTOR_ID = 0;
+  public static final int FUEL_KICKER_MOTOR_ID = 0;
   public static final int CLIMBER_ID = 1;
   public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
   public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 50;

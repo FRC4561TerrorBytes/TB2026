@@ -16,9 +16,16 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
+<<<<<<< HEAD
+=======
+import java.util.Set;
+import java.util.function.Supplier;
+
+>>>>>>> origin/main
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -42,6 +50,20 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.extension.Extension;
+import frc.robot.subsystems.extension.ExtensionIO;
+import frc.robot.subsystems.extension.ExtensionIOReal;
+import frc.robot.subsystems.extension.ExtensionIOSim;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOReal;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -57,8 +79,16 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+<<<<<<< HEAD
   private final Climber climber;
+=======
+  private final Intake intake;
+  private final Extension extension;
+  private final Shooter shooter;
+  private final Indexer indexer;
+>>>>>>> origin/main
 
+  Rotation2d snapRotation;
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -77,13 +107,25 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
+        intake = 
+            new Intake(new IntakeIOReal());
+        extension = 
+            new Extension(new ExtensionIOReal());
         vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
+<<<<<<< HEAD
         climber =
             new Climber(new ClimberIOReal());
+=======
+        shooter =
+            new Shooter(
+              new ShooterIOReal());
+        indexer =
+            new Indexer(new IndexerIOReal());
+>>>>>>> origin/main
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -95,8 +137,20 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+<<<<<<< HEAD
         climber =
             new Climber(new ClimberIOSim());
+=======
+        intake = 
+            new Intake(new IntakeIOSim()); //for actual code use intake IO sim
+        extension = 
+            new Extension(new ExtensionIOSim());
+        shooter =
+            new Shooter(
+              new ShooterIO() {});
+        indexer =
+            new Indexer(new IndexerIO() {});
+>>>>>>> origin/main
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -108,8 +162,20 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+<<<<<<< HEAD
         climber =
             new Climber(new ClimberIO() {});
+=======
+        intake = 
+            new Intake(new IntakeIO() {});
+        extension = 
+            new Extension(new ExtensionIO() {});
+        shooter =
+            new Shooter(
+              new ShooterIO() {});
+        indexer =
+            new Indexer(new IndexerIO() {});
+>>>>>>> origin/main
         break;
     }
 
@@ -150,10 +216,47 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
+<<<<<<< HEAD
     ;
     // Triggers
 
     // Driver Controls
+=======
+            
+
+    // Default Commands
+    intake.setDefaultCommand(
+        Commands.run( () -> intake.setOutput(0), intake));
+    indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
+    shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
+    // Triggers
+
+    // Driver Controls
+    driverController
+        .leftTrigger() //extend and run intake
+        .onTrue(
+            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+        ) 
+        .toggleOnTrue(
+            Commands.run(() -> intake.setOutput(1), intake)
+        );
+
+    driverController
+        .b() //retract intake
+        .onTrue(
+            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+        );
+    driverController
+        .x() 
+        .whileTrue(Commands.run(()-> drive.stopWithX()));
+
+    driverController 
+        .rightTrigger()
+        .whileTrue(
+            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+            new AutoShootCommand(drive, indexer, shooter))
+        );
+>>>>>>> origin/main
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -165,6 +268,9 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+    
+    driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
+    driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
   }
 
   /**
