@@ -2,6 +2,10 @@ package frc.robot.subsystems.climber;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,5 +45,8 @@ public class Climber extends SubsystemBase{
 
     public Command climbDown(){    
         return this.runOnce(() -> setClimberPosition(Constants.CLIMBER_DOWN_POSITION));
+    }
+    public void setCoastMode(TalonFX climberMotor) {
+        io.setCoastMode(climberMotor);
     }
 }

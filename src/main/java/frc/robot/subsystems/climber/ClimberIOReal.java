@@ -91,4 +91,13 @@ public void updateInputs(ClimberIOInputs inputs) {
     public void setClimberPosition(double position) {
         climberMotor.setControl(climberControl.withPosition(position));
     }
+
+    public void setCoastMode() {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+        climberMotor.getConfigurator().apply(config);
+    }
+    
 }
