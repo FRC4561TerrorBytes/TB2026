@@ -329,7 +329,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns if the positional vector of the robot is within a setpoint to the bump */
   public boolean closeToBump() {
-    if ((getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 0.5){
+    if ((getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 1){
       if (((getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1.7) || 
         (getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.RightBump.middle).getX())) < 1.7){
       return true;
