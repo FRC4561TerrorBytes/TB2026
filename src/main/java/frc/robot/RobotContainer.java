@@ -34,8 +34,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOReal;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -75,6 +80,7 @@ public class RobotContainer {
   private final Extension extension;
   private final Shooter shooter;
   private final Indexer indexer;
+  private final Climber climber;
 
   Rotation2d snapRotation;
   // Controller
@@ -109,6 +115,8 @@ public class RobotContainer {
               new ShooterIOReal());
         indexer =
             new Indexer(new IndexerIOReal());
+        climber =
+            new Climber(new ClimberIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -129,6 +137,8 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber =
+            new Climber(new ClimberIOSim());
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -149,21 +159,20 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber =
+            new Climber(new ClimberIO() {});
         break;
     }
 
     // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT OUT (FOR SIM)
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     /*
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",2
+        "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Quasistatic Reverse)",
@@ -171,11 +180,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
-    autoChooser.addOption(
-        "LeaveAndStop",
-        Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
-            .withTimeout(4));
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        */
+    autoChooser.addOption("Leave and Stop", Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive).withTimeout(4));
 
     SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -198,8 +205,6 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
             
-
-    // Default Commands
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
     indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
@@ -221,9 +226,16 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
         );
-        driverController
-           .x() 
-            .whileTrue(Commands.run(()-> drive.stopWithX()));
+    driverController
+        .x() 
+        .whileTrue(Commands.run(()-> drive.stopWithX()));
+
+    driverController 
+        .rightTrigger()
+        .whileTrue(
+            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+            new AutoShootCommand(drive, indexer, shooter))
+        );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -238,8 +250,6 @@ public class RobotContainer {
     
     driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
-    
-    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
   }
 
   /**
