@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -250,6 +251,9 @@ public class RobotContainer {
     
     driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
+
+    driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
+    driverController.leftBumper().whileTrue(climber.climbDown());
   }
 
   /**
@@ -259,6 +263,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void autoExit(){
+    climber.setIdleMode(NeutralModeValue.Coast);
   }
 
   private Command driverRumbleCommand() {
