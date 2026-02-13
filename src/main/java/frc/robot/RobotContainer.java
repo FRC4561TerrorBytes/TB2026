@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -206,8 +207,9 @@ public class RobotContainer {
     indexer.setDefaultCommand(
       indexer.stop()
     );
-    // Triggers
 
+    // Triggers
+    Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
     // Driver Controls
     driverController
         .leftTrigger() //extend and run intake

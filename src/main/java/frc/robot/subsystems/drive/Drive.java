@@ -327,6 +327,18 @@ public class Drive extends SubsystemBase {
     return values;
   }
 
+  /** Returns if the positional vector of the robot is within a setpoint to the bump */
+  public boolean closeToBump() {
+    if ((getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 0.5){
+      if (((getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1.7) || 
+        (getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.RightBump.middle).getX())) < 1.7){
+      return true;
+      }
+      else return false;
+    }
+    else return false;
+  }
+
   /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;

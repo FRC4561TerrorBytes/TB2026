@@ -150,6 +150,8 @@ public class FieldConstants {
     public static final Translation2d farLeftCorner =
         new Translation2d(LinesVertical.hubCenter + width / 2, Units.inchesToMeters(255));
     public static final Translation2d farRightCorner = Hub.farLeftCorner;
+    public static final Translation2d middle = 
+        new Translation2d(LinesVertical.hubCenter, Units.inchesToMeters(255));
 
     // Relevant reference points on opposing side
     public static final Translation2d oppNearLeftCorner =
@@ -182,6 +184,8 @@ public class FieldConstants {
     public static final Translation2d oppFarLeftCorner =
         new Translation2d(LinesVertical.hubCenter - width / 2, Units.inchesToMeters(255));
     public static final Translation2d oppFarRightCorner = Hub.oppFarLeftCorner;
+    public static final Translation2d middle = 
+        new Translation2d(LinesVertical.hubCenter, Units.inchesToMeters(255));
   }
 
   /** Left Trench related constants */
