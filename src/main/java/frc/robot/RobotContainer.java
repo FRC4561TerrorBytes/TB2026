@@ -167,11 +167,12 @@ public class RobotContainer {
     // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT OUT (FOR SIM)
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     /*
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",2
+        "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Quasistatic Reverse)",
@@ -179,7 +180,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        */
+    autoChooser.addOption("Leave and Stop", Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive).withTimeout(4));
 
     SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -202,7 +205,7 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
             
-    ;    intake.setDefaultCommand(
+    intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
     indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
     shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
