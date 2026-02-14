@@ -66,4 +66,12 @@ public class Indexer extends SubsystemBase {
   public void stop(){
     this.setThroughput(0.0, 0.0);
   }
+
+  public double getIndexerRightVelocity(){
+    return inputs.indexerRightVelocity;
+  }
+  
+  public double getIndexerLeftVelocity(){
+    return inputs.indexerLeftVelocity;
+  }
 }
