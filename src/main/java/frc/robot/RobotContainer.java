@@ -19,6 +19,7 @@ import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
@@ -210,14 +212,15 @@ public class RobotContainer {
       indexer.stop()
     );
 
-    // Triggers
+        // Trigger
     Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
     Trigger intakeExtendedTrigger = new Trigger(() -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
 
+
     bumpPositionTrigger
     .and(intakeExtendedTrigger)
-    .and(() -> !DriverStation.isAutonomous())
-    .onTrue(driverRumbleCommand());
+    .and(() -> DriverStation.isTeleop())
+    .whileTrue(driverRumbleCommand());
 
     // Driver Controls
     driverController
@@ -234,9 +237,9 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
         );
-        driverController
-           .x() 
-            .whileTrue(Commands.run(()-> drive.stopWithX()));
+    driverController
+        .x() 
+        .whileTrue(Commands.run(()-> drive.stopWithX()));
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -252,6 +255,7 @@ public class RobotContainer {
     driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
     driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
+
   }
 
   /**
@@ -266,7 +270,7 @@ public class RobotContainer {
     return Commands.startEnd(
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-        },
+            },
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
         });
