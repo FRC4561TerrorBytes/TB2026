@@ -31,5 +31,5 @@ public interface ClimberIO {
   public default void setClimberPosition(double position) {}
 
   /**Set the climber motor to coast mode */
-  public default void setCoastMode(TalonFX climberMotor) {}
+  public default void setIdleMode(NeutralModeValue idleMode) {}
 }

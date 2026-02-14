@@ -27,9 +27,11 @@ private final MotionMagicVoltage climberControl = new MotionMagicVoltage(0);
 
 private final Alert climberAlert = new Alert("Climber Disconnected.", AlertType.kWarning);
 
+private TalonFXConfiguration climberConfig;
+
 public ClimberIOReal() {
     //Update 
-    var climberConfig = new TalonFXConfiguration();
+    climberConfig = new TalonFXConfiguration();
     climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     climberConfig.CurrentLimits.SupplyCurrentLimit = Constants.CLIMBER_SUPPLY_CURRENT_LIMIT;
     climberConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -92,12 +94,9 @@ public void updateInputs(ClimberIOInputs inputs) {
         climberMotor.setControl(climberControl.withPosition(position));
     }
 
-    public void setCoastMode() {
-        TalonFXConfiguration config = new TalonFXConfiguration();
-
-        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-        climberMotor.getConfigurator().apply(config);
+    public void setIdleMode(NeutralModeValue idleMode) {
+        climberConfig.MotorOutput.NeutralMode = idleMode;
+        climberMotor.getConfigurator().apply(climberConfig);
     }
     
 }
