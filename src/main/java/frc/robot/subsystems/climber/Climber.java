@@ -49,4 +49,7 @@ public class Climber extends SubsystemBase{
     public void setIdleMode(NeutralModeValue idleMode) {
         io.setIdleMode(idleMode);
     }
+    public double getClimberPosition(){
+        return inputs.climberPosition;
+    }
 }
