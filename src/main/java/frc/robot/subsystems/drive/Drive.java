@@ -328,6 +328,7 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns if the positional vector of the robot is within a setpoint to the bump */
+  @AutoLogOutput(key = "Odometry/CloseToBump")
   public boolean closeToBump() {
     if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1){
       if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 1.7) || 
@@ -358,7 +359,6 @@ public class Drive extends SubsystemBase {
     double startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
     double angle = getPose().getRotation().getDegrees() + 180;
     double correctedAngle = angle - startAngle;
-    boolean snapBool = true;
     
     if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
         degreesClosestTo = 90;

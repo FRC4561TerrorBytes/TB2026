@@ -57,6 +57,8 @@ public final class Constants {
   public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
   public static final int EXTENSION_CANCODER_ID = 0;
+  public static final double EXTENSION_EXTENDED_POSITION = 1;
+  public static final double EXTENSION_RETRACTED_POSITION = 0;
 
   public static final int INDEXER_MOTOR_ID = 67; // Please look over these idk what the limits should be - Sam🔥
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
