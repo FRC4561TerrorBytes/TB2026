@@ -337,7 +337,14 @@ public class Drive extends SubsystemBase {
       }
       else return false;
     }
-    else return false;
+      else if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getX())) < 1){
+        if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getY())) < 1.7) || 
+          (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.oppMiddle).getY())) < 1.7)){
+        return true;
+        }
+      else return false;
+      }
+      else return false;
   }
 
   /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */

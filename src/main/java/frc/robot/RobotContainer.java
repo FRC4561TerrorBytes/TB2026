@@ -270,9 +270,11 @@ public class RobotContainer {
     return Commands.startEnd(
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+          Logger.recordOutput("RobotContainer/Rumbling", true);
             },
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+          Logger.recordOutput("RobotContainer/Rumbling", false);
         });
   }
 }
