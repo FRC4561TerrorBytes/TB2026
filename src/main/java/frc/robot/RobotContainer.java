@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,8 +39,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOReal;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -79,6 +85,7 @@ public class RobotContainer {
   private final Extension extension;
   private final Shooter shooter;
   private final Indexer indexer;
+  private final Climber climber;
 
   Rotation2d snapRotation;
   // Controller
@@ -113,6 +120,8 @@ public class RobotContainer {
               new ShooterIOReal());
         indexer =
             new Indexer(new IndexerIOReal());
+        climber =
+            new Climber(new ClimberIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -133,6 +142,8 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber =
+            new Climber(new ClimberIOSim());
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -153,21 +164,20 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber =
+            new Climber(new ClimberIO() {});
         break;
     }
 
     // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT OUT (FOR SIM)
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     /*
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",2
+        "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Quasistatic Reverse)",
@@ -175,11 +185,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
-    autoChooser.addOption(
-        "LeaveAndStop",
-        Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
-            .withTimeout(4));
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        */
+    autoChooser.addOption("Leave and Stop", Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive).withTimeout(4));
 
     SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -202,9 +210,7 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-    shooter.setDefaultCommand(shooter.stop());
-
-    // Default Commands
+            
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
 
@@ -221,6 +227,9 @@ public class RobotContainer {
     .and(intakeExtendedTrigger)
     .and(() -> DriverStation.isTeleop())
     .whileTrue(driverRumbleCommand());
+    indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
+    shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
+    // Triggers
 
     // Driver Controls
     driverController
@@ -240,6 +249,13 @@ public class RobotContainer {
     driverController
         .x() 
         .whileTrue(Commands.run(()-> drive.stopWithX()));
+
+    driverController 
+        .rightTrigger()
+        .whileTrue(
+            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+            new AutoShootCommand(drive, indexer, shooter))
+        );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -256,6 +272,9 @@ public class RobotContainer {
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
     driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
 
+
+    driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
+    driverController.leftBumper().whileTrue(climber.climbDown());
   }
 
   /**
@@ -266,6 +285,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
+
+  public void autoExit(){
+    climber.setIdleMode(NeutralModeValue.Coast);
+  }
+
   private Command driverRumbleCommand() {
     return Commands.startEnd(
         () -> {
