@@ -215,7 +215,7 @@ public class RobotContainer {
         Commands.run( () -> intake.setOutput(0), intake));
 
     indexer.setDefaultCommand(
-      indexer.stop()
+      Commands.run(() -> indexer.stop())
     );
 
         // Trigger
