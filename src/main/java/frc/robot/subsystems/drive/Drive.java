@@ -67,42 +67,41 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
   // TunerConstants doesn't include these constants, so they are declared locally
-  static final double ODOMETRY_FREQUENCY =
-      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
-  public static final double DRIVE_BASE_RADIUS =
+  static final double ODOMETRY_FREQUENCY = new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD()
+      ? 250.0
+      : 100.0;
+  public static final double DRIVE_BASE_RADIUS = Math.max(
       Math.max(
-          Math.max(
-              Math.hypot(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-              Math.hypot(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY)),
-          Math.max(
-              Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-              Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
+          Math.hypot(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
+          Math.hypot(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY)),
+      Math.max(
+          Math.hypot(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
+          Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
   // PathPlanner config constants
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
-  private static final RobotConfig PP_CONFIG =
-      new RobotConfig(
-          ROBOT_MASS_KG,
-          ROBOT_MOI,
-          new ModuleConfig(
-              TunerConstants.FrontLeft.WheelRadius,
-              TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-              WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1)
-                  .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-              TunerConstants.FrontLeft.SlipCurrent,
-              1),
-          getModuleTranslations());
+  private static final RobotConfig PP_CONFIG = new RobotConfig(
+      ROBOT_MASS_KG,
+      ROBOT_MOI,
+      new ModuleConfig(
+          TunerConstants.FrontLeft.WheelRadius,
+          TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
+          WHEEL_COF,
+          DCMotor.getKrakenX60Foc(1)
+              .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
+          TunerConstants.FrontLeft.SlipCurrent,
+          1),
+      getModuleTranslations());
 
   static final Lock odometryLock = new ReentrantLock();
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
-  private final Alert gyroDisconnectedAlert =
-      new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
+  private final Alert gyroDisconnectedAlert = new Alert("Disconnected gyro, using kinematics as fallback.",
+      AlertType.kError);
 
   private Field2d field = new Field2d();
 
@@ -110,13 +109,13 @@ public class Drive extends SubsystemBase {
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition(),
-        new SwerveModulePosition()
+          new SwerveModulePosition(),
+          new SwerveModulePosition(),
+          new SwerveModulePosition(),
+          new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
-      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+  private SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, rawGyroRotation,
+      lastModulePositions, new Pose2d());
 
   public Drive(
       GyroIO gyroIO,
@@ -159,15 +158,14 @@ public class Drive extends SubsystemBase {
         });
 
     // Configure SysId
-    sysId =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
-            new SysIdRoutine.Mechanism(
-                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+    sysId = new SysIdRoutine(
+        new SysIdRoutine.Config(
+            null,
+            null,
+            null,
+            (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+        new SysIdRoutine.Mechanism(
+            (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
   }
 
   @Override
@@ -194,8 +192,7 @@ public class Drive extends SubsystemBase {
     }
 
     // Update odometry
-    double[] sampleTimestamps =
-        modules[0].getOdometryTimestamps(); // All signals are sampled together
+    double[] sampleTimestamps = modules[0].getOdometryTimestamps(); // All signals are sampled together
     int sampleCount = sampleTimestamps.length;
     for (int i = 0; i < sampleCount; i++) {
       // Read wheel positions and deltas from each module
@@ -203,11 +200,10 @@ public class Drive extends SubsystemBase {
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int moduleIndex = 0; moduleIndex < 4; moduleIndex++) {
         modulePositions[moduleIndex] = modules[moduleIndex].getOdometryPositions()[i];
-        moduleDeltas[moduleIndex] =
-            new SwerveModulePosition(
-                modulePositions[moduleIndex].distanceMeters
-                    - lastModulePositions[moduleIndex].distanceMeters,
-                modulePositions[moduleIndex].angle);
+        moduleDeltas[moduleIndex] = new SwerveModulePosition(
+            modulePositions[moduleIndex].distanceMeters
+                - lastModulePositions[moduleIndex].distanceMeters,
+            modulePositions[moduleIndex].angle);
         lastModulePositions[moduleIndex] = modulePositions[moduleIndex];
       }
 
@@ -269,8 +265,10 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Stops the drive and turns the modules to an X arrangement to resist movement. The modules will
-   * return to their normal orientations the next time a nonzero velocity is requested.
+   * Stops the drive and turns the modules to an X arrangement to resist movement.
+   * The modules will
+   * return to their normal orientations the next time a nonzero velocity is
+   * requested.
    */
   public void stopWithX() {
     Rotation2d[] headings = new Rotation2d[4];
@@ -293,7 +291,10 @@ public class Drive extends SubsystemBase {
     return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(sysId.dynamic(direction));
   }
 
-  /** Returns the module states (turn angles and drive velocities) for all of the modules. */
+  /**
+   * Returns the module states (turn angles and drive velocities) for all of the
+   * modules.
+   */
   @AutoLogOutput(key = "SwerveStates/Measured")
   private SwerveModuleState[] getModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -303,7 +304,10 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
-  /** Returns the module positions (turn angles and drive positions) for all of the modules. */
+  /**
+   * Returns the module positions (turn angles and drive positions) for all of the
+   * modules.
+   */
   private SwerveModulePosition[] getModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
     for (int i = 0; i < 4; i++) {
@@ -327,27 +331,109 @@ public class Drive extends SubsystemBase {
     return values;
   }
 
-  /** Returns if the positional vector of the robot is within a setpoint to the bump */
+  /**
+   * Returns if the positional vector of the robot is within a setpoint to the
+   * bump
+   */
   @AutoLogOutput(key = "Odometry/CloseToBump")
   public boolean closeToBump() {
-    if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1){
-      if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 1.7) || 
-        (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.middle).getY())) < 1.7)){
+    if (Math
+        .abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1) {
+      if ((Math.abs(
+          getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 1.7) ||
+          (Math.abs(getPose().getTranslation().getY()
+              - (AllianceFlipUtil.apply(FieldConstants.RightBump.middle).getY())) < 1.7)) {
+        return true;
+      } else
+        return false;
+    } else if (Math.abs(
+        getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getX())) < 1) {
+      if ((Math.abs(
+          getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getY())) < 1.7)
+          ||
+          (Math.abs(getPose().getTranslation().getY()
+              - (AllianceFlipUtil.apply(FieldConstants.RightBump.oppMiddle).getY())) < 1.7)) {
+        return true;
+      } else
+        return false;
+    } else
+      return false;
+  }
+
+  @AutoLogOutput(key = "Odometry/HubActive")
+  public boolean hubActive() {
+    String gameData;
+    gameData = DriverStation.getGameSpecificMessage();
+    if (gameData == null || gameData.length() == 0) {
+      return true; // Default to true if no data is available
+    } else if (gameData.length() > 0) {
+      switch (gameData.charAt(0)) {
+        case 'B':
+          if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            if ((DriverStation.getMatchTime() < 56) || // if in last active period or endgame or auton
+                (141 > DriverStation.getMatchTime() && DriverStation.getMatchTime() > 130) // if in transition period
+                || (DriverStation.getMatchTime() < 106 && DriverStation.getMatchTime() < 80)) { // if in second period
+              return true;
+            } else
+              return false;
+          } else if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) { // if we are blue when blue is
+                                                                                          // inactive second and fourth
+                                                                                          // period
+            if ((DriverStation.getMatchTime() <= 31) || // if in endgame or auton
+                (141 >= DriverStation.getMatchTime() && DriverStation.getMatchTime() >= 105) // if in transition period
+                                                                                             // and first period
+                || (DriverStation.getMatchTime() <= 81 && DriverStation.getMatchTime() <= 55)) { // if in third
+              return true;
+            } else
+              return false;
+          } else {
+            return true;
+          }
+        case 'R':
+          if (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) {
+            if ((DriverStation.getMatchTime() < 56) || // if in last active period or endgame or auton
+                (141 > DriverStation.getMatchTime() && DriverStation.getMatchTime() > 130) // if in transition period
+                || (DriverStation.getMatchTime() < 106 && DriverStation.getMatchTime() < 80)) { // if in second period
+              return true;
+            } else
+              return false;
+          } else if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) { // if we are Red when Red is
+                                                                                          // inactive second and fourth
+                                                                                          // period
+            if ((DriverStation.getMatchTime() <= 31) || // if in endgame or auton
+                (141 >= DriverStation.getMatchTime() && DriverStation.getMatchTime() >= 105) // if in transition period
+                                                                                             // and first period
+                || (DriverStation.getMatchTime() <= 81 && DriverStation.getMatchTime() <= 55)) { // if in third
+              return true;
+            } else
+              return false;
+          } else
+            return false;
+        default:
+          return true; // Default to true if unexpected data is received
+      }
+    } else
       return true;
+  }
+
+  @AutoLogOutput(key = "Odometry/CanShoot")
+  public boolean canShoot() {
+    if (getPose().getTranslation().getX() < AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint).getX()) { // in our side of the field
+      if (hubActive()) { 
+        return true;
       }
       else return false;
     }
-      else if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getX())) < 1){
-        if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getY())) < 1.7) || 
-          (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.oppMiddle).getY())) < 1.7)){
-        return true;
-        }
-      else return false;
-      }
-      else return false;
+    else if (getPose(). getTranslation().getX() > AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint).getX()) { // if in neutral zone or in opponent side
+      return true;
+    }
+    else return true; 
   }
 
-  /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
+  /**
+   * Returns the average velocity of the modules in rotations/sec (Phoenix native
+   * units).
+   */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
     for (int i = 0; i < 4; i++) {
@@ -361,30 +447,26 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
+
   public Rotation2d snap45() {
     double degreesClosestTo = 0;
-    double startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
+    double startAngle = Units.radiansToDegrees(Math.atan(25.0 / 30.0));
     double angle = getPose().getRotation().getDegrees() + 180;
     double correctedAngle = angle - startAngle;
-    
-    if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
-        degreesClosestTo = 90;
-    }
-    else if ((90 - startAngle) < correctedAngle && correctedAngle < (180 - startAngle)){
-        degreesClosestTo = 180;
-    }
-    else if ((180 - startAngle) < correctedAngle && correctedAngle < (270 - startAngle)){
+
+    if (-startAngle < correctedAngle && correctedAngle < (90 - startAngle)) {
+      degreesClosestTo = 90;
+    } else if ((90 - startAngle) < correctedAngle && correctedAngle < (180 - startAngle)) {
+      degreesClosestTo = 180;
+    } else if ((180 - startAngle) < correctedAngle && correctedAngle < (270 - startAngle)) {
       degreesClosestTo = 270;
-    }
-    else if ((270 - startAngle) < correctedAngle && correctedAngle < (-startAngle)){
+    } else if ((270 - startAngle) < correctedAngle && correctedAngle < (-startAngle)) {
       degreesClosestTo = 0;
-    }
-    else {
+    } else {
       degreesClosestTo = 0;
     }
     return Rotation2d.fromDegrees(degreesClosestTo - startAngle - 180);
   }
-
 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
@@ -418,38 +500,41 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public static Translation2d[] getModuleTranslations() {
     return new Translation2d[] {
-      new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-      new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-      new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-      new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+        new Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
+        new Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
+        new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
+        new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
   }
+
   @AutoLogOutput
-  public Rotation2d getRotationToHub(){
+  public Rotation2d getRotationToHub() {
     return new Rotation2d(
-      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX()-getPose().getX(),
-      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getY()-getPose().getY()
-    );
+        AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX() - getPose().getX(),
+        AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getY() - getPose().getY());
   }
-  // Field relative drive command using two joysticks (controlling linear and angular velocities).
+
+  // Field relative drive command using two joysticks (controlling linear and
+  // angular velocities).
   public Command alignToAngle(
-    Supplier<Rotation2d> targetAngle){
-      double kP = 0.1;
-      double kI = 0;
-      double kD = 0;
-      double toleranceDegrees = 1.5;
+      Supplier<Rotation2d> targetAngle) {
+    double kP = 0.1;
+    double kI = 0;
+    double kD = 0;
+    double toleranceDegrees = 1.5;
 
-      PIDController controller = new PIDController(kP, kI, kD, 0.02);
-      controller.setTolerance(toleranceDegrees);
-      controller.enableContinuousInput(-180, 180);
+    PIDController controller = new PIDController(kP, kI, kD, 0.02);
+    controller.setTolerance(toleranceDegrees);
+    controller.enableContinuousInput(-180, 180);
 
-      return Commands.run(() -> {
-        Logger.recordOutput("targetAlignToHub", getRotationToHub().getDegrees()+180);
-        double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees(),targetAngle.get().getDegrees()), -30, 30);
-        this.runVelocity(
-          new ChassisSpeeds(0, 0,rotationSpeed));
-      } )
-      .until(() -> controller.atSetpoint())
-      .beforeStarting(() -> controller.reset());
+    return Commands.run(() -> {
+      Logger.recordOutput("targetAlignToHub", getRotationToHub().getDegrees() + 180);
+      double rotationSpeed = MathUtil.clamp(
+          controller.calculate(this.getPose().getRotation().getDegrees(), targetAngle.get().getDegrees()), -30, 30);
+      this.runVelocity(
+          new ChassisSpeeds(0, 0, rotationSpeed));
+    })
+        .until(() -> controller.atSetpoint())
+        .beforeStarting(() -> controller.reset());
   }
 }
