@@ -327,6 +327,26 @@ public class Drive extends SubsystemBase {
     return values;
   }
 
+  /** Returns if the positional vector of the robot is within a setpoint to the bump */
+  @AutoLogOutput(key = "Odometry/CloseToBump")
+  public boolean closeToBump() {
+    if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1){
+      if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 1.7) || 
+        (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.middle).getY())) < 1.7)){
+      return true;
+      }
+      else return false;
+    }
+      else if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getX())) < 1){
+        if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getY())) < 1.7) || 
+          (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.oppMiddle).getY())) < 1.7)){
+        return true;
+        }
+      else return false;
+      }
+      else return false;
+  }
+
   /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
@@ -346,7 +366,6 @@ public class Drive extends SubsystemBase {
     double startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
     double angle = getPose().getRotation().getDegrees() + 180;
     double correctedAngle = angle - startAngle;
-    boolean snapBool = true;
     
     if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
         degreesClosestTo = 90;

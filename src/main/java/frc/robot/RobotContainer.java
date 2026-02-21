@@ -19,13 +19,16 @@ import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -33,7 +36,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -196,6 +201,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -207,6 +213,20 @@ public class RobotContainer {
             
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
+
+    indexer.setDefaultCommand(
+      Commands.run(() -> indexer.stop())
+    );
+
+        // Trigger
+    Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
+    Trigger intakeExtendedTrigger = new Trigger(() -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
+
+
+    bumpPositionTrigger
+    .and(intakeExtendedTrigger)
+    .and(() -> DriverStation.isTeleop())
+    .whileTrue(driverRumbleCommand());
     indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
     shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
     // Triggers
@@ -215,7 +235,7 @@ public class RobotContainer {
     driverController
         .leftTrigger() //extend and run intake
         .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension)
         ) 
         .toggleOnTrue(
             Commands.run(() -> intake.setOutput(1), intake)
@@ -224,7 +244,7 @@ public class RobotContainer {
     driverController
         .b() //retract intake
         .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
         );
     driverController
         .x() 
@@ -250,6 +270,11 @@ public class RobotContainer {
     
     driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
     driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
+    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
+
+
+    driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
+    driverController.leftBumper().whileTrue(climber.climbDown());
   }
 
   /**
@@ -261,13 +286,19 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public void autoExit(){
+    climber.setIdleMode(NeutralModeValue.Coast);
+  }
+
   private Command driverRumbleCommand() {
     return Commands.startEnd(
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-        },
+          Logger.recordOutput("RobotContainer/Rumbling", true);
+            },
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+          Logger.recordOutput("RobotContainer/Rumbling", false);
         });
   }
 }
