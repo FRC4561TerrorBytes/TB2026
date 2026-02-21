@@ -61,6 +61,10 @@ public class Shooter extends SubsystemBase{
     io.setHoodAngle(angle);
   }
 
+  public boolean hoodAtSetpoint(){
+    return Math.abs(inputs.hoodRelativePosition - inputs.hoodSetpoint) < 0.3;
+  }
+
   public void setFlywheelVoltage(double speed) {
     io.setLeftFlywheelVoltage(speed);
     io.setRightFlywheelVoltage(speed);
