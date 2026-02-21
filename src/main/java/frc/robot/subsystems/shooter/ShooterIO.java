@@ -36,6 +36,7 @@ public interface ShooterIO {
         public double hoodVoltage = 0.0;
         public double hoodCurrent = 0.0;
         public double hoodRelativePosition = 0.0;
+        public double hoodSetpoint = 0.0;
     }
 
     public default void updateInputs(ShooterIOInputs inputs) {}
@@ -52,7 +53,7 @@ public interface ShooterIO {
 
     public default boolean rightFlywheelUpToSpeed(double rotationsPerSecond) {return false;}
     
-    public default void setHoodAngle(double angle){}
+    public default void setHoodAngle(double angle) {}
 
 }
 

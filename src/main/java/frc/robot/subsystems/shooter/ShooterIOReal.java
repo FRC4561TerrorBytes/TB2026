@@ -49,6 +49,8 @@ public class ShooterIOReal implements ShooterIO {
     private final StatusSignal<Current> hoodCurrent;
     private final StatusSignal<Angle> hoodRelativePosition;
 
+    private double hoodSetpoint;
+
     public ShooterIOReal () { 
         //constructor go brrrrrrr
         var flywheelConfig = new TalonFXConfiguration();
@@ -209,6 +211,7 @@ public class ShooterIOReal implements ShooterIO {
         inputs.hoodVoltage = hoodVoltage.getValueAsDouble();
         inputs.hoodCurrent = hoodCurrent.getValueAsDouble();
         inputs.hoodRelativePosition = hoodRelativePosition.getValueAsDouble();
+        inputs.hoodSetpoint = this.hoodSetpoint;
     }
 
     public void setLeftFlywheelVoltage(double voltage){
@@ -228,6 +231,8 @@ public class ShooterIOReal implements ShooterIO {
     }
 
     public void setHoodAngle(double position){
+        hoodSetpoint = position;
+        //HI MANBIR
         hoodMotor.setControl(hoodControl.withPosition(position));
     }
 
