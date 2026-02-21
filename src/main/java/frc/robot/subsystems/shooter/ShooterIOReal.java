@@ -20,10 +20,10 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 
 public class ShooterIOReal implements ShooterIO {
-    private final TalonFX flywheelLeftTopMotor = new TalonFX(Constants.FLYWHEEL_LEFT_TOP_ID);
-    private final TalonFX flywheelLeftBottomMotor = new TalonFX(Constants.FLYWHEEL_LEFT_BOTTOM_ID);
-    private final TalonFX flywheelRightTopMotor = new TalonFX(Constants.FLYWHEEL_RIGHT_TOP_ID);
-    private final TalonFX flywheelRightBottomMotor = new TalonFX(Constants.FLYWHEEL_RIGHT_BOTTOM_ID);
+    private final TalonFX flywheelLeftTopMotor = new TalonFX(Constants.FLYWHEEL_TOP_LEFT_ID);
+    private final TalonFX flywheelLeftBottomMotor = new TalonFX(Constants.FLYWHEEL_BOTTOM_LEFT_ID);
+    private final TalonFX flywheelRightTopMotor = new TalonFX(Constants.FLYWHEEL_TOP_RIGHT_ID);
+    private final TalonFX flywheelRightBottomMotor = new TalonFX(Constants.FLYWHEEL_BOTTOM_RIGHT_ID);
     private final TalonFX hoodMotor = new TalonFX(Constants.HOOD_ID);
 
     private final MotionMagicVelocityVoltage flywheelLeftControl = new MotionMagicVelocityVoltage(0);

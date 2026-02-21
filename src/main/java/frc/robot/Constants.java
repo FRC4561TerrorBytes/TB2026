@@ -43,8 +43,8 @@ public final class Constants {
 
   public static final int FLYWHEEL_TOP_RIGHT_ID = 30;
   public static final int FLYWHEEL_BOTTOM_RIGHT_ID = 31;
-  public static final int FLYWHEEL_TOP_LEFT_ID = 0;
-  public static final int FLYWHEEL_BOTTOM_LEFT_ID = 0;
+  public static final int FLYWHEEL_TOP_LEFT_ID = 32;
+  public static final int FLYWHEEL_BOTTOM_LEFT_ID = 33;
   public static final double FLYWHEELS_CIRCUMFERENCE = 0;
   public static final double FLYWHEELS_SUPPLY_CURRENT_LIMIT = 30;
   public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
