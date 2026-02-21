@@ -215,8 +215,7 @@ public class RobotContainer {
         Commands.run( () -> intake.setOutput(0), intake));
 
     indexer.setDefaultCommand(
-      Commands.run(() -> indexer.stop())
-    );
+      Commands.run(() -> indexer.stop(), indexer));
 
         // Trigger
     Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
