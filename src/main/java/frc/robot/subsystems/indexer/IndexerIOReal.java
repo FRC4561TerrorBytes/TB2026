@@ -19,25 +19,23 @@ import frc.robot.Constants;
 public class IndexerIOReal implements IndexerIO {
 
   private TalonFX indexerLeftMotor = new TalonFX(Constants.INDEXER_LEFT_MOTOR_ID);
-  private final StatusSignal<Current> IndexerLeftStatorCurrent;
-  private final StatusSignal<Current> IndexerLeftSupplyCurrent;
-  private final StatusSignal<AngularVelocity> IndexerLeftSpeed;
-  private final StatusSignal<Voltage> IndexerLeftVoltage;
-  private final StatusSignal<Temperature> IndexerLeftTemp;
+  private final StatusSignal<Current> indexerLeftCurrent;
+  private final StatusSignal<AngularVelocity> indexerLeftVelocity;
+  private final StatusSignal<Voltage> indexerLeftVoltage;
+  private final StatusSignal<Temperature> indexerLeftTemp;
 
   private TalonFX indexerRightMotor = new TalonFX(Constants.INDEXER_RIGHT_MOTOR_ID);
-  private final StatusSignal<Current> IndexerRightStatorCurrent;
-  private final StatusSignal<Current> IndexerRightSupplyCurrent;
-  private final StatusSignal<AngularVelocity> IndexerRightSpeed;
-  private final StatusSignal<Voltage> IndexerRightVoltage;
-  private final StatusSignal<Temperature> IndexerRightTemp;
+  private final StatusSignal<Current> indexerRightCurrent;
+  private final StatusSignal<AngularVelocity> indexerRightVelocity;
+  private final StatusSignal<Voltage> indexerRightVoltage;
+  private final StatusSignal<Temperature> indexerRightTemp;
 
   private TalonFX fuelKickerMotor = new TalonFX(Constants.FUEL_KICKER_MOTOR_ID);
-  private final StatusSignal<Current> FuelKickerStatorCurrent;
-  private final StatusSignal<Current> FuelKickerSupplyCurrent;
-  private final StatusSignal<AngularVelocity> FuelKickerSpeed;
-  private final StatusSignal<Voltage> FuelKickerVoltage;
-  private final StatusSignal<Temperature> FuelKickerTemp;
+  private final StatusSignal<Current> fuelKickerStatorCurrent;
+  private final StatusSignal<Current> fuelKickerSupplyCurrent;
+  private final StatusSignal<AngularVelocity> fuelKickerSpeed;
+  private final StatusSignal<Voltage> fuelKickerVoltage;
+  private final StatusSignal<Temperature> fuelKickerTemp;
 
   public IndexerIOReal() {
 
@@ -49,19 +47,17 @@ public class IndexerIOReal implements IndexerIO {
     indexerRightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     tryUntilOk(5, () -> indexerRightMotor.getConfigurator().apply(indexerRightConfig, 0.25));
 
-    IndexerRightStatorCurrent = indexerRightMotor.getStatorCurrent();
-    IndexerRightSupplyCurrent = indexerRightMotor.getSupplyCurrent();
-    IndexerRightSpeed = indexerRightMotor.getVelocity();
-    IndexerRightVoltage = indexerRightMotor.getMotorVoltage();
-    IndexerRightTemp = indexerRightMotor.getDeviceTemp();
+    indexerRightCurrent = indexerRightMotor.getStatorCurrent();
+    indexerRightVelocity = indexerRightMotor.getVelocity();
+    indexerRightVoltage = indexerRightMotor.getMotorVoltage();
+    indexerRightTemp = indexerRightMotor.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
-        IndexerRightStatorCurrent,
-        IndexerRightSupplyCurrent,
-        IndexerRightSpeed,
-        IndexerRightVoltage,
-        IndexerRightTemp);
+        indexerRightCurrent,
+        indexerRightVelocity,
+        indexerRightVoltage,
+        indexerRightTemp);
 
     ParentDevice.optimizeBusUtilizationForAll(indexerRightMotor);
 
@@ -73,65 +69,95 @@ public class IndexerIOReal implements IndexerIO {
     indexerLeftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     tryUntilOk(5, () -> indexerLeftMotor.getConfigurator().apply(indexerLeftConfig, 0.25));
 
-    IndexerLeftStatorCurrent = indexerLeftMotor.getStatorCurrent();
-    IndexerLeftSupplyCurrent = indexerLeftMotor.getSupplyCurrent();
-    IndexerLeftSpeed = indexerLeftMotor.getVelocity();
-    IndexerLeftVoltage = indexerLeftMotor.getMotorVoltage();
-    IndexerLeftTemp = indexerLeftMotor.getDeviceTemp();
+    indexerLeftCurrent = indexerLeftMotor.getStatorCurrent();
+    indexerLeftVelocity = indexerLeftMotor.getVelocity();
+    indexerLeftVoltage = indexerLeftMotor.getMotorVoltage();
+    indexerLeftTemp = indexerLeftMotor.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
-        IndexerLeftStatorCurrent,
-        IndexerLeftSupplyCurrent,
-        IndexerLeftSpeed,
-        IndexerLeftVoltage,
-        IndexerLeftTemp);
+        indexerLeftCurrent,
+        indexerLeftVelocity,
+        indexerLeftVoltage,
+        indexerLeftTemp);
 
     ParentDevice.optimizeBusUtilizationForAll(indexerLeftMotor);
 
     var fuelKickerConfig = new TalonFXConfiguration();
-    fuelKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    fuelKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
     fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
     fuelKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     fuelKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     tryUntilOk(5, () -> fuelKickerMotor.getConfigurator().apply(fuelKickerConfig, 0.25));
 
-    FuelKickerStatorCurrent = fuelKickerMotor.getStatorCurrent();
-    FuelKickerSupplyCurrent = fuelKickerMotor.getSupplyCurrent();
-    FuelKickerSpeed = fuelKickerMotor.getVelocity();
-    FuelKickerVoltage = fuelKickerMotor.getMotorVoltage();
-    FuelKickerTemp = fuelKickerMotor.getDeviceTemp();
+    fuelKickerStatorCurrent = fuelKickerMotor.getStatorCurrent();
+    fuelKickerSupplyCurrent = fuelKickerMotor.getSupplyCurrent();
+    fuelKickerSpeed = fuelKickerMotor.getVelocity();
+    fuelKickerVoltage = fuelKickerMotor.getMotorVoltage();
+    fuelKickerTemp = fuelKickerMotor.getDeviceTemp();
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0,
-        FuelKickerStatorCurrent,
-        FuelKickerSupplyCurrent,
-        FuelKickerSpeed,
-        FuelKickerVoltage,
-        FuelKickerTemp);
+        fuelKickerStatorCurrent,
+        fuelKickerSupplyCurrent,
+        fuelKickerSpeed,
+        fuelKickerVoltage,
+        fuelKickerTemp);
 
     ParentDevice.optimizeBusUtilizationForAll(fuelKickerMotor);
   }
 
   public void updateInputs(IndexerIOInputs inputs){
+    var leftIndexerStatus = 
+      BaseStatusSignal.refreshAll(
+        indexerLeftCurrent,
+        indexerLeftVelocity,
+        indexerLeftVoltage,
+        indexerLeftTemp);
+
+    var rightIndexerStatus = 
+      BaseStatusSignal.refreshAll(
+        indexerRightCurrent,
+        indexerRightVelocity,
+        indexerRightVoltage,
+        indexerRightTemp);
+        
     var fuelKickerStatus =
         BaseStatusSignal.refreshAll(
-            FuelKickerStatorCurrent,
-            FuelKickerSupplyCurrent,
-            FuelKickerSpeed,
-            FuelKickerVoltage,
-            FuelKickerTemp);
+            fuelKickerStatorCurrent,
+            fuelKickerSupplyCurrent,
+            fuelKickerSpeed,
+            fuelKickerVoltage,
+            fuelKickerTemp);
+
+    inputs.indexerLeftConnected = leftIndexerStatus.isOK();
+    inputs.indexerLeftVelocity = indexerLeftVelocity.getValueAsDouble();
+    inputs.indexerLeftCurrentAmps = indexerLeftCurrent.getValueAsDouble();
+    inputs.indexerLeftVoltage = indexerLeftMotor.getMotorVoltage().getValueAsDouble();
+    inputs.indexerLeftTemp = indexerLeftTemp.getValueAsDouble();
+
+    inputs.indexerRightConnected = rightIndexerStatus.isOK();
+    inputs.indexerRightVelocity = indexerRightVelocity.getValueAsDouble();
+    inputs.indexerRightCurrentAmps = indexerRightCurrent.getValueAsDouble();
+    inputs.indexerRightVoltage = indexerRightMotor.getMotorVoltage().getValueAsDouble();
+    inputs.indexerRightTemp = indexerRightTemp.getValueAsDouble();
 
     inputs.fuelKickerVelocity = fuelKickerMotor.getVelocity().getValueAsDouble();
-    inputs.fuelKickerCurrentAmps = FuelKickerStatorCurrent.getValueAsDouble();
+    inputs.fuelKickerCurrentAmps = fuelKickerStatorCurrent.getValueAsDouble();
     inputs.fuelKickerVoltage = fuelKickerMotor.getMotorVoltage().getValueAsDouble();
     inputs.fuelKickerConnected = fuelKickerStatus.isOK();
   }
 
-  public void setThroughput(double indexerSpeed, double kickerSpeed){
-    indexerRightMotor.set(indexerSpeed);
-    indexerLeftMotor.set(indexerSpeed);
-    fuelKickerMotor.set(kickerSpeed);
+  public void setLeftIndexerVoltage(double voltage){
+    indexerLeftMotor.set(voltage);
+  }
+  
+  public void setRightIndexerVoltage(double voltage){
+    indexerRightMotor.set(voltage);
+  }
+
+  public void setFuelKickerVoltage(double voltage){
+    fuelKickerMotor.set(voltage);
   }
 }

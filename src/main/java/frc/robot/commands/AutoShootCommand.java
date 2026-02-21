@@ -32,10 +32,15 @@ public class AutoShootCommand extends Command {
 
     @Override
     public void execute() {
+        //getting hood angle from the table with interpolation
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS)){
-            indexer.spin();
+
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS)){
+            indexer.setThroughput(0.5, 0.5);
+        }
+        else{
+            indexer.stop();
         }
     }
 

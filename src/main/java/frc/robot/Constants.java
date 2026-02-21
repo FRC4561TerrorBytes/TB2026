@@ -59,6 +59,8 @@ public final class Constants {
   public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
   public static final int EXTENSION_CANCODER_ID = 0;
+  public static final double EXTENSION_EXTENDED_POSITION = 1;
+  public static final double EXTENSION_RETRACTED_POSITION = 0;
 
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
   public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;
@@ -66,4 +68,10 @@ public final class Constants {
   public static final int INDEXER_RIGHT_MOTOR_ID = 22;
   
   public static final int FUEL_KICKER_MOTOR_ID = 23;
+
+  public static final int CLIMBER_ID = 1;
+  public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
+  public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 50;
+  public static final double CLIMBER_UP_POSITION = 0.1;
+  public static final double CLIMBER_DOWN_POSITION = 0.0;
 }
