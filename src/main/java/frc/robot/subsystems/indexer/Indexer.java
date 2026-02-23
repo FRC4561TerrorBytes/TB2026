@@ -46,7 +46,7 @@ public class Indexer extends SubsystemBase {
   }
 
   public void setFuelKickerOutput(double speed) {
-    io.setFuelKickerOutput(speed);
+    io.setFuelKickerVoltage(speed);
   }
 
   public void setThroughput(double indexerSpeed, double kickerSpeed) {

@@ -69,4 +69,10 @@ public final class Constants {
   public static final int INDEXER_LEFT_MOTOR_ID = 0;
   public static final int INDEXER_RIGHT_MOTOR_ID = 0;
   public static final int FUEL_KICKER_MOTOR_ID = 0;
+
+  public static final int CLIMBER_ID = 1;
+  public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
+  public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 50;
+  public static final double CLIMBER_UP_POSITION = 0.1;
+  public static final double CLIMBER_DOWN_POSITION = 0.0;
 }
