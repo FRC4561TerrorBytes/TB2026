@@ -7,6 +7,8 @@ package frc.robot.subsystems.extension;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,5 +38,9 @@ public class Extension extends SubsystemBase {
     Logger.processInputs("Extension/Io", inputs);
     ExtensionDisconnectedAlert.set(!inputs.extensionMotorConnected);
     // This method will be called once per scheduler run
+  }
+
+  public Pose3d getPivotPose(){
+    return new Pose3d(0.23,0,0.185, new Rotation3d(0,(-90*Math.PI)/180,0));
   }
 }
