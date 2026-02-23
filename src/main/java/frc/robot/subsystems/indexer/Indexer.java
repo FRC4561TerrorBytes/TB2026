@@ -5,6 +5,8 @@
 package frc.robot.subsystems.indexer;
 
 import edu.wpi.first.wpilibj.Alert;
+//HI  MANBIR -SARAH 
+//hey give me my computer back
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -39,24 +41,29 @@ public class Indexer extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void setIndexerOutput(double speed) {
-    io.setIndexerOutput(speed);
+  public void setIndexerVoltage(double voltage) {
+    io.setLeftIndexerVoltage(voltage);
+    io.setRightIndexerVoltage(voltage);
   }
 
-  public void setFuelKickerOutput(double speed) {
-    io.setFuelKickerOutput(speed);
+  public void setLeftIndexerVoltage(double voltage){
+    io.setLeftIndexerVoltage(voltage);
   }
 
-  public void setThroughput(double indexerSpeed, double kickerSpeed) {
-    setFuelKickerOutput(kickerSpeed);
-    setIndexerOutput(indexerSpeed);
+  public void setRightIndexerVoltage(double voltage){
+    io.setRightIndexerVoltage(voltage);
   }
 
-  public Command spin(){
-    return Commands.run(() -> this.setThroughput(1.0, 1.0), this);
+  public void setFuelKickerVoltage(double voltage) {
+    io.setFuelKickerVoltage(voltage);
   }
 
-  public Command stop(){
-    return Commands.run(() -> this.setThroughput(0.0, 0.0), this);
+  public void setThroughput(double indexerVoltage, double kickerVoltage) {
+    setFuelKickerVoltage(kickerVoltage);
+    setIndexerVoltage(indexerVoltage);
+  }
+
+  public void stop(){
+    this.setThroughput(0.0, 0.0);
   }
 }

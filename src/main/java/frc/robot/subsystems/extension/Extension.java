@@ -27,6 +27,10 @@ public class Extension extends SubsystemBase {
       io.setExtensionSetpoint(extensionSetpoint);
   }
 
+  public double extensionSetpoint() {
+    return inputs.extensionSetpoint;
+  }
+
   @Override
   public void periodic() {
     
