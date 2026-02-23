@@ -37,14 +37,14 @@ public final class Constants {
     REPLAY
   }
 
-  public static final int HOOD_ID = 0;
+  public static final int HOOD_ID = 34;
   public static final double HOOD_SUPPLY_CURRENT_LIMIT = 15;
   public static final double HOOD_STATOR_CURRENT_LIMIT = 30;
 
-  public static final int FLYWHEEL_TOP_RIGHT_ID = 30;
-  public static final int FLYWHEEL_BOTTOM_RIGHT_ID = 31;
-  public static final int FLYWHEEL_TOP_LEFT_ID = 32;
-  public static final int FLYWHEEL_BOTTOM_LEFT_ID = 33;
+  public static final int FLYWHEEL_TOP_RIGHT_ID = 32;
+  public static final int FLYWHEEL_BOTTOM_RIGHT_ID = 33;
+  public static final int FLYWHEEL_TOP_LEFT_ID = 30;
+  public static final int FLYWHEEL_BOTTOM_LEFT_ID = 31;
   public static final double FLYWHEELS_CIRCUMFERENCE = 0;
   public static final double FLYWHEELS_SUPPLY_CURRENT_LIMIT = 30;
   public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
@@ -54,7 +54,7 @@ public final class Constants {
   public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 20;
   public static final double INTAKE_STATOR_CURRENT_LIMIT = 45;
 
-  public static final int EXTENSION_ID = 0;
+  public static final int EXTENSION_ID = 40;
   public static final double EXTENSION_GEAR_RATIO = 0;
   public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
@@ -69,7 +69,7 @@ public final class Constants {
   
   public static final int FUEL_KICKER_MOTOR_ID = 23;
 
-  public static final int CLIMBER_ID = 1;
+  public static final int CLIMBER_ID = 50;
   public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
   public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 50;
   public static final double CLIMBER_UP_POSITION = 0.1;
