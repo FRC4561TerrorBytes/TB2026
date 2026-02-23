@@ -26,7 +26,9 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -39,6 +41,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -46,14 +49,19 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -319,6 +327,26 @@ public class Drive extends SubsystemBase {
     return values;
   }
 
+  /** Returns if the positional vector of the robot is within a setpoint to the bump */
+  @AutoLogOutput(key = "Odometry/CloseToBump")
+  public boolean closeToBump() {
+    if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX())) < 1){
+      if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY())) < 1.7) || 
+        (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.middle).getY())) < 1.7)){
+      return true;
+      }
+      else return false;
+    }
+      else if (Math.abs(getPose().getTranslation().getX() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getX())) < 1){
+        if ((Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.LeftBump.oppMiddle).getY())) < 1.7) || 
+          (Math.abs(getPose().getTranslation().getY() - (AllianceFlipUtil.apply(FieldConstants.RightBump.oppMiddle).getY())) < 1.7)){
+        return true;
+        }
+      else return false;
+      }
+      else return false;
+  }
+
   /** Returns the average velocity of the modules in rotations/sec (Phoenix native units). */
   public double getFFCharacterizationVelocity() {
     double output = 0.0;
@@ -333,6 +361,30 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
+  public Rotation2d snap45() {
+    double degreesClosestTo = 0;
+    double startAngle = Units.radiansToDegrees(Math.atan(25.0/30.0));
+    double angle = getPose().getRotation().getDegrees() + 180;
+    double correctedAngle = angle - startAngle;
+    
+    if ( -startAngle < correctedAngle && correctedAngle < (90 - startAngle)){
+        degreesClosestTo = 90;
+    }
+    else if ((90 - startAngle) < correctedAngle && correctedAngle < (180 - startAngle)){
+        degreesClosestTo = 180;
+    }
+    else if ((180 - startAngle) < correctedAngle && correctedAngle < (270 - startAngle)){
+      degreesClosestTo = 270;
+    }
+    else if ((270 - startAngle) < correctedAngle && correctedAngle < (-startAngle)){
+      degreesClosestTo = 0;
+    }
+    else {
+      degreesClosestTo = 0;
+    }
+    return Rotation2d.fromDegrees(degreesClosestTo - startAngle - 180);
+  }
+
 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
@@ -371,5 +423,33 @@ public class Drive extends SubsystemBase {
       new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
       new Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
     };
+  }
+  @AutoLogOutput
+  public Rotation2d getRotationToHub(){
+    return new Rotation2d(
+      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX()-getPose().getX(),
+      AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getY()-getPose().getY()
+    );
+  }
+  // Field relative drive command using two joysticks (controlling linear and angular velocities).
+  public Command alignToAngle(
+    Supplier<Rotation2d> targetAngle){
+      double kP = 0.1;
+      double kI = 0;
+      double kD = 0;
+      double toleranceDegrees = 1.5;
+
+      PIDController controller = new PIDController(kP, kI, kD, 0.02);
+      controller.setTolerance(toleranceDegrees);
+      controller.enableContinuousInput(-180, 180);
+
+      return Commands.run(() -> {
+        Logger.recordOutput("targetAlignToHub", getRotationToHub().getDegrees()+180);
+        double rotationSpeed = MathUtil.clamp(controller.calculate(this.getPose().getRotation().getDegrees(),targetAngle.get().getDegrees()), -30, 30);
+        this.runVelocity(
+          new ChassisSpeeds(0, 0,rotationSpeed));
+      } )
+      .until(() -> controller.atSetpoint())
+      .beforeStarting(() -> controller.reset());
   }
 }

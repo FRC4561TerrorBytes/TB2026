@@ -25,8 +25,9 @@ public interface IndexerIO {
 
   public default void updateInputs(IndexerIOInputs inputs) {}
 
-  public default void setIndexerOutput(double speed) {}
-  public default void setFuelKickerOutput(double speed) {}
+  public default void setLeftIndexerVoltage(double voltage) {}
+  public default void setRightIndexerVoltage(double voltage) {}
+  public default void setFuelKickerVoltage(double voltage) {}
 
   
 }

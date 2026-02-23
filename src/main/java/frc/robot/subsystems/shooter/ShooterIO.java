@@ -5,28 +5,55 @@ import org.littletonrobotics.junction.AutoLog;
 public interface ShooterIO {
     @AutoLog
     public class ShooterIOInputs {
-        public boolean flywheelLeftConnected = false;
-        public double flywheelLeftVelocity = 0.0;
-        public double flywheelLeftVoltage = 0.0;
-        public double flywheelLeftCurrent = 0.0;
-        public boolean flywheelRightConnected = false;
-        public double flywheelRightVelocity = 0.0;
-        public double flywheelRightVoltage = 0.0;
-        public double flywheelRightCurrent = 0.0;
+        public boolean flywheelLeftTopConnected = false;
+        public double flywheelLeftTopVelocity = 0.0;
+        public double flywheelLeftTopVoltage = 0.0;
+        public double flywheelLeftTopCurrent = 0.0;
+
+        public boolean flywheelLeftBottomConnected = false;
+        public double flywheelLeftBottomVelocity = 0.0;
+        public double flywheelLeftBottomVoltage = 0.0;
+        public double flywheelLeftBottomCurrent = 0.0;
+
+        public double flywheelLeftSetpoint = 0.0;
+
+
+        public boolean flywheelRightTopConnected = false;
+        public double flywheelRightTopVelocity = 0.0;
+        public double flywheelRightTopVoltage = 0.0;
+        public double flywheelRightTopCurrent = 0.0;
+
+        public boolean flywheelRightBottomConnected = false;
+        public double flywheelRightBottomVelocity = 0.0;
+        public double flywheelRightBottomVoltage = 0.0;
+        public double flywheelRightBottomCurrent = 0.0;
+
+        public double flywheelRightSetpoint = 0.0;
+
+
         public boolean hoodConnected = false;
         public double hoodVelocity = 0.0;
         public double hoodVoltage = 0.0;
         public double hoodCurrent = 0.0;
         public double hoodRelativePosition = 0.0;
+        public double hoodSetpoint = 0.0;
     }
 
     public default void updateInputs(ShooterIOInputs inputs) {}
 
-    public default void setFlywheelLeftVoltage(double voltage){}
+    public default void setLeftFlywheelVoltage(double voltage){}
 
-    public default void setFlywheelRightVoltage(double voltage){}
+    public default void setRightFlywheelVoltage(double voltage){}
+
+    public default void setLeftFlywheelSpeed(double velocityRPS){}
+
+    public default void setRightFlywheelSpeed(double velocityRPS){}
+
+    public default boolean leftFlywheelUpToSpeed(double rotationsPerSecond) {return false;}
+
+    public default boolean rightFlywheelUpToSpeed(double rotationsPerSecond) {return false;}
     
-    public default void setHoodPosition(double position){}
+    public default void setHoodAngle(double angle) {}
 
 }
 

@@ -16,13 +16,19 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
+import java.util.Set;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -30,10 +36,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.snap45;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOReal;
+import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -73,7 +85,9 @@ public class RobotContainer {
   private final Extension extension;
   private final Shooter shooter;
   private final Indexer indexer;
+  private final Climber climber;
 
+  Rotation2d snapRotation;
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -106,6 +120,8 @@ public class RobotContainer {
               new ShooterIOReal());
         indexer =
             new Indexer(new IndexerIOReal());
+        climber =
+            new Climber(new ClimberIOReal());
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -126,6 +142,8 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber =
+            new Climber(new ClimberIOSim());
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -146,21 +164,20 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber =
+            new Climber(new ClimberIO() {});
         break;
     }
 
     // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT OUT (FOR SIM)
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     /*
     autoChooser.addOption(
         "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",2
+        "Drive SysId (Quasistatic Forward)",
         drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Quasistatic Reverse)",
@@ -168,11 +185,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)); */
-    autoChooser.addOption(
-        "LeaveAndStop",
-        Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
-            .withTimeout(4));
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        */
+    autoChooser.addOption("Leave and Stop", Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive).withTimeout(4));
 
     SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -186,6 +201,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+  
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
@@ -194,22 +210,31 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-    shooter.setDefaultCommand(shooter.stop());
-
-    // Default Commands
+            
     intake.setDefaultCommand(
         Commands.run( () -> intake.setOutput(0), intake));
 
     indexer.setDefaultCommand(
-      indexer.stop()
-    );
+      Commands.run(() -> indexer.stop(), indexer));
+
+        // Trigger
+    Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
+    Trigger intakeExtendedTrigger = new Trigger(() -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
+
+
+    bumpPositionTrigger
+    .and(intakeExtendedTrigger)
+    .and(() -> DriverStation.isTeleop())
+    .whileTrue(driverRumbleCommand());
+    indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
+    shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
     // Triggers
 
     // Driver Controls
     driverController
         .leftTrigger() //extend and run intake
         .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension)
         ) 
         .toggleOnTrue(
             Commands.run(() -> intake.setOutput(1), intake)
@@ -218,7 +243,17 @@ public class RobotContainer {
     driverController
         .b() //retract intake
         .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension)
+            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
+        );
+    driverController
+        .x() 
+        .whileTrue(Commands.run(()-> drive.stopWithX()));
+
+    driverController 
+        .rightTrigger()
+        .whileTrue(
+            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+            new AutoShootCommand(drive, indexer, shooter))
         );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
@@ -232,8 +267,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     
-    driverController.rightTrigger().whileTrue(shooter.shoot());
-    driverController.a().whileTrue(new snap45(drive));
+    driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
+    driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
+    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
+
+
+    driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
+    driverController.leftBumper().whileTrue(climber.climbDown());
   }
 
   /**
@@ -245,13 +285,19 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
+  public void autoExit(){
+    climber.setIdleMode(NeutralModeValue.Coast);
+  }
+
   private Command driverRumbleCommand() {
     return Commands.startEnd(
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-        },
+          Logger.recordOutput("RobotContainer/Rumbling", true);
+            },
         () -> {
           driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+          Logger.recordOutput("RobotContainer/Rumbling", false);
         });
   }
 }
