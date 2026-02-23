@@ -43,7 +43,7 @@ public class IntakeIOReal implements IntakeIO{
 
      var intakeConfig = new TalonFXConfiguration();
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    intakeConfig.Feedback.RotorToSensorRatio = Constants.INTAKE_GEAR_RATIO;
+    intakeConfig.Feedback.RotorToSensorRatio = 0.5;
     intakeConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     intakeConfig.ClosedLoopGeneral.ContinuousWrap = false;
     intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
