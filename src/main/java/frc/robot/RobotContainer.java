@@ -233,14 +233,14 @@ public class RobotContainer {
                 Commands.run(() -> indexer.stop(), indexer));
 
         // Trigger
-        Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
+        //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
         Trigger intakeExtendedTrigger = new Trigger(
                 () -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
 
-        bumpPositionTrigger
-                .and(intakeExtendedTrigger)
-                .and(() -> DriverStation.isTeleop())
-                .whileTrue(driverRumbleCommand());
+        // bumpPositionTrigger
+        //         .and(intakeExtendedTrigger)
+        //         .and(() -> DriverStation.isTeleop())
+        //         .whileTrue(driverRumbleCommand());
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
         shooter.setDefaultCommand(Commands.run(() -> shooter.stop(), shooter));
         // Triggers
