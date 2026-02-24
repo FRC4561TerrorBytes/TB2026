@@ -112,16 +112,16 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.FrontRight),
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
                         new ModuleIOTalonFX(TunerConstants.BackRight));
-                intake = new Intake(new IntakeIOReal());
-                extension = new Extension(new ExtensionIOReal());
+                intake = new Intake(new IntakeIO() {});
+                extension = new Extension(new ExtensionIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         new VisionIOLimelight(camera0Name, drive::getRotation),
                         new VisionIOLimelight(camera1Name, drive::getRotation));
                 shooter = new Shooter(
-                        new ShooterIOReal());
+                        new ShooterIO() {});
                 indexer = new Indexer(new IndexerIOReal());
-                climber = new Climber(new ClimberIOReal());
+                climber = new Climber(new ClimberIO() {});
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -200,7 +200,7 @@ public class RobotContainer {
          * drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
          */
         autoChooser.addOption("Leave and Stop",
-                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive).withTimeout(4));
+                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-1, 0, 0)), drive).withTimeout(4));
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -222,9 +222,9 @@ public class RobotContainer {
         drive.setDefaultCommand(
                 DriveCommands.joystickDrive(
                         drive,
-                        () -> -driverController.getLeftY(),
-                        () -> -driverController.getLeftX(),
-                        () -> -driverController.getRightX()));
+                        () -> driverController.getLeftY(),
+                        () -> driverController.getLeftX(),
+                        () -> driverController.getRightX()));
 
         intake.setDefaultCommand(
                 Commands.run(() -> intake.setOutput(0), intake));
@@ -263,11 +263,12 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        driverController
-                .rightTrigger()
-                .whileTrue(
-                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                                new AutoShootCommand(drive, indexer, shooter)));
+        // driverController
+        //         .rightTrigger()
+        //         .whileTrue(
+        //                 Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+        //                         new AutoShootCommand(drive, indexer, shooter)));
+        driverController.rightTrigger().whileTrue(Commands.run(() -> indexer.setThroughput(0.2, 0.2), indexer));
 
         driverController
                 .povRight()
