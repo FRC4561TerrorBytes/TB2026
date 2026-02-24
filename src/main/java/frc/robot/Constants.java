@@ -58,7 +58,7 @@ public final class Constants {
   public static final double EXTENSION_GEAR_RATIO = 0;
   public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
-  public static final int EXTENSION_CANCODER_ID = 0;
+  public static final int EXTENSION_CANCODER_ID = 42;
   public static final double EXTENSION_EXTENDED_POSITION = 1;
   public static final double EXTENSION_RETRACTED_POSITION = 0;
 
