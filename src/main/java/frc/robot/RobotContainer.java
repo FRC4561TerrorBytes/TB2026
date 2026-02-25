@@ -183,6 +183,7 @@ public class RobotContainer {
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+         autoChooser.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
         /*
          * autoChooser.addOption(
          * "Drive Simple FF Characterization",
@@ -252,7 +253,7 @@ public class RobotContainer {
                 .b() // retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension));
+                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
         driverController
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
