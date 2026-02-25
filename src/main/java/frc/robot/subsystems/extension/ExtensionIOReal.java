@@ -11,7 +11,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -21,7 +20,6 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -54,14 +52,14 @@ public class ExtensionIOReal implements ExtensionIO{
 
   public ExtensionIOReal() {
 
-    var ExtensionPIDConfig = new Slot0Configs();
-    ExtensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
-    ExtensionPIDConfig.kS = 0.28;
-    ExtensionPIDConfig.kV = 0;
-    ExtensionPIDConfig.kA = 0;
-    ExtensionPIDConfig.kP = 0.5; 
-    ExtensionPIDConfig.kI = 0;
-    ExtensionPIDConfig.kD = 0;
+    var extensionPIDConfig = new Slot0Configs();
+    extensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
+    extensionPIDConfig.kS = 0.28;
+    extensionPIDConfig.kV = 0;
+    extensionPIDConfig.kA = 0;
+    extensionPIDConfig.kP = 0.5; 
+    extensionPIDConfig.kI = 0;
+    extensionPIDConfig.kD = 0;
 
     var cancoderConfig = new CANcoderConfiguration();
     cancoderConfig.MagnetSensor.withMagnetOffset(0);
@@ -71,9 +69,10 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var extensionConfig = new TalonFXConfiguration();
     extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    extensionConfig.Slot0 = ExtensionPIDConfig;
+    extensionConfig.Slot0 = extensionPIDConfig;
     extensionConfig.Feedback.FeedbackRemoteSensorID = extensionEncoder.getDeviceID();
     extensionConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    extensionConfig.Feedback.RotorToSensorRatio = Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 100 / Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicAcceleration =
     extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.050;
@@ -111,11 +110,11 @@ public class ExtensionIOReal implements ExtensionIO{
 
 @Override
   public void updateInputs(ExtensionIOInputs inputs) {
-    var ExtensionEncoderStatus = 
+    var extensionEncoderStatus = 
         BaseStatusSignal.refreshAll(
           extensionAngle
         );
-    var ExtensionStatus =
+    var extensionStatus =
         BaseStatusSignal.refreshAll(
             extensionStatorCurrent,
             extensionSupplyCurrent,
@@ -124,9 +123,9 @@ public class ExtensionIOReal implements ExtensionIO{
             extensionTemp);
 
 
-    inputs.extensionEncoderConnected = ExtensionEncoderStatus.isOK();
+    inputs.extensionEncoderConnected = extensionEncoderStatus.isOK();
     inputs.extensionAngle = extensionEncoder.getPosition().getValueAsDouble();
-    inputs.extensionMotorConnected = ExtensionStatus.isOK();
+    inputs.extensionMotorConnected = extensionStatus.isOK();
     inputs.extensionStatorCurrent = extensionStatorCurrent.getValueAsDouble();
     inputs.extensionSupplyCurrent = extensionSupplyCurrent.getValueAsDouble();
     inputs.extensionSpeed = extensionMotor.getVelocity().getValueAsDouble();
