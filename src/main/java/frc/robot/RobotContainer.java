@@ -95,6 +95,7 @@ public class RobotContainer {
     Rotation2d snapRotation;
     // Controller
     private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -121,7 +122,7 @@ public class RobotContainer {
                 shooter = new Shooter(
                         new ShooterIOReal());
                 indexer = new Indexer(new IndexerIOReal());
-                climber = new Climber(new ClimberIO() {});
+                climber = new Climber(new ClimberIOReal());
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -224,28 +225,21 @@ public class RobotContainer {
                         drive,
                         () -> driverController.getLeftY(),
                         () -> driverController.getLeftX(),
-                        () -> driverController.getRightX()));
+                        () -> -driverController.getRightX()));
 
-        intake.setDefaultCommand(
-                Commands.run(() -> intake.setOutput(0), intake));
+        // intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
+        indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
+        shooter.setDefaultCommand(Commands.run(() -> shooter.stop(), shooter));
 
-        indexer.setDefaultCommand(
-                Commands.run(() -> indexer.stop(), indexer));
-
-        // Trigger
+        //TRIGGERS
         //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
-        Trigger intakeExtendedTrigger = new Trigger(
-                () -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
 
         // bumpPositionTrigger
         //         .and(intakeExtendedTrigger)
         //         .and(() -> DriverStation.isTeleop())
         //         .whileTrue(driverRumbleCommand());
-        indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.run(() -> shooter.stop(), shooter));
-        // Triggers
 
-        // Driver Controls
+        // DRIVER CONTROLS
         driverController
                 .leftTrigger() // extend and run intake
                 .onTrue(
@@ -279,13 +273,6 @@ public class RobotContainer {
         //         .whileTrue(new DriveToPose(drive,
         //                 AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)))));
         
-        driverController
-                .povUp()
-                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(5), shooter));
-
-        driverController
-                .povDown()
-                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter));
         // Reset gyro to 0° when RS and LS are pressed
         driverController
                 .rightStick()
@@ -307,6 +294,33 @@ public class RobotContainer {
         driverController.rightBumper()
                 .whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
         driverController.leftBumper().whileTrue(climber.climbDown());
+
+        //OPERATOR CONTROLS
+        operatorController
+                .povUp()
+                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(5), shooter));
+
+        operatorController
+                .povDown()
+                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter));
+
+        operatorController.povLeft().onTrue(climber.climbDown());
+        operatorController.povRight().onTrue(climber.climbUp());
+
+        operatorController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(25), shooter));
+        operatorController.a().whileTrue(Commands.run(() -> indexer.setThroughput(0.3, 0.4), indexer));
+
+
+        operatorController.leftTrigger().onTrue(
+                Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+                        extension))
+                .onTrue(
+                        Commands.runOnce(() -> intake.setOutput(0.2), intake));
+        operatorController
+                .b() // retract intake
+                .onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
+                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
     }
 
     /**

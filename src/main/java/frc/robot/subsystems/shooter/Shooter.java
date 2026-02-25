@@ -61,9 +61,9 @@ public class Shooter extends SubsystemBase{
     io.setHoodAngle(angle);
   }
 
-  public void setFlywheelVoltage(double speed) {
-    io.setLeftFlywheelVoltage(speed);
-    io.setRightFlywheelVoltage(speed);
+  public void setFlywheelVoltage(double voltage) {
+    io.setLeftFlywheelVoltage(voltage);
+    io.setRightFlywheelVoltage(voltage);
   }
 
   public void setFlywheelSpeed(double velocityRPS){

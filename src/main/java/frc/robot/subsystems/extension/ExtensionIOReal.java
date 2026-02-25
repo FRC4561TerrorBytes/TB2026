@@ -55,9 +55,9 @@ public class ExtensionIOReal implements ExtensionIO{
     var extensionPIDConfig = new Slot0Configs();
     extensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
     extensionPIDConfig.kS = 0.28;
-    extensionPIDConfig.kV = 0;
-    extensionPIDConfig.kA = 0;
-    extensionPIDConfig.kP = 0.5; 
+    extensionPIDConfig.kV = 3.2;
+    extensionPIDConfig.kA = 0.04;
+    extensionPIDConfig.kP = 10; 
     extensionPIDConfig.kI = 0;
     extensionPIDConfig.kD = 0;
 
@@ -75,7 +75,7 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionConfig.Feedback.RotorToSensorRatio = Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 100 / Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicAcceleration =
-    extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.050;
+    extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.030;
     extensionConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     extensionConfig.ClosedLoopGeneral.ContinuousWrap = false;

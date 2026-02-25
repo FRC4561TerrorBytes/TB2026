@@ -50,6 +50,7 @@ public class ShooterIOReal implements ShooterIO {
     private final StatusSignal<Angle> hoodRelativePosition;
 
     private double hoodSetpoint;
+    private double flywheelSpeedSetpoint;
 
     public ShooterIOReal () { 
         //constructor go brrrrrrr
@@ -67,19 +68,24 @@ public class ShooterIOReal implements ShooterIO {
         flywheelLeftSlot0Config.kS = 0.5; // Add 0.25 V output to overcome static friction
         flywheelLeftSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
         flywheelLeftSlot0Config.kA = 0.02; // An acceleration of 1 rps/s requires 0.01 V output
-        flywheelLeftSlot0Config.kP = 0.4; // An error of 1 rps results in 0.11 V output
+        flywheelLeftSlot0Config.kP = 0.1; // An error of 1 rps results in 0.11 V output
         flywheelLeftSlot0Config.kI = 0.0; // no output for integrated error
         flywheelLeftSlot0Config.kD = 0.0; // no output for error derivative
 
         var flywheelMotionMagicConfig = flywheelConfig.MotionMagic;
         flywheelMotionMagicConfig.MotionMagicAcceleration = 10; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 10;
         flywheelMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
-        flywheelLeftTopMotor.getConfigurator().apply(flywheelConfig.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive));
-        flywheelLeftBottomMotor.getConfigurator().apply(flywheelConfig.MotorOutput.withInverted(InvertedValue.CounterClockwise_Positive));
+        flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        flywheelRightTopMotor.getConfigurator().apply(flywheelConfig.MotorOutput.withInverted(InvertedValue.Clockwise_Positive));
-        flywheelRightBottomMotor.getConfigurator().apply(flywheelConfig.MotorOutput.withInverted(InvertedValue.Clockwise_Positive));
+        flywheelLeftTopMotor.getConfigurator().apply(flywheelConfig);
+        flywheelLeftBottomMotor.getConfigurator().apply(flywheelConfig);
+
+        flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        flywheelRightTopMotor.getConfigurator().apply(flywheelConfig);
+        flywheelRightBottomMotor.getConfigurator().apply(flywheelConfig);
 
         flywheelLeftTopVelocity = flywheelLeftTopMotor.getVelocity();
         flywheelLeftTopVoltage = flywheelLeftTopMotor.getMotorVoltage();
@@ -195,6 +201,8 @@ public class ShooterIOReal implements ShooterIO {
         inputs.flywheelRightBottomConnected = flywheelRightBottomStatus.isOK();
         inputs.hoodConnected = hoodStatus.isOK();
 
+        inputs.flywheelSpeedSetpoint = flywheelSpeedSetpoint;
+
         //yiiiiipppppppppppppppppppppeeeeeeeeeeeeeeeeee - tyler
         inputs.flywheelLeftTopVelocity = flywheelLeftTopVelocity.getValueAsDouble();
         inputs.flywheelLeftTopVoltage = flywheelLeftTopVoltage.getValueAsDouble();
@@ -226,6 +234,7 @@ public class ShooterIOReal implements ShooterIO {
     }
 
     public void setLeftFlywheelSpeed(double velocityRPS){
+        flywheelSpeedSetpoint = velocityRPS;
         flywheelLeftTopMotor.setControl(flywheelLeftControl.withVelocity(velocityRPS));
     }
 

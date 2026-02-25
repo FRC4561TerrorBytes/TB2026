@@ -60,7 +60,7 @@ public final class Constants {
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 40;
   public static final int EXTENSION_CANCODER_ID = 42;
   public static final double EXTENSION_EXTENDED_POSITION = 0.0;
-  public static final double EXTENSION_RETRACTED_POSITION = 0.312988;
+  public static final double EXTENSION_RETRACTED_POSITION = 0.37;
 
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
   public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;
@@ -72,6 +72,6 @@ public final class Constants {
   public static final int CLIMBER_ID = 50;
   public static final int CLIMBER_STATOR_CURRENT_LIMIT = 50;
   public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 50;
-  public static final double CLIMBER_UP_POSITION = 0.1;
+  public static final double CLIMBER_UP_POSITION = 71.0;
   public static final double CLIMBER_DOWN_POSITION = 0.0;
 }
