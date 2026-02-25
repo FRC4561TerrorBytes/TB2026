@@ -38,7 +38,7 @@ public final class Constants {
   }
 
   public static final int HOOD_ID = 34;
-  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 15;
+  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 30;
   public static final double HOOD_STATOR_CURRENT_LIMIT = 30;
 
   public static final int FLYWHEEL_TOP_RIGHT_ID = 32;
@@ -55,12 +55,12 @@ public final class Constants {
   public static final double INTAKE_STATOR_CURRENT_LIMIT = 45;
 
   public static final int EXTENSION_ID = 40;
-  public static final double EXTENSION_GEAR_RATIO = 0;
+  public static final double EXTENSION_GEAR_RATIO = 1;
   public static final double EXTENSION_SUPPLY_CURRENT_LIMIT = 20;
-  public static final double EXTENSION_STATOR_CURRENT_LIMIT = 45;
+  public static final double EXTENSION_STATOR_CURRENT_LIMIT = 40;
   public static final int EXTENSION_CANCODER_ID = 42;
-  public static final double EXTENSION_EXTENDED_POSITION = 1;
-  public static final double EXTENSION_RETRACTED_POSITION = 0;
+  public static final double EXTENSION_EXTENDED_POSITION = 0.0;
+  public static final double EXTENSION_RETRACTED_POSITION = 0.312988;
 
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
   public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;

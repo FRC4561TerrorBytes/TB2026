@@ -49,6 +49,8 @@ public class ShooterIOReal implements ShooterIO {
     private final StatusSignal<Current> hoodCurrent;
     private final StatusSignal<Angle> hoodRelativePosition;
 
+    private double hoodSetpoint;
+
     public ShooterIOReal () { 
         //constructor go brrrrrrr
         var flywheelConfig = new TalonFXConfiguration();
@@ -101,22 +103,25 @@ public class ShooterIOReal implements ShooterIO {
 
         hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         hoodConfig.CurrentLimits.SupplyCurrentLimit = Constants.HOOD_SUPPLY_CURRENT_LIMIT;
+        // hoodConfig.MotorOutput.
 
         hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         var hoodSlot0Config = hoodConfig.Slot0;
-        hoodSlot0Config.kS = 0.5; // Add 0.25 V output to overcome static friction
+        hoodSlot0Config.kS = 0.2; // Add 0.25 V output to overcome static friction
         hoodSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
         hoodSlot0Config.kA = 0.02; // An acceleration of 1 rps/s requires 0.01 V output
-        hoodSlot0Config.kP = 0.4; // An error of 1 rps results in 0.11 V output
+        hoodSlot0Config.kP = 0.2; // An error of 1 rps results in 0.11 V output
         hoodSlot0Config.kI = 0.0; // no output for integrated error
         hoodSlot0Config.kD = 0.0; // no output for error derivative
 
         var hoodMotionMagicConfig = hoodConfig.MotionMagic;
-        hoodMotionMagicConfig.MotionMagicAcceleration = 10; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        hoodMotionMagicConfig.MotionMagicAcceleration = 50; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        hoodMotionMagicConfig.MotionMagicCruiseVelocity = 5;
         hoodMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         hoodMotor.getConfigurator().apply(hoodConfig);
+        hoodMotor.setPosition(0);
 
         hoodVelocity = hoodMotor.getVelocity();
         hoodVoltage = hoodMotor.getMotorVoltage();
@@ -209,6 +214,7 @@ public class ShooterIOReal implements ShooterIO {
         inputs.hoodVoltage = hoodVoltage.getValueAsDouble();
         inputs.hoodCurrent = hoodCurrent.getValueAsDouble();
         inputs.hoodRelativePosition = hoodRelativePosition.getValueAsDouble();
+        inputs.hoodSetpoint = hoodSetpoint;
     }
 
     public void setLeftFlywheelVoltage(double voltage){
@@ -228,6 +234,7 @@ public class ShooterIOReal implements ShooterIO {
     }
 
     public void setHoodAngle(double position){
+        hoodSetpoint = position;
         hoodMotor.setControl(hoodControl.withPosition(position));
     }
 

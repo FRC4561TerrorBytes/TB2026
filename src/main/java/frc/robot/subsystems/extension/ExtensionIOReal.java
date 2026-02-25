@@ -11,6 +11,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
@@ -55,22 +56,22 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var ExtensionPIDConfig = new Slot0Configs();
     ExtensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
-    // pivotPIDConfig.kS = 0.28;
+    ExtensionPIDConfig.kS = 0.28;
     ExtensionPIDConfig.kV = 0;
     ExtensionPIDConfig.kA = 0;
-    ExtensionPIDConfig.kP = 75; 
+    ExtensionPIDConfig.kP = 0.5; 
     ExtensionPIDConfig.kI = 0;
     ExtensionPIDConfig.kD = 0;
 
     var cancoderConfig = new CANcoderConfiguration();
     cancoderConfig.MagnetSensor.withMagnetOffset(0);
-    cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    cancoderConfig.MagnetSensor.MagnetOffset = 0.010986;
     tryUntilOk(5, () -> extensionEncoder.getConfigurator().apply(cancoderConfig, 0.25));
 
     var extensionConfig = new TalonFXConfiguration();
     extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     extensionConfig.Slot0 = ExtensionPIDConfig;
-    extensionConfig.Feedback.RotorToSensorRatio = Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.Feedback.FeedbackRemoteSensorID = extensionEncoder.getDeviceID();
     extensionConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 100 / Constants.EXTENSION_GEAR_RATIO;
@@ -79,11 +80,13 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     extensionConfig.ClosedLoopGeneral.ContinuousWrap = false;
-    extensionConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    extensionConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.EXTENSION_STATOR_CURRENT_LIMIT;
     extensionConfig.CurrentLimits.SupplyCurrentLimit = Constants.EXTENSION_SUPPLY_CURRENT_LIMIT;
     extensionConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     extensionConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = !true;
+    extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.32;
     tryUntilOk(5, () -> extensionMotor.getConfigurator().apply(extensionConfig, 0.25));
 
     extensionAngle = extensionEncoder.getPosition();
@@ -108,9 +111,12 @@ public class ExtensionIOReal implements ExtensionIO{
 
 @Override
   public void updateInputs(ExtensionIOInputs inputs) {
+    var ExtensionEncoderStatus = 
+        BaseStatusSignal.refreshAll(
+          extensionAngle
+        );
     var ExtensionStatus =
         BaseStatusSignal.refreshAll(
-            extensionAngle,
             extensionStatorCurrent,
             extensionSupplyCurrent,
             extensionSpeed,
@@ -118,6 +124,8 @@ public class ExtensionIOReal implements ExtensionIO{
             extensionTemp);
 
 
+    inputs.extensionEncoderConnected = ExtensionEncoderStatus.isOK();
+    inputs.extensionAngle = extensionEncoder.getPosition().getValueAsDouble();
     inputs.extensionMotorConnected = ExtensionStatus.isOK();
     inputs.extensionStatorCurrent = extensionStatorCurrent.getValueAsDouble();
     inputs.extensionSupplyCurrent = extensionSupplyCurrent.getValueAsDouble();
@@ -133,7 +141,7 @@ public class ExtensionIOReal implements ExtensionIO{
 
    @Override
   public void setExtensionSetpoint(double position) {
-    extensionSetpoint = Units.degreesToRotations(position);
+    extensionSetpoint = position;
     extensionMotor.setControl(m_request_extension.withPosition(extensionSetpoint));
   }
 }

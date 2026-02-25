@@ -112,14 +112,14 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.FrontRight),
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
                         new ModuleIOTalonFX(TunerConstants.BackRight));
-                intake = new Intake(new IntakeIO() {});
-                extension = new Extension(new ExtensionIO() {});
+                intake = new Intake(new IntakeIOReal());
+                extension = new Extension(new ExtensionIOReal());
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         new VisionIOLimelight(camera0Name, drive::getRotation),
                         new VisionIOLimelight(camera1Name, drive::getRotation));
                 shooter = new Shooter(
-                        new ShooterIO() {});
+                        new ShooterIOReal());
                 indexer = new Indexer(new IndexerIOReal());
                 climber = new Climber(new ClimberIO() {});
                 break;
@@ -252,7 +252,7 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                                 extension))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(1), intake));
+                        Commands.run(() -> intake.setOutput(0.2), intake));
 
         driverController
                 .b() // retract intake
@@ -270,14 +270,22 @@ public class RobotContainer {
         //                         new AutoShootCommand(drive, indexer, shooter)));
         driverController.rightTrigger().whileTrue(Commands.run(() -> indexer.setThroughput(0.2, 0.2), indexer));
 
+        // driverController
+        //         .povRight()
+        //         .whileTrue(new DriveToPose(drive,
+        //                 AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)))));
+        // driverController
+        //         .povLeft()
+        //         .whileTrue(new DriveToPose(drive,
+        //                 AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)))));
+        
         driverController
-                .povRight()
-                .whileTrue(new DriveToPose(drive,
-                        AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)))));
+                .povUp()
+                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(5), shooter));
+
         driverController
-                .povLeft()
-                .whileTrue(new DriveToPose(drive,
-                        AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)))));
+                .povDown()
+                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter));
         // Reset gyro to 0° when RS and LS are pressed
         driverController
                 .rightStick()
