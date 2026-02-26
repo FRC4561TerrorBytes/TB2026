@@ -337,6 +337,10 @@ public class RobotContainer {
         climber.setIdleMode(NeutralModeValue.Coast);
     }
 
+    public void teleopEnter(){
+        climber.setClimberPosition(climber.getClimberPosition());
+    }
+
     private Command driverRumbleCommand() {
         return Commands.startEnd(
                 () -> {

@@ -29,6 +29,8 @@ private final Alert climberAlert = new Alert("Climber Disconnected.", AlertType.
 
 private TalonFXConfiguration climberConfig;
 
+private double climberSetpoint;
+
 public ClimberIOReal() {
     //Update 
     climberConfig = new TalonFXConfiguration();
@@ -75,7 +77,8 @@ public void updateInputs(ClimberIOInputs inputs) {
     var climberStatus = BaseStatusSignal.refreshAll(
         climberVelocity,
         climberVoltage,
-        climberCurrent
+        climberCurrent,
+        climberPosition
     );
 
         inputs.climberConnected = climberStatus.isOK();
@@ -84,6 +87,7 @@ public void updateInputs(ClimberIOInputs inputs) {
         inputs.climberVoltage = climberVoltage.getValueAsDouble();
         inputs.climberCurrent = climberCurrent.getValueAsDouble();
         inputs.climberPosition = climberPosition.getValueAsDouble();
+        inputs.climberSetpoint = this.climberSetpoint;
     }
 
     @Override
@@ -93,6 +97,7 @@ public void updateInputs(ClimberIOInputs inputs) {
 
     @Override
     public void setClimberPosition(double position) {
+        climberSetpoint = position;
         climberMotor.setControl(climberControl.withPosition(position));
     }
 
