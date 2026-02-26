@@ -50,7 +50,8 @@ public class ShooterIOReal implements ShooterIO {
     private final StatusSignal<Angle> hoodRelativePosition;
 
     private double hoodSetpoint;
-    private double flywheelSpeedSetpoint;
+    private double flywheelLeftSpeedSetpoint;
+    private double flywheelRightSpeedSetpoint;
 
     public ShooterIOReal () { 
         //constructor go brrrrrrr
@@ -201,7 +202,6 @@ public class ShooterIOReal implements ShooterIO {
         inputs.flywheelRightBottomConnected = flywheelRightBottomStatus.isOK();
         inputs.hoodConnected = hoodStatus.isOK();
 
-        inputs.flywheelSpeedSetpoint = flywheelSpeedSetpoint;
 
         //yiiiiipppppppppppppppppppppeeeeeeeeeeeeeeeeee - tyler
         inputs.flywheelLeftTopVelocity = flywheelLeftTopVelocity.getValueAsDouble();
@@ -210,6 +210,7 @@ public class ShooterIOReal implements ShooterIO {
         inputs.flywheelLeftBottomVelocity = flywheelLeftBottomVelocity.getValueAsDouble();
         inputs.flywheelLeftBottomVoltage = flywheelLeftBottomVoltage.getValueAsDouble();
         inputs.flywheelLeftBottomCurrent = flywheelLeftBottomCurrent.getValueAsDouble();
+        inputs.flywheelLeftSpeedSetpoint = flywheelLeftSpeedSetpoint;
 
         inputs.flywheelRightTopVelocity = flywheelRightTopVelocity.getValueAsDouble();
         inputs.flywheelRightTopVoltage = flywheelRightTopVoltage.getValueAsDouble();
@@ -217,6 +218,7 @@ public class ShooterIOReal implements ShooterIO {
         inputs.flywheelRightBottomVelocity = flywheelRightBottomVelocity.getValueAsDouble();
         inputs.flywheelRightBottomVoltage = flywheelRightBottomVoltage.getValueAsDouble();
         inputs.flywheelRightBottomCurrent = flywheelRightBottomCurrent.getValueAsDouble();
+        inputs.flywheelRightSpeedSetpoint = flywheelRightSpeedSetpoint;
 
         inputs.hoodVelocity = hoodVelocity.getValueAsDouble();
         inputs.hoodVoltage = hoodVoltage.getValueAsDouble();
@@ -234,11 +236,12 @@ public class ShooterIOReal implements ShooterIO {
     }
 
     public void setLeftFlywheelSpeed(double velocityRPS){
-        flywheelSpeedSetpoint = velocityRPS;
+        flywheelLeftSpeedSetpoint = velocityRPS;
         flywheelLeftTopMotor.setControl(flywheelLeftControl.withVelocity(velocityRPS));
     }
 
     public void setRightFlywheelSpeed(double velocityRPS){
+        flywheelRightSpeedSetpoint = velocityRPS;
         flywheelRightTopMotor.setControl(flywheelRightControl.withVelocity(velocityRPS));
     }
 

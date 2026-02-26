@@ -26,7 +26,8 @@ public interface ShooterIO {
         public double flywheelRightBottomVoltage = 0.0;
         public double flywheelRightBottomCurrent = 0.0;
 
-        public double flywheelSpeedSetpoint = 0.0;
+        public double flywheelLeftSpeedSetpoint = 0.0;
+        public double flywheelRightSpeedSetpoint = 0.0;
 
         public boolean hoodConnected = false;
         public double hoodVelocity = 0.0;
