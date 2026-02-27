@@ -163,9 +163,9 @@ public class RobotContainer {
         // OUT (FOR SIM)
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake));
+        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake).withTimeout(10.0));
         NamedCommands.registerCommand("shoot", Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                new AutoShootCommand(drive, indexer, shooter)));
+                new AutoShootCommand(drive, indexer, shooter).withTimeout(5.0)));
         // Make into the constant NOT DONE YET DONT RUN AAAAAAAAAAAAAA
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
 
