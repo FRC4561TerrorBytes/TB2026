@@ -25,19 +25,21 @@ public class DriveToPose extends Command {
   private Command pathCommand;
 
   private Pose2d targetPose;
+  private double tolerance;
   private boolean scoreBack = true;
 
   ProfiledPIDController xController =
-      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(2, 2));
+      new ProfiledPIDController(20, 0, 0, new TrapezoidProfile.Constraints(20, 20));
   ProfiledPIDController yController =
-      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(2, 2));
+      new ProfiledPIDController(20, 0, 0, new TrapezoidProfile.Constraints(20, 20));
   ProfiledPIDController thetaController =
-      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI));
+      new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI));
 
   /** Creates a new DriveToPose. */
-  public DriveToPose(Drive drive, Pose2d targetPose) {
+  public DriveToPose(Drive drive, Pose2d targetPose, double tolerance) {
     this.drive = drive;
     this.targetPose = targetPose;
+    this.tolerance = tolerance;
     addRequirements(drive);
   }
 
@@ -57,10 +59,10 @@ public class DriveToPose extends Command {
       pathCommand = null;
 
       xController.setGoal(targetPose.getX());
-      xController.setTolerance(0.07);
+      xController.setTolerance(tolerance);
       xController.reset(drive.getPose().getX());
       yController.setGoal(targetPose.getY());
-      yController.setTolerance(0.07);
+      yController.setTolerance(tolerance);
       yController.reset(drive.getPose().getY());
       thetaController.setGoal(targetPose.getRotation().getRadians());
       thetaController.setTolerance(Units.degreesToRadians(0.2));

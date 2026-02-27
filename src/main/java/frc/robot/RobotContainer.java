@@ -274,11 +274,11 @@ public class RobotContainer {
                 .whileTrue(
                         Commands.sequence(
                                 Commands.parallel(
-                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(2.6, 3.4, Rotation2d.fromDegrees(0)))), //right side of tower from driver perspective
+                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(2.6, 3.4, Rotation2d.fromDegrees(0)), 0.2)), //right side of tower from driver perspective
                                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
                                 ),
                                 Commands.parallel(
-                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)))), 
+                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)), 0.07)), 
                                         Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
                                 ),
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)

@@ -50,7 +50,6 @@ public class AllianceFlipUtil {
   }
 
   public static boolean shouldFlip() {
-    Logger.recordOutput("DS Present", DriverStation.getAlliance().get() == DriverStation.Alliance.Red);
     return DriverStation.getAlliance().isPresent()
         && DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
   }
