@@ -38,8 +38,8 @@ public final class Constants {
   }
 
   public static final int HOOD_ID = 34;
-  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 30;
-  public static final double HOOD_STATOR_CURRENT_LIMIT = 30;
+  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 6;
+  public static final double HOOD_STATOR_CURRENT_LIMIT = 6;
 
   public static final int FLYWHEEL_TOP_RIGHT_ID = 32;
   public static final int FLYWHEEL_BOTTOM_RIGHT_ID = 33;
@@ -62,8 +62,8 @@ public final class Constants {
   public static final double EXTENSION_EXTENDED_POSITION = 0.0;
   public static final double EXTENSION_RETRACTED_POSITION = 0.37;
 
-  public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
-  public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;
+  public static final int INDEXER_STATOR_CURRENT_LIMIT = 25;
+  public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 30;
   public static final int INDEXER_LEFT_MOTOR_ID = 21;
   public static final int INDEXER_RIGHT_MOTOR_ID = 22;
   

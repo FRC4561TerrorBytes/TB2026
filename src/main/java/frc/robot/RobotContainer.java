@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootCommand;
+import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
 import frc.robot.generated.TunerConstants;
@@ -224,8 +225,8 @@ public class RobotContainer {
         drive.setDefaultCommand(
                 DriveCommands.joystickDrive(
                         drive,
-                        () -> driverController.getLeftY(),
-                        () -> driverController.getLeftX(),
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
                         () -> -driverController.getRightX()));
 
         // intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
@@ -247,7 +248,7 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                                 extension))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.7), intake));
+                        Commands.run(() -> intake.setOutput(0.0), intake));
 
         driverController
                 .b() // retract intake
@@ -258,11 +259,12 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        driverController
-                .rightTrigger()
-                .whileTrue(
-                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                                new AutoShootCommand(drive, indexer, shooter)));
+        // driverController
+        //         .rightTrigger()
+        //         .whileTrue(
+        //                 Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+        //                         new AutoShootCommand(drive, indexer, shooter)));
+        driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
 
         driverController
                 .povRight()
@@ -287,25 +289,32 @@ public class RobotContainer {
         }));
         driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftY,
                 driverController::getLeftX, () -> snapRotation));
-        driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
+        //driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
 
         driverController.rightBumper()
                 .whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
         driverController.leftBumper().whileTrue(climber.climbDown());
 
+        driverController
+                .povUp()
+                .onTrue(Commands.runOnce(() -> shooter.nudge(0.1), shooter));
+        driverController
+                .povDown()
+                .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
+
         //OPERATOR CONTROLS
         operatorController
                 .povUp()
-                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(5), shooter));
+                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(9), shooter));
 
         operatorController
                 .povDown()
-                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter));
+                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(5), shooter));
 
         operatorController.povLeft().onTrue(climber.climbDown());
         operatorController.povRight().onTrue(climber.climbUp());
 
-        operatorController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(25), shooter));
+        operatorController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         operatorController.a().whileTrue(Commands.run(() -> indexer.setThroughput(0.3, 0.4), indexer));
 
 

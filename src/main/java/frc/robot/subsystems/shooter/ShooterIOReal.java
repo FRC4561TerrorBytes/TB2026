@@ -66,16 +66,16 @@ public class ShooterIOReal implements ShooterIO {
         flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         
         var flywheelLeftSlot0Config = flywheelConfig.Slot0;
-        flywheelLeftSlot0Config.kS = 0.5; // Add 0.25 V output to overcome static friction
+        flywheelLeftSlot0Config.kS = 0.4; // Add 0.25 V output to overcome static friction
         flywheelLeftSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
-        flywheelLeftSlot0Config.kA = 0.02; // An acceleration of 1 rps/s requires 0.01 V output
-        flywheelLeftSlot0Config.kP = 0.1; // An error of 1 rps results in 0.11 V output
-        flywheelLeftSlot0Config.kI = 0.0; // no output for integrated error
-        flywheelLeftSlot0Config.kD = 0.0; // no output for error derivative
+        flywheelLeftSlot0Config.kA = 0.23; // An acceleration of 1 rps/s requires 0.01 V output
+        flywheelLeftSlot0Config.kP = 0.6; // An error of 1 rps results in 0.11 V output
+        flywheelLeftSlot0Config.kI = 0.6; // no output for integrated error
+        flywheelLeftSlot0Config.kD = 0.01; // no output for error derivative
 
         var flywheelMotionMagicConfig = flywheelConfig.MotionMagic;
-        flywheelMotionMagicConfig.MotionMagicAcceleration = 10; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 10;
+        flywheelMotionMagicConfig.MotionMagicAcceleration = 50; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 30;
         flywheelMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -110,21 +110,27 @@ public class ShooterIOReal implements ShooterIO {
 
         hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         hoodConfig.CurrentLimits.SupplyCurrentLimit = Constants.HOOD_SUPPLY_CURRENT_LIMIT;
+
+        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10;
+        hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
         // hoodConfig.MotorOutput.
 
-        hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         var hoodSlot0Config = hoodConfig.Slot0;
         hoodSlot0Config.kS = 0.2; // Add 0.25 V output to overcome static friction
         hoodSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
-        hoodSlot0Config.kA = 0.02; // An acceleration of 1 rps/s requires 0.01 V output
-        hoodSlot0Config.kP = 0.00006; // An error of 1 rps results in 0.11 V output
-        hoodSlot0Config.kI = 0.15; // no output for integrated error
-        hoodSlot0Config.kD = 0.2; // no output for error derivative
+        hoodSlot0Config.kA = 0.05; // An acceleration of 1 rps/s requires 0.01 V output
+        hoodSlot0Config.kP = 0.26; // An error of 1 rps results in 0.11 V output
+        hoodSlot0Config.kI = 0.0; // no output for integrated error
+        hoodSlot0Config.kD = 0.0; // no output for error derivative
 
         var hoodMotionMagicConfig = hoodConfig.MotionMagic;
-        hoodMotionMagicConfig.MotionMagicAcceleration = 150; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        hoodMotionMagicConfig.MotionMagicCruiseVelocity = 75;
+        hoodMotionMagicConfig.MotionMagicAcceleration = 10; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        hoodMotionMagicConfig.MotionMagicCruiseVelocity = 10;
         hoodMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         hoodMotor.getConfigurator().apply(hoodConfig);

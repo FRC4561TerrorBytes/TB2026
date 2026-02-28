@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -45,12 +47,8 @@ public class Shooter extends SubsystemBase{
   private void setHoodAngleMap(){
     //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
+    hoodAngleMap.put(Units.inchesToMeters(240), 9.8);
 
-    hoodAngleMap.put(Units.inchesToMeters(41), 10.0);
-    hoodAngleMap.put(Units.inchesToMeters(67), 20.0);
-    hoodAngleMap.put(Units.inchesToMeters(76), 30.0);
-    hoodAngleMap.put(Units.inchesToMeters(81), 40.0);
-    hoodAngleMap.put(Units.inchesToMeters(96), 50.0);
     //HI MIKEY
   }
 
@@ -62,8 +60,17 @@ public class Shooter extends SubsystemBase{
     io.setHoodAngle(angle);
   }
 
+  public double getHoodAngle(){
+    return inputs.hoodRelativePosition;
+  }
+
+  @AutoLogOutput
   public boolean hoodAtSetpoint(){
-    return Math.abs(inputs.hoodRelativePosition - inputs.hoodSetpoint) < 0.3;
+    return Math.abs(inputs.hoodRelativePosition - inputs.hoodSetpoint) < 0.6;
+  }
+
+  public void nudge(double amount){
+      setHoodAngle(amount + getHoodAngle());
   }
 
   public void setFlywheelVoltage(double voltage) {
@@ -76,16 +83,18 @@ public class Shooter extends SubsystemBase{
     io.setRightFlywheelSpeed(velocityRPS);
   }
 
+  @AutoLogOutput(key = "Shooter/leftFlywheelUpToSpeed")
   public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
     return inputs.flywheelLeftTopVelocity >= (rotationsPerSecond*0.95);
   }
+  @AutoLogOutput(key = "Shooter/rightFlywheelUpToSpeed")
   public boolean rightFlywheelUpToSpeed(double rotationsPerSecond){
     return inputs.flywheelRightTopVelocity >= (rotationsPerSecond*0.95);
   }
 
   public void idleFlywheels(){
-    io.setLeftFlywheelVoltage(0.3);
-    io.setRightFlywheelVoltage(0.3);
+    io.setLeftFlywheelSpeed(20);
+    io.setRightFlywheelSpeed(20);
   }
   
 

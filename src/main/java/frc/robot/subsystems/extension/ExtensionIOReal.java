@@ -42,7 +42,6 @@ public class ExtensionIOReal implements ExtensionIO{
   private final StatusSignal<Temperature> extensionTemp;
 
   private double extensionSetpoint = 0.0;
-  private double extensionFeedForward = 0.0;
 
   private final MotionMagicVoltage m_request_extension = new MotionMagicVoltage(0);
   private final Alert extensionAlert = 
@@ -63,7 +62,7 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var cancoderConfig = new CANcoderConfiguration();
     cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    cancoderConfig.MagnetSensor.MagnetOffset = -0.334717 ;
+    cancoderConfig.MagnetSensor.MagnetOffset = -0.333496;
     tryUntilOk(5, () -> extensionEncoder.getConfigurator().apply(cancoderConfig, 0.25));
 
     var extensionConfig = new TalonFXConfiguration();
