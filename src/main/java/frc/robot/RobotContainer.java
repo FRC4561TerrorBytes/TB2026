@@ -258,12 +258,11 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        // driverController
-        //         .rightTrigger()
-        //         .whileTrue(
-        //                 Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-        //                         new AutoShootCommand(drive, indexer, shooter)));
-        driverController.rightTrigger().whileTrue(Commands.run(() -> indexer.setThroughput(0.2, 0.2), indexer));
+        driverController
+                .rightTrigger()
+                .whileTrue(
+                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+                                new AutoShootCommand(drive, indexer, shooter)));
 
         // driverController
         //         .povRight()

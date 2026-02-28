@@ -26,7 +26,8 @@ public class AutoShootCommand extends Command {
     
     @Override
     public void initialize() {
-        distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
+        //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
+        distanceToHub = drive.getDistanceToHub();
         shooter.setFlywheelSpeed(shootSpeedRPS);
     }
 
@@ -36,7 +37,7 @@ public class AutoShootCommand extends Command {
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
 
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS)){
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             indexer.setThroughput(0.5, 0.5);
         }
         else{

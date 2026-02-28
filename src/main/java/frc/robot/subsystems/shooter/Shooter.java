@@ -51,6 +51,7 @@ public class Shooter extends SubsystemBase{
     hoodAngleMap.put(Units.inchesToMeters(76), 30.0);
     hoodAngleMap.put(Units.inchesToMeters(81), 40.0);
     hoodAngleMap.put(Units.inchesToMeters(96), 50.0);
+    //HI MIKEY
   }
 
   public double interpolateHoodAngle(double distanceMeters){
@@ -59,6 +60,10 @@ public class Shooter extends SubsystemBase{
 
   public void setHoodAngle(double angle){
     io.setHoodAngle(angle);
+  }
+
+  public boolean hoodAtSetpoint(){
+    return Math.abs(inputs.hoodRelativePosition - inputs.hoodSetpoint) < 0.3;
   }
 
   public void setFlywheelVoltage(double voltage) {
