@@ -250,7 +250,10 @@ public class FieldConstants {
     public static final double lowRungHeight = Units.inchesToMeters(27.0);
     public static final double midRungHeight = Units.inchesToMeters(45.0);
     public static final double highRungHeight = Units.inchesToMeters(63.0);
-
+    public static final Translation2d leftClimbPoint = 
+        new Translation2d(1.6, 4.1);
+    public static final Translation2d rightClimbPoint = 
+        new Translation2d(1.6, 3.4);
     // Relevant reference points on alliance side
     public static final Translation2d centerPoint =
         new Translation2d(

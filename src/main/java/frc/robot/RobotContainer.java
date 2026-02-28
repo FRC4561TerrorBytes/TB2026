@@ -16,6 +16,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
+import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -275,7 +276,7 @@ public class RobotContainer {
                 .whileTrue(
                         Commands.sequence(
                                 Commands.parallel(
-                                        new DriveToPose(drive, () -> new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)), 0.2), //right side of tower from driver perspective
+                                        new DriveToPose(drive, () -> new Pose2d(FieldConstants.Tower.rightClimbPoint.getX(), FieldConstants.Tower.rightClimbPoint.getY(), Rotation2d.fromDegrees(0)), 0.2), //right side of tower from driver perspective
                                         Commands.sequence(
                                                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension),
                                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
@@ -284,14 +285,17 @@ public class RobotContainer {
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
                          ))
                 .onFalse(
-                        Commands.runOnce(() -> drive.stop(), drive)
+                        Commands.sequence(
+                                Commands.runOnce(() -> drive.stop(), drive),
+                                Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
+                        )
                 );
         driverController
                 .povLeft()
                 .whileTrue(
                         Commands.sequence(
                                 Commands.parallel(
-                                        new DriveToPose(drive, () -> new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)), 0.2), //right side of tower from driver perspective
+                                        new DriveToPose(drive, () -> new Pose2d(FieldConstants.Tower.leftClimbPoint.getX(), FieldConstants.Tower.leftClimbPoint.getY(), Rotation2d.fromDegrees(0)), 0.2), //right side of tower from driver perspective
                                         Commands.sequence(
                                                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension),
                                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
@@ -300,7 +304,10 @@ public class RobotContainer {
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
                          ))
                         .onFalse(
-                        Commands.runOnce(() -> drive.stop(), drive)
+                        Commands.sequence(
+                                Commands.runOnce(() -> drive.stop(), drive),
+                                Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
+                        )
                 );
         // Reset gyro to 0° when RS and LS are pressed
         driverController
