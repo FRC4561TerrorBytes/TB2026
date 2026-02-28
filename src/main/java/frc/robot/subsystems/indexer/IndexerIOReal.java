@@ -87,8 +87,8 @@ public class IndexerIOReal implements IndexerIO {
 
     var fuelKickerConfig = new TalonFXConfiguration();
     fuelKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
-    fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
+    fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.FUEL_KICKER_STATOR_CURRENT_LIMIT;
+    fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.FUEL_KICKER_SUPPLY_CURRENT_LIMIT;
     fuelKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     fuelKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     tryUntilOk(5, () -> fuelKickerMotor.getConfigurator().apply(fuelKickerConfig, 0.25));

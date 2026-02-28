@@ -62,13 +62,12 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionPIDConfig.kD = 0;
 
     var cancoderConfig = new CANcoderConfiguration();
-    cancoderConfig.MagnetSensor.withMagnetOffset(0);
     cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    cancoderConfig.MagnetSensor.MagnetOffset = 0.010986;
+    cancoderConfig.MagnetSensor.MagnetOffset = -0.334717 ;
     tryUntilOk(5, () -> extensionEncoder.getConfigurator().apply(cancoderConfig, 0.25));
 
     var extensionConfig = new TalonFXConfiguration();
-    extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    extensionConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     extensionConfig.Slot0 = extensionPIDConfig;
     extensionConfig.Feedback.FeedbackRemoteSensorID = extensionEncoder.getDeviceID();
     extensionConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;

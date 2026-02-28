@@ -247,7 +247,7 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                                 extension))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.2), intake));
+                        Commands.run(() -> intake.setOutput(0.7), intake));
 
         driverController
                 .b() // retract intake
