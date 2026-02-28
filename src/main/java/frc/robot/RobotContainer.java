@@ -264,16 +264,14 @@ public class RobotContainer {
                         Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
                                 new AutoShootCommand(drive, indexer, shooter)));
 
-        // driverController
-        //         .povRight()
-        //         .whileTrue(new DriveToPose(drive,
-        //                 AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)))));
-        // driverController
-        //         .povLeft()
-        //         .whileTrue(new DriveToPose(drive,
-        //                 AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)))));
-        
-        // Reset gyro to 0° when RS and LS are pressed
+        driverController
+                .povRight()
+                .whileTrue(new DriveToPose(drive,
+                        AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)))));
+        driverController
+                .povLeft()
+                .whileTrue(new DriveToPose(drive,
+                       AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)))));
         driverController
                 .rightStick()
                 .and(driverController.leftStick())
