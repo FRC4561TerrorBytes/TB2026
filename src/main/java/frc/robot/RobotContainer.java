@@ -282,7 +282,10 @@ public class RobotContainer {
                                         )
                                 ),
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
-                         ));
+                         ))
+                .onFalse(
+                        Commands.runOnce(() -> drive.stop(), drive)
+                );
         driverController
                 .povLeft()
                 .whileTrue(
@@ -295,7 +298,10 @@ public class RobotContainer {
                                         )
                                 ),
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
-                         ));
+                         ))
+                        .onFalse(
+                        Commands.runOnce(() -> drive.stop(), drive)
+                );
         // Reset gyro to 0° when RS and LS are pressed
         driverController
                 .rightStick()
