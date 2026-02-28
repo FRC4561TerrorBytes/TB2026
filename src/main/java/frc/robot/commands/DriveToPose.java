@@ -11,9 +11,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.CurrentUnit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.AllianceFlipUtil;
+
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -24,19 +29,20 @@ public class DriveToPose extends Command {
   private boolean seenEndTag;
   private Command pathCommand;
 
-  private Pose2d targetPose;
+  private Supplier <Pose2d> targetPose;
+  private Pose2d currentTarget;
   private double tolerance;
   private boolean scoreBack = true;
 
   ProfiledPIDController xController =
-      new ProfiledPIDController(20, 0, 0, new TrapezoidProfile.Constraints(20, 20));
+      new ProfiledPIDController(15, 0, 0, new TrapezoidProfile.Constraints(20, 20));
   ProfiledPIDController yController =
-      new ProfiledPIDController(20, 0, 0, new TrapezoidProfile.Constraints(20, 20));
+      new ProfiledPIDController(15, 0, 0, new TrapezoidProfile.Constraints(20, 20));
   ProfiledPIDController thetaController =
       new ProfiledPIDController(10, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI));
 
   /** Creates a new DriveToPose. */
-  public DriveToPose(Drive drive, Pose2d targetPose, double tolerance) {
+  public DriveToPose(Drive drive, Supplier <Pose2d> targetPose, double tolerance) {
     this.drive = drive;
     this.targetPose = targetPose;
     this.tolerance = tolerance;
@@ -47,24 +53,25 @@ public class DriveToPose extends Command {
   @Override
   public void initialize() {
     drive.stop();
+    currentTarget = targetPose.get();
+    currentTarget = AllianceFlipUtil.apply(currentTarget);
+    Logger.recordOutput("Auto Lineup/Target Pose", currentTarget);
 
-    Logger.recordOutput("Auto Lineup/Target Pose", targetPose);
-
-    if (drive.getPose().getTranslation().getDistance(targetPose.getTranslation()) > 1) {
+    if (drive.getPose().getTranslation().getDistance(currentTarget.getTranslation()) > 1) {
       pathCommand =
-          AutoBuilder.pathfindToPose(targetPose, new PathConstraints(1.5, 1, Math.PI, Math.PI), 0);
+          AutoBuilder.pathfindToPose(currentTarget, new PathConstraints(3, 2, Math.PI, Math.PI), 0);
 
       pathCommand.withName("DriveToPose").schedule();
     } else {
       pathCommand = null;
 
-      xController.setGoal(targetPose.getX());
+      xController.setGoal(currentTarget.getX());
       xController.setTolerance(tolerance);
       xController.reset(drive.getPose().getX());
-      yController.setGoal(targetPose.getY());
+      yController.setGoal(currentTarget.getY());
       yController.setTolerance(tolerance);
       yController.reset(drive.getPose().getY());
-      thetaController.setGoal(targetPose.getRotation().getRadians());
+      thetaController.setGoal(currentTarget.getRotation().getRadians());
       thetaController.setTolerance(Units.degreesToRadians(0.2));
       thetaController.reset(drive.getPose().getRotation().getRadians());
     }
@@ -80,9 +87,9 @@ public class DriveToPose extends Command {
       double rotSpeed = thetaController.calculate(drive.getPose().getRotation().getRadians());
 
       Logger.recordOutput("Auto Lineup/RunXVelocity", xSpeed);
-      Logger.recordOutput("Auto Lineup/TargetPoseX", targetPose.getX());
+      Logger.recordOutput("Auto Lineup/TargetPoseX", currentTarget.getX());
       Logger.recordOutput("Auto Lineup/RunYVelocity", ySpeed);
-      Logger.recordOutput("Auto Lineup/TargetPoseY", targetPose.getY());
+      Logger.recordOutput("Auto Lineup/TargetPoseY", currentTarget.getY());
       Logger.recordOutput("Auto Lineup/RunThetaVelocity", rotSpeed);
       // Hi Ethan :)
 
@@ -95,7 +102,7 @@ public class DriveToPose extends Command {
     Logger.recordOutput("TEST/score back", scoreBack);
     Logger.recordOutput(
         "TEST/target dist",
-        drive.getPose().getTranslation().getDistance(targetPose.getTranslation()));
+        drive.getPose().getTranslation().getDistance(currentTarget.getTranslation()));
     Logger.recordOutput("Auto Lineup/Seen Tag", seenEndTag);
     Logger.recordOutput("Auto Lineup/Tag ID", endTagId);
   }

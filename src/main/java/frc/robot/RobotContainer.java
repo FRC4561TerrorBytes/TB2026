@@ -24,6 +24,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -274,26 +275,24 @@ public class RobotContainer {
                 .whileTrue(
                         Commands.sequence(
                                 Commands.parallel(
-                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(2.6, 3.4, Rotation2d.fromDegrees(0))), 0.2), //right side of tower from driver perspective
-                                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
+                                        new DriveToPose(drive, () -> new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)), 0.2), //right side of tower from driver perspective
+                                        Commands.sequence(
+                                                Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension),
+                                                Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
+                                        )
                                 ),
-                                Commands.parallel(
-                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0))), 0.07), 
-                                        Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
-                                ,
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
-                         )));
+                         ));
         driverController
                 .povLeft()
                 .whileTrue(
                         Commands.sequence(
                                 Commands.parallel(
-                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(2.6, 4.1, Rotation2d.fromDegrees(0))), 0.2), //left side of tower from driver perspective
-                                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
-                                ),
-                                Commands.parallel(
-                                        new DriveToPose(drive, AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0))), 0.07), 
-                                        Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
+                                        new DriveToPose(drive, () -> new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)), 0.2), //right side of tower from driver perspective
+                                        Commands.sequence(
+                                                Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension),
+                                                Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION), climber)
+                                        )
                                 ),
                                 Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION), climber)
                          ));
