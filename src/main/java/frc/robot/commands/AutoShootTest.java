@@ -14,7 +14,7 @@ public class AutoShootTest extends Command {
     public double distanceToHub;
 
     public double targetAngle;
-    public double shootSpeedRPS = 70;
+    public double shootSpeedRPS = 68;
 
     public AutoShootTest(Indexer indexer, Shooter shooter) {
         this.indexer = indexer;
@@ -26,7 +26,7 @@ public class AutoShootTest extends Command {
     public void initialize() {
         //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
         shooter.setFlywheelSpeed(shootSpeedRPS);
-        shooter.setHoodAngle(4);
+        shooter.setHoodAngle(12);
     }
 
     @Override

@@ -47,6 +47,8 @@ public class Shooter extends SubsystemBase{
   private void setHoodAngleMap(){
     //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
+
+    hoodAngleMap.put(Units.inchesToMeters(130), 8.0);
     hoodAngleMap.put(Units.inchesToMeters(240), 9.8);
 
     //HI MIKEY

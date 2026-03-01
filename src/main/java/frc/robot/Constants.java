@@ -38,8 +38,8 @@ public final class Constants {
   }
 
   public static final int HOOD_ID = 34;
-  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 6;
-  public static final double HOOD_STATOR_CURRENT_LIMIT = 6;
+  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 10;
+  public static final double HOOD_STATOR_CURRENT_LIMIT = 10;
 
   public static final int FLYWHEEL_TOP_RIGHT_ID = 32;
   public static final int FLYWHEEL_BOTTOM_RIGHT_ID = 33;

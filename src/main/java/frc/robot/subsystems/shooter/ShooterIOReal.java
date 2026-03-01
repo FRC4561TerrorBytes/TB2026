@@ -70,7 +70,7 @@ public class ShooterIOReal implements ShooterIO {
         flywheelLeftSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
         flywheelLeftSlot0Config.kA = 0.23; // An acceleration of 1 rps/s requires 0.01 V output
         flywheelLeftSlot0Config.kP = 0.6; // An error of 1 rps results in 0.11 V output
-        flywheelLeftSlot0Config.kI = 0.6; // no output for integrated error
+        flywheelLeftSlot0Config.kI = 0.64; // no output for integrated error
         flywheelLeftSlot0Config.kD = 0.01; // no output for error derivative
 
         var flywheelMotionMagicConfig = flywheelConfig.MotionMagic;
@@ -114,18 +114,18 @@ public class ShooterIOReal implements ShooterIO {
         hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10;
+        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 12.3;
         hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
         // hoodConfig.MotorOutput.
 
-        hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         var hoodSlot0Config = hoodConfig.Slot0;
         hoodSlot0Config.kS = 0.2; // Add 0.25 V output to overcome static friction
         hoodSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
         hoodSlot0Config.kA = 0.05; // An acceleration of 1 rps/s requires 0.01 V output
-        hoodSlot0Config.kP = 0.26; // An error of 1 rps results in 0.11 V output
-        hoodSlot0Config.kI = 0.0; // no output for integrated error
+        hoodSlot0Config.kP = 1.2; // An error of 1 rps results in 0.11 V output
+        hoodSlot0Config.kI = 0.015; // no output for integrated error
         hoodSlot0Config.kD = 0.0; // no output for error derivative
 
         var hoodMotionMagicConfig = hoodConfig.MotionMagic;
