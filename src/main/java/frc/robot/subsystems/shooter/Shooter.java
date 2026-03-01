@@ -50,7 +50,7 @@ public class Shooter extends SubsystemBase{
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
 
     //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
-    
+
     hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0); //FLYWHEEL SPEED OF 68
 
     //HI MIKEY
@@ -63,6 +63,15 @@ public class Shooter extends SubsystemBase{
     }
     else{
       return hoodAngleMapClose.get(distanceMeters);
+    }
+  }
+
+  public double getFlywheelShootSpeed(double distanceMeters){
+    if(distanceMeters > 2){
+      return 68.0;
+    }
+    else{
+      return 40.0; //ARBITRARY HASNT BEEN TESTED
     }
   }
 
