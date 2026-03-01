@@ -21,7 +21,8 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterLeftBottomDisconnectedAlert;
   private final Alert shooterRightTopDisconnectedAlert;
   private final Alert shooterRightBottomDisconnectedAlert;
-  private InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
+  private InterpolatingDoubleTreeMap hoodAngleMapClose = new InterpolatingDoubleTreeMap();
+  private InterpolatingDoubleTreeMap hoodAngleMapFar = new InterpolatingDoubleTreeMap();
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -48,14 +49,21 @@ public class Shooter extends SubsystemBase{
     //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
 
-    hoodAngleMap.put(Units.inchesToMeters(130), 8.0);
-    hoodAngleMap.put(Units.inchesToMeters(240), 9.8);
+    //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
+    
+    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0); //FLYWHEEL SPEED OF 68
 
     //HI MIKEY
   }
 
   public double interpolateHoodAngle(double distanceMeters){
-    return hoodAngleMap.get(distanceMeters);
+    //2 IS ARITRARY DISTANCE
+    if(distanceMeters > 2){
+      return hoodAngleMapFar.get(distanceMeters);
+    }
+    else{
+      return hoodAngleMapClose.get(distanceMeters);
+    }
   }
 
   public void setHoodAngle(double angle){
