@@ -51,6 +51,11 @@ public class Shooter extends SubsystemBase{
 
     //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
 
+    hoodAngleMapClose.put(Units.inchesToMeters(62), 0.0);
+    hoodAngleMapClose.put(Units.inchesToMeters(71), 4.0);
+    hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
+    hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
+
     hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0); //FLYWHEEL SPEED OF 68
 
     //HI MIKEY
@@ -58,7 +63,7 @@ public class Shooter extends SubsystemBase{
 
   public double interpolateHoodAngle(double distanceMeters){
     //2 IS ARITRARY DISTANCE
-    if(distanceMeters > 2){
+    if(distanceMeters > Units.inchesToMeters(105)){
       return hoodAngleMapFar.get(distanceMeters);
     }
     else{
@@ -67,11 +72,11 @@ public class Shooter extends SubsystemBase{
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){
-    if(distanceMeters > 2){
+    if(distanceMeters > Units.inchesToMeters(105)){
       return 68.0;
     }
     else{
-      return 40.0; //ARBITRARY HASNT BEEN TESTED
+      return 52.0;
     }
   }
 

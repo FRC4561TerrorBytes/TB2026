@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
@@ -14,7 +16,7 @@ public class AutoShootTest extends Command {
     public double distanceToHub;
 
     public double targetAngle;
-    public double shootSpeedRPS = 68;
+    public double shootSpeedRPS = 52;
 
     public AutoShootTest(Indexer indexer, Shooter shooter) {
         this.indexer = indexer;
@@ -26,13 +28,14 @@ public class AutoShootTest extends Command {
     public void initialize() {
         //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
         shooter.setFlywheelSpeed(shootSpeedRPS);
-        shooter.setHoodAngle(0);
+        shooter.setHoodAngle(4);
     }
 
     @Override
     public void execute() {
-
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
+        Logger.recordOutput("LeftFlywheelUpToSpeed", shooter.leftFlywheelUpToSpeed(shootSpeedRPS));
+        Logger.recordOutput("RightFlywheelUpToSpeed", shooter.rightFlywheelUpToSpeed(shootSpeedRPS));
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             indexer.setThroughput(0.5, 0.5);
         }
         else{
