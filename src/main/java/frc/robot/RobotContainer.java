@@ -147,6 +147,7 @@ public class RobotContainer {
               new ShooterIO() {});
         indexer =
             new Indexer(new IndexerIO() {});
+        climber = new Climber(new ClimberIO() {});
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -281,15 +282,25 @@ public class RobotContainer {
 
     driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
     driverController.leftBumper().whileTrue(climber.climbDown());
-  }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
+        driverController
+                .b() // retract intake
+                .onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(0), extension));
+        driverController
+                .x()
+                .whileTrue(Commands.run(() -> drive.stopWithX()));
+        // Reset gyro to 0° when RS and LS are pressed
+        driverController
+                .rightStick()
+                .and(driverController.leftStick())
+                .onTrue(
+                        Commands.runOnce(
+                                () -> drive.setPose(
+                                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                                drive)
+                                .ignoringDisable(true));
+
   }
 
   public void autoExit(){
