@@ -57,6 +57,8 @@ public class Shooter extends SubsystemBase{
     hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
     hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
 
+    hoodAngleMapFar.put(Units.inchesToMeters(135), 8.5);
+
     hoodAngleMapFar.put(Units.inchesToMeters(200), 8.0);
     hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0);
   }
@@ -72,8 +74,8 @@ public class Shooter extends SubsystemBase{
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){
-    if(distanceMeters > Units.inchesToMeters(105)){
-      return 68.0;
+    if(distanceMeters > Units.inchesToMeters(120)){
+      return 58.0;
     }
     else{
       return 52.0;

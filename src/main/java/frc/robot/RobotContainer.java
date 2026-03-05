@@ -43,6 +43,7 @@ import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
+import frc.robot.commands.TrenchShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -262,12 +263,12 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        // driverController
-        //         .rightTrigger()
-        //         .whileTrue(
-        //                 Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-        //                         new AutoShootCommand(drive, indexer, shooter)));
-        driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
+        driverController
+                .rightTrigger()
+                .whileTrue(
+                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+                                new AutoShootCommand(drive, indexer, shooter)));
+        //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         driverController
                 .rightStick()
                 .and(driverController.leftStick())
@@ -309,8 +310,14 @@ public class RobotContainer {
         operatorController.leftTrigger().onTrue(
                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                         extension))
-                .onTrue(
-                        Commands.runOnce(() -> intake.setOutput(0.2), intake));
+                .toggleOnTrue((
+                        Commands.runOnce(() -> intake.setOutput(0.2), intake)));
+        
+        operatorController
+        .rightTrigger().whileTrue(
+                new TrenchShootCommand(drive, indexer, shooter)
+        );
+
         operatorController
                 .b() // retract intake
                 .onTrue(
