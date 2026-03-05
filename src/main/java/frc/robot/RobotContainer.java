@@ -229,7 +229,7 @@ public class RobotContainer {
                         () -> -driverController.getLeftX(),
                         () -> -driverController.getRightX()));
 
-        // intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
+        intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
         shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter)));
 
@@ -240,6 +240,9 @@ public class RobotContainer {
         //         .and(intakeExtendedTrigger)
         //         .and(() -> DriverStation.isTeleop())
         //         .whileTrue(driverRumbleCommand());
+
+        Trigger intakeExtendedTrigger = new Trigger(
+                () -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
 
         // DRIVER CONTROLS
         driverController
@@ -265,15 +268,6 @@ public class RobotContainer {
         //                 Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
         //                         new AutoShootCommand(drive, indexer, shooter)));
         driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
-
-        driverController
-                .povRight()
-                .whileTrue(new DriveToPose(drive,
-                        AllianceFlipUtil.apply(new Pose2d(1.6, 3.4, Rotation2d.fromDegrees(0)))));
-        driverController
-                .povLeft()
-                .whileTrue(new DriveToPose(drive,
-                       AllianceFlipUtil.apply(new Pose2d(1.6, 4.1, Rotation2d.fromDegrees(0)))));
         driverController
                 .rightStick()
                 .and(driverController.leftStick())
@@ -289,6 +283,8 @@ public class RobotContainer {
         }));
         driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftY,
                 driverController::getLeftX, () -> snapRotation));
+
+        driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         //driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
 
         driverController.rightBumper()
@@ -303,19 +299,11 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
         //OPERATOR CONTROLS
-        operatorController
-                .povUp()
-                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(9), shooter));
-
-        operatorController
-                .povDown()
-                .onTrue(Commands.runOnce(() -> shooter.setHoodAngle(5), shooter));
 
         operatorController.povLeft().onTrue(climber.climbDown());
         operatorController.povRight().onTrue(climber.climbUp());
 
-        operatorController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
-        operatorController.a().whileTrue(Commands.run(() -> indexer.setThroughput(0.3, 0.4), indexer));
+        operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
 
         operatorController.leftTrigger().onTrue(
@@ -344,7 +332,9 @@ public class RobotContainer {
     }
 
     public void teleopEnter(){
-        climber.setClimberPosition(climber.getClimberPosition());
+        if(climber.getClimberPosition() >= Constants.CLIMBER_DOWN_POSITION){
+            climber.setClimberPosition(Constants.CLIMBER_UP_POSITION);
+        }
     }
 
     private Command driverRumbleCommand() {

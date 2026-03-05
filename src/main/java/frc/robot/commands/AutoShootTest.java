@@ -16,7 +16,7 @@ public class AutoShootTest extends Command {
     public double distanceToHub;
 
     public double targetAngle;
-    public double shootSpeedRPS = 52;
+    public double shootSpeedRPS = 68;
 
     public AutoShootTest(Indexer indexer, Shooter shooter) {
         this.indexer = indexer;
@@ -28,15 +28,16 @@ public class AutoShootTest extends Command {
     public void initialize() {
         //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
         shooter.setFlywheelSpeed(shootSpeedRPS);
-        shooter.setHoodAngle(4);
+        shooter.setHoodAngle(8);
     }
 
     @Override
     public void execute() {
         Logger.recordOutput("LeftFlywheelUpToSpeed", shooter.leftFlywheelUpToSpeed(shootSpeedRPS));
         Logger.recordOutput("RightFlywheelUpToSpeed", shooter.rightFlywheelUpToSpeed(shootSpeedRPS));
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
-            indexer.setThroughput(0.5, 0.5);
+
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) &&shooter.hoodAtSetpoint()){
+            indexer.setThroughput(0.7, 0.6);
         }
         else{
             indexer.stop();

@@ -67,11 +67,11 @@ public class ShooterIOReal implements ShooterIO {
         
         var flywheelLeftSlot0Config = flywheelConfig.Slot0;
         flywheelLeftSlot0Config.kS = 0.4; // Add 0.25 V output to overcome static friction
-        flywheelLeftSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
+        flywheelLeftSlot0Config.kV = 0.23; // A velocity target of 1 rps results in 0.12 V output
         flywheelLeftSlot0Config.kA = 0.23; // An acceleration of 1 rps/s requires 0.01 V output
-        flywheelLeftSlot0Config.kP = 0.6; // An error of 1 rps results in 0.11 V output
+        flywheelLeftSlot0Config.kP = 0.65; // An error of 1 rps results in 0.11 V output
         flywheelLeftSlot0Config.kI = 0.64; // no output for integrated error
-        flywheelLeftSlot0Config.kD = 0.01; // no output for error derivative
+        flywheelLeftSlot0Config.kD = 0.02; // no output for error derivative
 
         var flywheelMotionMagicConfig = flywheelConfig.MotionMagic;
         flywheelMotionMagicConfig.MotionMagicAcceleration = 50; // Target acceleration of 400 rps/s (0.25 seconds to max)

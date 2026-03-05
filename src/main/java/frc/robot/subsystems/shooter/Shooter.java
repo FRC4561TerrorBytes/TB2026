@@ -52,13 +52,13 @@ public class Shooter extends SubsystemBase{
     //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
 
     hoodAngleMapClose.put(Units.inchesToMeters(62), 0.0);
+    hoodAngleMapClose.put(Units.inchesToMeters(55), 2.0);
     hoodAngleMapClose.put(Units.inchesToMeters(71), 4.0);
     hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
     hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
 
-    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0); //FLYWHEEL SPEED OF 68
-
-    //HI MIKEY
+    hoodAngleMapFar.put(Units.inchesToMeters(200), 8.0);
+    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0);
   }
 
   public double interpolateHoodAngle(double distanceMeters){
@@ -109,11 +109,11 @@ public class Shooter extends SubsystemBase{
 
   @AutoLogOutput(key = "Shooter/leftFlywheelUpToSpeed")
   public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
-    return Math.abs(inputs.flywheelLeftTopVelocity - rotationsPerSecond) < 3.0;
+    return Math.abs(inputs.flywheelLeftTopVelocity - rotationsPerSecond) < 6.0;
   }
   @AutoLogOutput(key = "Shooter/rightFlywheelUpToSpeed")
   public boolean rightFlywheelUpToSpeed(double rotationsPerSecond){
-    return Math.abs(inputs.flywheelRightTopVelocity - rotationsPerSecond) < 3.0;
+    return Math.abs(inputs.flywheelRightTopVelocity - rotationsPerSecond) < 6.0;
   }
 
   public void idleFlywheels(){
