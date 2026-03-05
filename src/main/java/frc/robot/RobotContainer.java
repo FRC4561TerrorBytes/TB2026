@@ -182,6 +182,9 @@ public class RobotContainer {
                 new AutoShootCommand(drive, indexer, shooter).withTimeout(5.0)));
         // Make into the constant NOT DONE YET DONT RUN AAAAAAAAAAAAAA
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
+        NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
+        NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
+        //YOU'RE WELCOME TEA
 
         // Set up SysId routines
         autoChooser.addOption(
