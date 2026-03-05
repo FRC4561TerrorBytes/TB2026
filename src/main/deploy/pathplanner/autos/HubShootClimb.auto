@@ -15,6 +15,12 @@
           "data": {
             "pathName": "ShootClimb"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbfull"
+          }
         }
       ]
     }

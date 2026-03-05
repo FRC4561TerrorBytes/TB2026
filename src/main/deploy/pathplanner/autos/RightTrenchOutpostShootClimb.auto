@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "climbprep"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "RightTrenchOutpost"
@@ -20,6 +26,12 @@
           "type": "path",
           "data": {
             "pathName": "OutpostShootClimb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbfull"
           }
         }
       ]

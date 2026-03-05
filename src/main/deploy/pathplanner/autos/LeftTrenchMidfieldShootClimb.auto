@@ -19,6 +19,12 @@
         {
           "type": "named",
           "data": {
+            "name": "climbprep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "shoot"
           }
         },
@@ -26,6 +32,12 @@
           "type": "path",
           "data": {
             "pathName": "climbFromLeftShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbfull"
           }
         }
       ]
