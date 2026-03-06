@@ -73,6 +73,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.AllianceFlipUtil;
+import frc.robot.util.RobotVisualizer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
