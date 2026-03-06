@@ -24,13 +24,13 @@ public class Shoot extends Command {
   /**
    * Shoots forward pretty much, auto makes it aim at bump and shoot.
    */
-  public Shoot(Drive drive, Indexer indexer, Shooter shooter, double flyWheelRPS, double hoodAngle) {
+  public Shoot(Indexer indexer, Shooter shooter, double flyWheelRPS, double hoodAngle) {
     this.hoodAngle = hoodAngle;
     this.flyWheelRPS = flyWheelRPS;
     this.drive = drive;
     this.indexer = indexer;
     this.shooter = shooter;
-    addRequirements(drive, indexer, shooter);
+    addRequirements(indexer, shooter);
   }
 
   @Override
