@@ -116,5 +116,5 @@
   "splits":[0]
  },
  "events":[
-   {"name":"climbprep", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.1 s", "val":0.1}}, "event":{"type":"named", "data":{"name":"climbprep"}}}]
+   {"name":"climbprep", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"climbprep"}}}]
 }
