@@ -18,7 +18,7 @@ public interface ClimberIO {
     public double climberVoltage = 0.0;
     public double climberCurrent = 0.0;
     public double climberPosition = 0.0;
-
+    public double climberSetpoint = 0.0;
 }
 
 /** Updates the set of loggable inputs. */
