@@ -37,6 +37,14 @@ public class FieldConstants {
   public static final double fieldLength = AprilTagLayoutType.OFFICIAL.getLayout().getFieldLength();
   public static final double fieldWidth = AprilTagLayoutType.OFFICIAL.getLayout().getFieldWidth();
 
+  public static class PassingPoints {
+ 
+    // all in meters
+    //The point that the robot will aim at to pass the balls on the red
+    public static final Translation2d leftPoint = new Translation2d(4.5,2.5);
+    public static final Translation2d rightPoint = new Translation2d(4.5,5.5);
+
+  }
   /**
    * Officially defined and relevant vertical lines found on the field (defined by X-axis offset)
    */

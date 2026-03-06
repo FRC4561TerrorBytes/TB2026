@@ -45,6 +45,7 @@ import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TrenchShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -319,6 +320,14 @@ public class RobotContainer {
 
         operatorController.povLeft().onTrue(climber.climbDown());
         operatorController.povRight().onTrue(climber.climbUp());
+
+        operatorController
+                .y()
+                .whileTrue(new Shoot(indexer, shooter, 40, 6));
+
+        operatorController
+                .x()
+                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 40, 6)));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
