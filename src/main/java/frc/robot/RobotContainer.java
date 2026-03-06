@@ -43,7 +43,7 @@ import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
-import frc.robot.commands.PassToAlliance;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TrenchShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -309,11 +309,11 @@ public class RobotContainer {
 
         operatorController
                 .y()
-                .whileTrue(new PassToAlliance(drive, indexer, shooter));
+                .whileTrue(new Shoot(drive, indexer, shooter, 40, 6));
 
         operatorController
                 .x()
-                .whileTrue(Commands.sequence(drive.alignToAngle(()-> drive.getRotationToPass()), new PassToAlliance(drive, indexer, shooter)));
+                .whileTrue(Commands.sequence(drive.alignToAngle(()-> drive.getRotationToPass()), new Shoot(drive, indexer, shooter, 40, 6)));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 

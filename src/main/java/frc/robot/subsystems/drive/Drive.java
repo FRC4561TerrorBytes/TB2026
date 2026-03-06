@@ -54,7 +54,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.commands.PassToAlliance;
+import frc.robot.commands.Shoot;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -476,7 +476,7 @@ public class Drive extends SubsystemBase {
           rightRedPoint[0]-getPose().getX(),
           rightRedPoint[1]-getPose().getY()
         );
-        
+
       } else {
 
         return new Rotation2d(
