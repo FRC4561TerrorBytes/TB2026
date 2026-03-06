@@ -29,12 +29,10 @@ private final Alert climberAlert = new Alert("Climber Disconnected.", AlertType.
 
 private TalonFXConfiguration climberConfig;
 
-private double climberSetpoint;
-
 public ClimberIOReal() {
     //Update 
     climberConfig = new TalonFXConfiguration();
-    climberConfig.CurrentLimits.SupplyCurrentLimitEnable = !true;
+    climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     climberConfig.CurrentLimits.SupplyCurrentLimit = Constants.CLIMBER_SUPPLY_CURRENT_LIMIT;
     climberConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     climberConfig.CurrentLimits.StatorCurrentLimit = Constants.CLIMBER_STATOR_CURRENT_LIMIT;
@@ -50,8 +48,7 @@ public ClimberIOReal() {
     climberSlot0Config.kD = 0.0; // no output for error derivative
 
     var leftMotionMagicConfig = climberConfig.MotionMagic;
-    leftMotionMagicConfig.MotionMagicAcceleration = 100; // Target acceleration of 400 rps/s (0.25 seconds to max)
-    leftMotionMagicConfig.MotionMagicCruiseVelocity = 100;
+    leftMotionMagicConfig.MotionMagicAcceleration = 10; // Target acceleration of 400 rps/s (0.25 seconds to max)
     leftMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
     climberMotor.getConfigurator().apply(climberConfig);
@@ -69,7 +66,6 @@ public ClimberIOReal() {
             );
 
     ParentDevice.optimizeBusUtilizationForAll(climberMotor);
-    climberMotor.setPosition(0);
 }
 
 @Override
@@ -77,8 +73,7 @@ public void updateInputs(ClimberIOInputs inputs) {
     var climberStatus = BaseStatusSignal.refreshAll(
         climberVelocity,
         climberVoltage,
-        climberCurrent,
-        climberPosition
+        climberCurrent
     );
 
         inputs.climberConnected = climberStatus.isOK();
@@ -87,7 +82,6 @@ public void updateInputs(ClimberIOInputs inputs) {
         inputs.climberVoltage = climberVoltage.getValueAsDouble();
         inputs.climberCurrent = climberCurrent.getValueAsDouble();
         inputs.climberPosition = climberPosition.getValueAsDouble();
-        inputs.climberSetpoint = this.climberSetpoint;
     }
 
     @Override
@@ -97,7 +91,6 @@ public void updateInputs(ClimberIOInputs inputs) {
 
     @Override
     public void setClimberPosition(double position) {
-        climberSetpoint = position;
         climberMotor.setControl(climberControl.withPosition(position));
     }
 

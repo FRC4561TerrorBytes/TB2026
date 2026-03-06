@@ -1,7 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -23,8 +21,7 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterLeftBottomDisconnectedAlert;
   private final Alert shooterRightTopDisconnectedAlert;
   private final Alert shooterRightBottomDisconnectedAlert;
-  private InterpolatingDoubleTreeMap hoodAngleMapClose = new InterpolatingDoubleTreeMap();
-  private InterpolatingDoubleTreeMap hoodAngleMapFar = new InterpolatingDoubleTreeMap();
+  private InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -51,59 +48,28 @@ public class Shooter extends SubsystemBase{
     //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
 
-    //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
-
-    hoodAngleMapClose.put(Units.inchesToMeters(62), 0.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(55), 2.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(71), 4.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
-
-    hoodAngleMapFar.put(Units.inchesToMeters(135), 8.5);
-
-    hoodAngleMapFar.put(Units.inchesToMeters(200), 8.0);
-    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0);
+    hoodAngleMap.put(Units.inchesToMeters(41), 10.0);
+    hoodAngleMap.put(Units.inchesToMeters(67), 20.0);
+    hoodAngleMap.put(Units.inchesToMeters(76), 30.0);
+    hoodAngleMap.put(Units.inchesToMeters(81), 40.0);
+    hoodAngleMap.put(Units.inchesToMeters(96), 50.0);
   }
 
   public double interpolateHoodAngle(double distanceMeters){
-    //2 IS ARITRARY DISTANCE
-    if(distanceMeters > Units.inchesToMeters(105)){
-      return hoodAngleMapFar.get(distanceMeters);
-    }
-    else{
-      return hoodAngleMapClose.get(distanceMeters);
-    }
-  }
-
-  public double getFlywheelShootSpeed(double distanceMeters){
-    if(distanceMeters > Units.inchesToMeters(120)){
-      return 58.0;
-    }
-    else{
-      return 52.0;
-    }
+    return hoodAngleMap.get(distanceMeters);
   }
 
   public void setHoodAngle(double angle){
     io.setHoodAngle(angle);
   }
 
-  public double getHoodAngle(){
-    return inputs.hoodRelativePosition;
-  }
-
-  @AutoLogOutput
   public boolean hoodAtSetpoint(){
-    return Math.abs(inputs.hoodRelativePosition - inputs.hoodSetpoint) < 0.6;
+    return Math.abs(inputs.hoodRelativePosition - inputs.hoodSetpoint) < 0.3;
   }
 
-  public void nudge(double amount){
-      setHoodAngle(amount + getHoodAngle());
-  }
-
-  public void setFlywheelVoltage(double voltage) {
-    io.setLeftFlywheelVoltage(voltage);
-    io.setRightFlywheelVoltage(voltage);
+  public void setFlywheelVoltage(double speed) {
+    io.setLeftFlywheelVoltage(speed);
+    io.setRightFlywheelVoltage(speed);
   }
 
   public void setFlywheelSpeed(double velocityRPS){
@@ -111,18 +77,16 @@ public class Shooter extends SubsystemBase{
     io.setRightFlywheelSpeed(velocityRPS);
   }
 
-  @AutoLogOutput(key = "Shooter/leftFlywheelUpToSpeed")
   public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
-    return Math.abs(inputs.flywheelLeftTopVelocity - rotationsPerSecond) < 6.0;
+    return inputs.flywheelLeftTopVelocity >= (rotationsPerSecond*0.95);
   }
-  @AutoLogOutput(key = "Shooter/rightFlywheelUpToSpeed")
   public boolean rightFlywheelUpToSpeed(double rotationsPerSecond){
-    return Math.abs(inputs.flywheelRightTopVelocity - rotationsPerSecond) < 6.0;
+    return inputs.flywheelRightTopVelocity >= (rotationsPerSecond*0.95);
   }
 
   public void idleFlywheels(){
-    io.setLeftFlywheelSpeed(20);
-    io.setRightFlywheelSpeed(20);
+    io.setLeftFlywheelVoltage(0.3);
+    io.setRightFlywheelVoltage(0.3);
   }
   
 

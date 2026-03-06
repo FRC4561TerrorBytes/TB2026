@@ -16,20 +16,17 @@ public class AutoShootCommand extends Command {
     public double distanceToHub;
 
     public double targetAngle;
-    public double shootSpeedRPS = 70;
+    public double shootSpeedRPS = 5;
 
     public AutoShootCommand(Drive drive, Indexer indexer, Shooter shooter) {
         this.drive = drive;
         this.indexer = indexer;
         this.shooter = shooter;
-        addRequirements(drive, indexer, shooter);
     }
     
     @Override
     public void initialize() {
-        //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
-        distanceToHub = drive.getDistanceToHub();
-        shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
+        distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
         shooter.setFlywheelSpeed(shootSpeedRPS);
     }
 
@@ -40,7 +37,7 @@ public class AutoShootCommand extends Command {
         shooter.setHoodAngle(hoodAngleInterpolated);
 
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
-            indexer.setThroughput(0.6, 0.7);
+            indexer.setThroughput(0.5, 0.5);
         }
         else{
             indexer.stop();

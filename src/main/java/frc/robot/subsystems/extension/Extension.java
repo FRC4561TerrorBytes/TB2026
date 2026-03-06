@@ -33,6 +33,7 @@ public class Extension extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
     io.updateInputs(inputs);
     Logger.processInputs("Extension/Io", inputs);
     ExtensionDisconnectedAlert.set(!inputs.extensionMotorConnected);

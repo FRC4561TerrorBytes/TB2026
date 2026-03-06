@@ -431,15 +431,10 @@ public class Drive extends SubsystemBase {
       AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getY()-getPose().getY()
     );
   }
-
-  @AutoLogOutput
-  public double getDistanceToHub(){
-    return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
-  }
   // Field relative drive command using two joysticks (controlling linear and angular velocities).
   public Command alignToAngle(
     Supplier<Rotation2d> targetAngle){
-      double kP = 0.075;
+      double kP = 0.1;
       double kI = 0;
       double kD = 0;
       double toleranceDegrees = 1.5;

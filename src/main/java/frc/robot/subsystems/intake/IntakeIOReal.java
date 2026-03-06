@@ -43,6 +43,9 @@ public class IntakeIOReal implements IntakeIO{
 
      var intakeConfig = new TalonFXConfiguration();
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    intakeConfig.Feedback.RotorToSensorRatio = 0.5;
+    intakeConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    intakeConfig.ClosedLoopGeneral.ContinuousWrap = false;
     intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     intakeConfig.CurrentLimits.StatorCurrentLimit = Constants.INTAKE_STATOR_CURRENT_LIMIT;
     intakeConfig.CurrentLimits.SupplyCurrentLimit = Constants.INTAKE_SUPPLY_CURRENT_LIMIT;
