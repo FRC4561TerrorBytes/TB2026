@@ -9,6 +9,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -36,15 +37,19 @@ public class Climber extends SubsystemBase{
     }
 
     public void setClimberPosition(double position) {
-            io.setClimberPosition(position);
+        io.setClimberPosition(position);
+    }
+
+    public double getClimberPosition(){
+        return inputs.climberPosition;
     }
     
     public Command climbUp(){    
-        return this.runOnce(() -> setClimberPosition(Constants.CLIMBER_UP_POSITION));
+        return Commands.runOnce(() -> setClimberPosition(Constants.CLIMBER_UP_POSITION));
     }
 
     public Command climbDown(){    
-        return this.runOnce(() -> setClimberPosition(Constants.CLIMBER_DOWN_POSITION));
+        return Commands.runOnce(() -> setClimberPosition(Constants.CLIMBER_DOWN_POSITION));
     }
     public void setIdleMode(NeutralModeValue idleMode) {
         io.setIdleMode(idleMode);

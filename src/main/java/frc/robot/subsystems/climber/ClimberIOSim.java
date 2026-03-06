@@ -5,4 +5,18 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public class ClimberIOSim implements ClimberIO{}
+public class ClimberIOSim implements ClimberIO{
+    /*
+
+       O  |       | 
+          |   X   | O
+    ---------------------
+          |       | O
+        X |    O  | 
+    ---------------------
+          |       | 
+        X |   O   | X
+
+    -Sam & Tyler 💵 = 😊 💸
+*/
+}

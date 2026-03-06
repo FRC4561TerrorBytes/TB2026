@@ -40,7 +40,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootCommand;
+import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveToPose;
+import frc.robot.commands.TrenchShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -70,12 +73,16 @@ import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.RobotVisualizer;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -90,218 +97,265 @@ public class RobotContainer {
   private final Leds leds;
   private final Climber climber;
 
-  Rotation2d snapRotation;
-  // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
+    Rotation2d snapRotation;
+    // Controller
+    private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+    // Dashboard inputs
+    private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
-        intake = 
-            new Intake(new IntakeIOReal());
-        extension = 
-            new Extension(new ExtensionIOReal());
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation),
-                new VisionIOLimelight(camera1Name, drive::getRotation));
-        shooter =
-            new Shooter(
-              new ShooterIOReal());
-        indexer =
-            new Indexer(new IndexerIOReal());
-        climber =
-            new Climber(new ClimberIOReal());
-        break;
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = 
-            new Intake(new IntakeIOSim()); //for actual code use intake IO sim
-        extension = 
-            new Extension(new ExtensionIOSim());
-        shooter =
-            new Shooter(
-              new ShooterIO() {});
-        indexer =
-            new Indexer(new IndexerIO() {});
-        climber =
-            new Climber(new ClimberIOSim());
-        break;
-      default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-        vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = 
-            new Intake(new IntakeIO() {});
-        extension = 
-            new Extension(new ExtensionIO() {});
-        shooter =
-            new Shooter(
-              new ShooterIO() {});
-        indexer =
-            new Indexer(new IndexerIO() {});
-        climber =
-            new Climber(new ClimberIO() {});
-        break;
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                drive = new Drive(
+                        new GyroIOPigeon2(),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft),
+                        new ModuleIOTalonFX(TunerConstants.BackRight));
+                intake = new Intake(new IntakeIOReal());
+                extension = new Extension(new ExtensionIOReal());
+                vision = new Vision(
+                        drive::addVisionMeasurement,
+                        new VisionIOLimelight(camera0Name, drive::getRotation),
+                        new VisionIOLimelight(camera1Name, drive::getRotation));
+                shooter = new Shooter(
+                        new ShooterIOReal());
+                indexer = new Indexer(new IndexerIOReal());
+                climber = new Climber(new ClimberIOReal());
+                break;
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                drive = new Drive(
+                        new GyroIO() {
+                        },
+                        new ModuleIOSim(TunerConstants.FrontLeft),
+                        new ModuleIOSim(TunerConstants.FrontRight),
+                        new ModuleIOSim(TunerConstants.BackLeft),
+                        new ModuleIOSim(TunerConstants.BackRight));
+                vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
+                }, new VisionIO() {
+                });
+                intake = new Intake(new IntakeIO() {
+                }); // for actual code use intake IO sim
+                extension = new Extension(new ExtensionIO() {
+                });
+                shooter = new Shooter(
+                        new ShooterIO() {
+                        });
+                indexer = new Indexer(new IndexerIO() {
+                });
+                climber = new Climber(new ClimberIO() {
+                });
+                break;
+            default:
+                // Replayed robot, disable IO implementations
+                drive = new Drive(
+                        new GyroIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        });
+                vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
+                }, new VisionIO() {
+                });
+                intake = new Intake(new IntakeIO() {
+                });
+                extension = new Extension(new ExtensionIO() {
+                });
+                shooter = new Shooter(
+                        new ShooterIO() {
+                        });
+                indexer = new Indexer(new IndexerIO() {
+                });
+                climber = new Climber(new ClimberIO() {
+                });
+                break;
+        }
+
+        // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT
+        // OUT (FOR SIM)
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+         autoChooser.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        /*
+         * autoChooser.addOption(
+         * "Drive Simple FF Characterization",
+         * DriveCommands.feedforwardCharacterization(drive));
+         * autoChooser.addOption(
+         * "Drive SysId (Quasistatic Forward)",
+         * drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+         * autoChooser.addOption(
+         * "Drive SysId (Quasistatic Reverse)",
+         * drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+         * autoChooser.addOption(
+         * "Drive SysId (Dynamic Forward)",
+         * drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+         * autoChooser.addOption(
+         * "Drive SysId (Dynamic Reverse)",
+         * drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+         */
+        autoChooser.addOption("Leave and Stop",
+                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-1, 0, 0)), drive).withTimeout(4));
+
+        SmartDashboard.putData(CommandScheduler.getInstance());
+
+        // Configure the button bindings
+        configureButtonBindings();
     }
 
-    // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT OUT (FOR SIM)
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-    autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    /*
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        */
-    autoChooser.addOption("Leave and Stop", Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive).withTimeout(4));
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
 
-    SmartDashboard.putData(CommandScheduler.getInstance());
+    private void configureButtonBindings() {
+        // Default command, normal field-relative drive
+        drive.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drive,
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
+                        () -> -driverController.getRightX()));
 
-    RobotVisualizer.initialize(extension, shooter);
-    // Configure the button bindings
-    configureButtonBindings();
-  }
+        intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
+        indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter)));
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  
-  private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
-            
-    intake.setDefaultCommand(
-        Commands.run( () -> intake.setOutput(0), intake));
+        //TRIGGERS
+        //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
 
-    indexer.setDefaultCommand(
-      Commands.run(() -> indexer.stop(), indexer));
+        // bumpPositionTrigger
+        //         .and(intakeExtendedTrigger)
+        //         .and(() -> DriverStation.isTeleop())
+        //         .whileTrue(driverRumbleCommand());
 
-        // Trigger
-    Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
-    Trigger intakeExtendedTrigger = new Trigger(() -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
+        Trigger intakeExtendedTrigger = new Trigger(
+                () -> extension.extensionSetpoint() == Constants.EXTENSION_EXTENDED_POSITION);
+
+        // DRIVER CONTROLS
+        driverController
+                .leftTrigger() // extend and run intake
+                .onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+                                extension))
+                .toggleOnTrue(
+                        Commands.run(() -> intake.setOutput(0.8), intake));
+
+        driverController
+                .b() // retract intake
+                .onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
+                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+        driverController
+                .x()
+                .whileTrue(Commands.run(() -> drive.stopWithX()));
+
+        driverController
+                .rightTrigger()
+                .whileTrue(
+                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+                                new AutoShootCommand(drive, indexer, shooter)));
+        //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
+        driverController
+                .rightStick()
+                .and(driverController.leftStick())
+                .onTrue(
+                        Commands.runOnce(
+                                () -> drive.setPose(
+                                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                                drive)
+                                .ignoringDisable(true));
+
+        driverController.a().onTrue(Commands.runOnce(() -> {
+            snapRotation = drive.snap45();
+        }));
+        driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftY,
+                driverController::getLeftX, () -> snapRotation));
+
+        driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
+        //driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
+
+        driverController.rightBumper()
+                .whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
+        driverController.leftBumper().whileTrue(climber.climbDown());
+
+        driverController
+                .povUp()
+                .onTrue(Commands.runOnce(() -> shooter.nudge(0.1), shooter));
+        driverController
+                .povDown()
+                .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
+
+        //OPERATOR CONTROLS
+
+        operatorController.povLeft().onTrue(climber.climbDown());
+        operatorController.povRight().onTrue(climber.climbUp());
+
+        operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
 
-    bumpPositionTrigger
-    .and(intakeExtendedTrigger)
-    .and(() -> DriverStation.isTeleop())
-    .whileTrue(driverRumbleCommand());
-    indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-    shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
-    // Triggers
-
-    // Driver Controls
-    driverController
-        .leftTrigger() //extend and run intake
-        .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension)
-        ) 
-        .toggleOnTrue(
-            Commands.run(() -> intake.setOutput(1), intake)
+        operatorController.leftTrigger().onTrue(
+                Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+                        extension))
+                .toggleOnTrue((
+                        Commands.runOnce(() -> intake.setOutput(0.2), intake)));
+        
+        operatorController
+        .rightTrigger().whileTrue(
+                new TrenchShootCommand(drive, indexer, shooter)
         );
 
-    driverController
-        .b() //retract intake
-        .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
-        );
-    driverController
-        .x() 
-        .whileTrue(Commands.run(()-> drive.stopWithX()));
+        operatorController
+                .b() // retract intake
+                .onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
+                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+    }
 
-    driverController 
-        .rightTrigger()
-        .whileTrue(
-            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-            new AutoShootCommand(drive, indexer, shooter))
-        );
-    // Reset gyro to 0° when RS and LS are pressed
-    driverController
-        .rightStick()
-        .and(driverController.leftStick())
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-    
-    driverController.a().onTrue(Commands.runOnce(() -> {snapRotation = drive.snap45();}));
-    driverController.a().whileTrue(DriveCommands.joystickDriveAtAngle(drive, driverController::getLeftX, driverController::getLeftY, () -> snapRotation));
-    driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return autoChooser.get();
+    }
 
+    public void autoExit() {
+        climber.setIdleMode(NeutralModeValue.Coast);
+    }
 
-    driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
-    driverController.leftBumper().whileTrue(climber.climbDown());
-  }
+    public void teleopEnter(){
+        if(climber.getClimberPosition() >= Constants.CLIMBER_DOWN_POSITION){
+            climber.setClimberPosition(Constants.CLIMBER_UP_POSITION);
+        }
+    }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
-
-  public void autoExit(){
-    climber.setIdleMode(NeutralModeValue.Coast);
-  }
-
-  private Command driverRumbleCommand() {
-    return Commands.startEnd(
-        () -> {
-          driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-          Logger.recordOutput("RobotContainer/Rumbling", true);
-            },
-        () -> {
-          driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
-          Logger.recordOutput("RobotContainer/Rumbling", false);
-        });
-  }
+    private Command driverRumbleCommand() {
+        return Commands.startEnd(
+                () -> {
+                    driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+                    Logger.recordOutput("RobotContainer/Rumbling", true);
+                },
+                () -> {
+                    driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+                    Logger.recordOutput("RobotContainer/Rumbling", false);
+                });
+    }
 }

@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.units.AngularMomentumUnit;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -67,6 +68,7 @@ public class IndexerIOReal implements IndexerIO {
     indexerLeftConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
     indexerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     indexerLeftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    indexerLeftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     tryUntilOk(5, () -> indexerLeftMotor.getConfigurator().apply(indexerLeftConfig, 0.25));
 
     indexerLeftCurrent = indexerLeftMotor.getStatorCurrent();
@@ -85,8 +87,8 @@ public class IndexerIOReal implements IndexerIO {
 
     var fuelKickerConfig = new TalonFXConfiguration();
     fuelKickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
-    fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
+    fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.FUEL_KICKER_STATOR_CURRENT_LIMIT;
+    fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.FUEL_KICKER_SUPPLY_CURRENT_LIMIT;
     fuelKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     fuelKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     tryUntilOk(5, () -> fuelKickerMotor.getConfigurator().apply(fuelKickerConfig, 0.25));
