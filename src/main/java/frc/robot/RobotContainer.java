@@ -211,6 +211,7 @@ public class RobotContainer {
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
+        RobotVisualizer.initialize(extension, shooter);
         // Configure the button bindings
         configureButtonBindings();
     }
