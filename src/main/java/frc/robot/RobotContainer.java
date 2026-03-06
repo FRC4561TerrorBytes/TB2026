@@ -43,6 +43,7 @@ import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
+import frc.robot.commands.PassToAlliance;
 import frc.robot.commands.TrenchShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
@@ -209,6 +210,7 @@ public class RobotContainer {
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
+        RobotVisualizer.initialize(extension, shooter);
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -304,6 +306,14 @@ public class RobotContainer {
 
         operatorController.povLeft().onTrue(climber.climbDown());
         operatorController.povRight().onTrue(climber.climbUp());
+
+        operatorController
+                .y()
+                .whileTrue(new PassToAlliance(drive, indexer, shooter));
+
+        operatorController
+                .x()
+                .whileTrue(Commands.sequence(drive.alignToAngle(()-> drive.getRotationToPass()), new PassToAlliance(drive, indexer, shooter)));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 

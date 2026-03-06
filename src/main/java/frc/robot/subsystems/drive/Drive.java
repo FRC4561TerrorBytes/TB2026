@@ -54,6 +54,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.commands.PassToAlliance;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.AllianceFlipUtil;
@@ -435,6 +436,55 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput
   public double getDistanceToHub(){
     return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
+  }
+
+  // all in meters
+  //The point that the robot will aim at to pass the balls on the blue
+  public double[] leftBluePoint = {4.5,2.5};
+  public double[] rightBluePoint = {4.5,5.5};
+
+  //The point that the robot will aim at to pass the balls on the red
+  public double[] leftRedPoint = {12,2.5};
+  public double[] rightRedPoint = {12,5.5};
+
+  @AutoLogOutput
+  public Rotation2d getRotationToPass(){
+
+    if(DriverStation.getAlliance().get() == Alliance.Red){
+
+      if(getPose().getTranslation().getDistance( new Translation2d(rightRedPoint[0],rightRedPoint[1])) 
+      < getPose().getTranslation().getDistance( new Translation2d(leftRedPoint[0],leftRedPoint[1]))){
+
+        return new Rotation2d(
+          rightRedPoint[0]-getPose().getX(),
+          rightRedPoint[1]-getPose().getY()
+        );
+      } else {
+
+        return new Rotation2d(
+          leftRedPoint[0]-getPose().getX(),
+          leftRedPoint[1]-getPose().getY()
+        );
+      }
+
+    } else {
+
+      if(getPose().getTranslation().getDistance( new Translation2d(rightRedPoint[0],rightRedPoint[1])) 
+      < getPose().getTranslation().getDistance( new Translation2d(leftRedPoint[0],leftRedPoint[1]))){
+
+        return new Rotation2d(
+          rightRedPoint[0]-getPose().getX(),
+          rightRedPoint[1]-getPose().getY()
+        );
+        
+      } else {
+
+        return new Rotation2d(
+          leftRedPoint[0]-getPose().getX(),
+          leftRedPoint[1]-getPose().getY()
+        );
+      }
+    }
   }
   // Field relative drive command using two joysticks (controlling linear and angular velocities).
   public Command alignToAngle(
