@@ -84,12 +84,6 @@ import frc.robot.util.RobotVisualizer;
  * the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of
  * the robot (including
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -192,7 +186,6 @@ public class RobotContainer {
         // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT
         // OUT (FOR SIM)
         // Set up auto routines
-        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake).withTimeout(10.0));
         NamedCommands.registerCommand("shoot", Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
                 new AutoShootCommand(drive, indexer, shooter).withTimeout(5.0)));
@@ -200,6 +193,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         //YOU'RE WELCOME TEA
 
         // Set up SysId routines
@@ -229,7 +223,7 @@ public class RobotContainer {
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
-    RobotVisualizer.initialize(extension, shooter);
+        RobotVisualizer.initialize(extension, shooter);
         // Configure the button bindings
         configureButtonBindings();
     }

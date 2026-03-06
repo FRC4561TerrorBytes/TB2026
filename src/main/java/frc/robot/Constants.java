@@ -50,7 +50,6 @@ public final class Constants {
   public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
 
   public static final int INTAKE_ID = 41;
-  public static final double INTAKE_GEAR_RATIO = 0;
   public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 20;
   public static final double INTAKE_STATOR_CURRENT_LIMIT = 45;
   
