@@ -438,54 +438,25 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
   }
 
-  // all in meters
-  //The point that the robot will aim at to pass the balls on the blue
-  public double[] leftBluePoint = {4.5,2.5};
-  public double[] rightBluePoint = {4.5,5.5};
-
-  //The point that the robot will aim at to pass the balls on the red
-  public double[] leftRedPoint = {12,2.5};
-  public double[] rightRedPoint = {12,5.5};
-
   @AutoLogOutput
   public Rotation2d getRotationToPass(){
 
-    if(DriverStation.getAlliance().get() == Alliance.Red){
-
-      if(getPose().getTranslation().getDistance( new Translation2d(rightRedPoint[0],rightRedPoint[1])) 
-      < getPose().getTranslation().getDistance( new Translation2d(leftRedPoint[0],leftRedPoint[1]))){
+      if(getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.PassingPoints.leftPoint)) 
+      > getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.PassingPoints.rightPoint))){
 
         return new Rotation2d(
-          rightRedPoint[0]-getPose().getX(),
-          rightRedPoint[1]-getPose().getY()
+          AllianceFlipUtil.apply(FieldConstants.PassingPoints.rightPoint).getX()-getPose().getX(),
+          AllianceFlipUtil.apply(FieldConstants.PassingPoints.rightPoint).getY()-getPose().getY()
         );
       } else {
 
         return new Rotation2d(
-          leftRedPoint[0]-getPose().getX(),
-          leftRedPoint[1]-getPose().getY()
+          AllianceFlipUtil.apply(FieldConstants.PassingPoints.leftPoint).getX()-getPose().getX(),
+          AllianceFlipUtil.apply(FieldConstants.PassingPoints.leftPoint).getY()-getPose().getY()
         );
       }
-
-    } else {
-
-      if(getPose().getTranslation().getDistance( new Translation2d(rightBluePoint[0],rightBluePoint[1])) 
-      < getPose().getTranslation().getDistance( new Translation2d(leftBluePoint[0],leftBluePoint[1]))){
-
-        return new Rotation2d(
-          rightBluePoint[0]-getPose().getX(),
-          rightBluePoint[1]-getPose().getY()
-        );
-
-      } else {
-
-        return new Rotation2d(
-          leftBluePoint[0]-getPose().getX(),
-          leftBluePoint[1]-getPose().getY()
-        );
-      }
-    }
   }
+
   // Field relative drive command using two joysticks (controlling linear and angular velocities).
   public Command alignToAngle(
     Supplier<Rotation2d> targetAngle){
