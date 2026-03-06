@@ -469,19 +469,19 @@ public class Drive extends SubsystemBase {
 
     } else {
 
-      if(getPose().getTranslation().getDistance( new Translation2d(rightRedPoint[0],rightRedPoint[1])) 
-      < getPose().getTranslation().getDistance( new Translation2d(leftRedPoint[0],leftRedPoint[1]))){
+      if(getPose().getTranslation().getDistance( new Translation2d(rightBluePoint[0],rightBluePoint[1])) 
+      < getPose().getTranslation().getDistance( new Translation2d(leftBluePoint[0],leftBluePoint[1]))){
 
         return new Rotation2d(
-          rightRedPoint[0]-getPose().getX(),
-          rightRedPoint[1]-getPose().getY()
+          rightBluePoint[0]-getPose().getX(),
+          rightBluePoint[1]-getPose().getY()
         );
 
       } else {
 
         return new Rotation2d(
-          leftRedPoint[0]-getPose().getX(),
-          leftRedPoint[1]-getPose().getY()
+          leftBluePoint[0]-getPose().getX(),
+          leftBluePoint[1]-getPose().getY()
         );
       }
     }
