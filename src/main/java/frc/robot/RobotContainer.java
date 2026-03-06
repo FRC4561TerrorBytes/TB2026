@@ -24,6 +24,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -39,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
@@ -185,15 +187,25 @@ public class RobotContainer {
         // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT
         // OUT (FOR SIM)
         // Set up auto routines
+        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake).withTimeout(10.0));
+        NamedCommands.registerCommand("shoot", Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+                new AutoShootCommand(drive, indexer, shooter).withTimeout(5.0)));
+        // Make into the constant NOT DONE YET DONT RUN AAAAAAAAAAAAAA
+        NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
+        NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
+        NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-        autoChooser.addOption("Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-         autoChooser.addOption("Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        //YOU'RE WELCOME TEA
+
+        // Set up SysId routines
+        autoChooser.addOption(
+                "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
         /*
          * autoChooser.addOption(
          * "Drive Simple FF Characterization",
          * DriveCommands.feedforwardCharacterization(drive));
          * autoChooser.addOption(
-         * "Drive SysId (Quasistatic Forward)",
+         * "Drive SysId (Quasistatic Forward)",2
          * drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
          * autoChooser.addOption(
          * "Drive SysId (Quasistatic Reverse)",
@@ -205,8 +217,10 @@ public class RobotContainer {
          * "Drive SysId (Dynamic Reverse)",
          * drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
          */
-        autoChooser.addOption("Leave and Stop",
-                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-1, 0, 0)), drive).withTimeout(4));
+        autoChooser.addOption(
+                "LeaveAndStop",
+                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
+                        .withTimeout(4));
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
