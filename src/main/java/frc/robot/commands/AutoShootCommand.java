@@ -47,17 +47,16 @@ public class AutoShootCommand extends Command {
         //getting hood angle from the table with interpolation
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
-        shooter.setFlywheelSpeed(shootSpeedRPS);
 
-        //double time = System.currentTimeMillis();
+        double time = System.currentTimeMillis();
 
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             
             indexer.setThroughput(0.6, 0.7);
-            // if(startTime - time> 1000){
-            //     new AgitateBallsCommand(extension, intake);
-            //     startTime = System.currentTimeMillis();
-            // }
+            if(startTime - time > 1000){
+                 new AgitateBallsCommand(extension, intake);
+                 startTime = System.currentTimeMillis();
+            }
         }
         else{
             indexer.stop();
