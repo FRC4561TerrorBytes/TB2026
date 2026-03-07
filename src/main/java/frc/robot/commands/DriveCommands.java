@@ -76,8 +76,8 @@ public class DriveCommands {
       DoubleSupplier omegaSupplier) {
     return Commands.run(
         () -> {
-          double x = xSupplier.getAsDouble();
-          double y = ySupplier.getAsDouble();
+          double x = (xSupplier.getAsDouble() * xSupplier.getAsDouble()) * Math.signum(xSupplier.getAsDouble());
+          double y = (ySupplier.getAsDouble() * ySupplier.getAsDouble()) * Math.signum(ySupplier.getAsDouble());
 
           // Get linear velocity
           Translation2d linearVelocity = getLinearVelocityFromJoysticks(x, y);
