@@ -243,9 +243,9 @@ public class RobotContainer {
         drive.setDefaultCommand(
                 DriveCommands.joystickDrive(
                         drive,
-                        () -> Math.pow(-driverController.getLeftY(), 2),
-                        () -> Math.pow(-driverController.getLeftX(), 2),
-                        () -> Math.pow(-driverController.getRightX(), 2)));
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
+                        () -> -driverController.getRightX()));
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
