@@ -21,6 +21,7 @@ public class AutoShootCommand extends Command {
     public Intake intake;
     public Extension extension;
     public double distanceToHub;
+    public double startTime;
 
     public double targetAngle;
     public double shootSpeedRPS = 70;
@@ -31,6 +32,7 @@ public class AutoShootCommand extends Command {
         this.shooter = shooter;
         this.extension = extension;
         this.intake = intake;
+        startTime = System.currentTimeMillis();
         addRequirements(drive, indexer, shooter);
     }
     
@@ -48,15 +50,9 @@ public class AutoShootCommand extends Command {
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
 
-        double time = System.currentTimeMillis();
-
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             
             indexer.setThroughput(0.6, 0.7);
-            if(startTime - time > 1000){
-                 new AgitateBallsCommand(extension, intake);
-                 startTime = System.currentTimeMillis();
-            }
         }
         else{
             indexer.stop();
