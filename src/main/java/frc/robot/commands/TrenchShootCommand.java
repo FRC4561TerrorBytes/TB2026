@@ -15,7 +15,7 @@ public class TrenchShootCommand extends Command {
     public Shooter shooter;
     public double distanceToHub;
 
-    public double targetAngle = 8.5;
+    public double targetAngle = 5.5;
     public double shootSpeedRPS = 58;
 
     public TrenchShootCommand(Drive drive, Indexer indexer, Shooter shooter) {
