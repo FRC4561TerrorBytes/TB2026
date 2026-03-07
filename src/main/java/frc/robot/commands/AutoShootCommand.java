@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
@@ -53,10 +55,10 @@ public class AutoShootCommand extends Command {
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             
             indexer.setThroughput(0.6, 0.7);
-            if(startTime - time> 1000){
-                new AgitateBallsCommand(extension, intake);
-                startTime = System.currentTimeMillis();
-            }
+            // if(startTime - time> 1000){
+            //     new AgitateBallsCommand(extension, intake);
+            //     startTime = System.currentTimeMillis();
+            // }
         }
         else{
             indexer.stop();

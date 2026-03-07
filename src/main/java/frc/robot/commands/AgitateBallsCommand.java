@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
@@ -16,6 +18,7 @@ import frc.robot.subsystems.intake.Intake;
 public class AgitateBallsCommand extends SequentialCommandGroup {
   /** Creates a new AgitateBallsCommand. */
   public AgitateBallsCommand(Extension extension, Intake intake) {
+    //Logger.recordOutput("Agitating",true);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -26,6 +29,7 @@ public class AgitateBallsCommand extends SequentialCommandGroup {
       Commands.run(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
         extension),
       Commands.waitSeconds(0.5)
+      //Logger.recordOutput("Agitating",false)
     );
   }
 }
