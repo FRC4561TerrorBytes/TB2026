@@ -284,6 +284,7 @@ public class RobotContainer {
                 .rightTrigger()
                 .whileTrue(
                         Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+                                Commands.run(() -> drive.stopWithX()),
                                 new AutoShootCommand(drive, indexer, shooter, extension, intake)));
         //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         driverController
