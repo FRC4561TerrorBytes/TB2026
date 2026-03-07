@@ -189,7 +189,7 @@ public class RobotContainer {
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake).withTimeout(10.0));
         NamedCommands.registerCommand("shoot", Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                new AutoShootCommand(drive, indexer, shooter, extension, intake).withTimeout(5.0)));
+                new AutoShootCommand(drive, indexer, shooter, extension, intake).withTimeout(9.0)));
         // Make into the constant NOT DONE YET DONT RUN AAAAAAAAAAAAAA
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
