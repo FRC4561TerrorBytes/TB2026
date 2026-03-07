@@ -49,6 +49,7 @@ public class AutoShootCommand extends Command {
         //getting hood angle from the table with interpolation
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
+        shooter.setFlywheelSpeed(shooter.getFlywheelShootSpeed(hoodAngleInterpolated));
 
         double time = System.currentTimeMillis();
 
