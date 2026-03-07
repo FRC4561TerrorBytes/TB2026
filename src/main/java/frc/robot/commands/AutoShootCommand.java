@@ -40,7 +40,6 @@ public class AutoShootCommand extends Command {
         distanceToHub = drive.getDistanceToHub();
         shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
         shooter.setFlywheelSpeed(shootSpeedRPS);
-        startTime = System.currentTimeMillis();
     }
 
     @Override
