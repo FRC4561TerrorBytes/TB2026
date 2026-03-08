@@ -266,10 +266,18 @@ public class RobotContainer {
         driverController
                 .leftTrigger() // extend and run intake
                 .onTrue(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
-                                extension))
+                        Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+                                extension), Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake))))
                 .toggleOnTrue(
                         Commands.run(() -> intake.setOutput(0.8), intake));
+        
+        // driverController
+        //         .leftTrigger() // extend and run intake
+        //         .onTrue(
+        //                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+        //                         extension))
+        //         .toggleOnTrue(
+        //                 Commands.run(() -> intake.setOutput(0.8), intake));
 
         driverController
                 .b() // retract intake
@@ -321,8 +329,10 @@ public class RobotContainer {
 
         //OPERATOR CONTROLS
 
-        operatorController.povLeft().onTrue(climber.climbDown());
-        operatorController.povRight().onTrue(climber.climbUp());
+        operatorController.povLeft().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
+                                extension), climber.climbDown()));
+        operatorController.povRight().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
+                                extension), climber.climbUp()));
 
         operatorController
                 .y()
