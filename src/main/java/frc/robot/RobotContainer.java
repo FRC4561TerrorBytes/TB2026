@@ -336,7 +336,7 @@ public class RobotContainer {
 
         operatorController
                 .y()
-                .whileTrue(new Shoot(indexer, shooter, 40, 6));
+                .whileTrue(new Shoot(indexer, shooter, 40, 9));
 
         operatorController
                 .x()
