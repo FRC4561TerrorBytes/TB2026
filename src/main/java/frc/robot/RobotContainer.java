@@ -336,11 +336,11 @@ public class RobotContainer {
 
         operatorController
                 .y()
-                .whileTrue(new Shoot(indexer, shooter, 40, 9));
+                .whileTrue(new Shoot(indexer, shooter, 40, 10));
 
         operatorController
                 .x()
-                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 40, 6)));
+                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 40, 10)));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
