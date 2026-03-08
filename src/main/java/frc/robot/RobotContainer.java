@@ -266,8 +266,8 @@ public class RobotContainer {
         driverController
                 .leftTrigger() // extend and run intake
                 .onTrue(
-                        Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
-                                extension), Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake))))
+                        Commands.sequence(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)),Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+                                extension)))
                 .toggleOnTrue(
                         Commands.run(() -> intake.setOutput(0.8), intake));
         
