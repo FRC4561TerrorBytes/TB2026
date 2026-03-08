@@ -72,8 +72,8 @@ public final class Constants {
   public static final int FUEL_KICKER_SUPPLY_CURRENT_LIMIT = 25;
 
   public static final int CLIMBER_ID = 50;
-  public static final int CLIMBER_STATOR_CURRENT_LIMIT = 70;
-  public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 80;
+  public static final int CLIMBER_STATOR_CURRENT_LIMIT = 140;
+  public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 160;
   public static final double CLIMBER_UP_POSITION = 276.0;
   public static final double CLIMBER_DOWN_POSITION = 58.0;
 }
