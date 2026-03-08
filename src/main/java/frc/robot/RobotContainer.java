@@ -197,6 +197,7 @@ public class RobotContainer {
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         //YOU'RE WELCOME TEA
 
+        
         // Set up SysId routines
         autoChooser.addOption(
                 "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
