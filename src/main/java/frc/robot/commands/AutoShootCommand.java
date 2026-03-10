@@ -44,11 +44,10 @@ public class AutoShootCommand extends Command {
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
 
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
-            
+        if (shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             indexer.setThroughput(0.6, 0.7);
         }
-        else{
+        else {
             indexer.stop();
         }
     }
