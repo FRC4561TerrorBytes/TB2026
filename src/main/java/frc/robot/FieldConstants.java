@@ -45,6 +45,7 @@ public class FieldConstants {
     public static final Translation2d rightPoint = new Translation2d(4.5,5.5);
 
   }
+
   /**
    * Officially defined and relevant vertical lines found on the field (defined by X-axis offset)
    */

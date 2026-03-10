@@ -40,9 +40,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoAlignAndClimb;
 import frc.robot.commands.AutoShootAndMoveCommand;
-import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
 import frc.robot.commands.DriveCommands;
@@ -285,7 +283,7 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(
-                        Commands.sequence( new AutoShootAndMoveCommand(drive, indexer, shooter, extension, intake, ()-> driverController.getLeftX(),  ()-> driverController.getLeftY(), ()-> drive.getRotationToHubWithVelocity())));
+                         Commands.parallel(new AutoShootAndMoveCommand(drive, indexer, shooter), DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY(), ()-> driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())));
         
         // driverController
         //         .rightTrigger()
@@ -329,8 +327,8 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
         driverController
-                .povRight()
-                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension), new AutoAlignAndClimb(drive,climber)));
+                .leftStick()
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension), climber.climbUp() ));
 
         //OPERATOR CONTROLS
 

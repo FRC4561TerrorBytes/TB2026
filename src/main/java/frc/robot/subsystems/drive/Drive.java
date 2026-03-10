@@ -16,11 +16,13 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.swerve.jni.SwerveJNI.ModuleState;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -325,6 +327,15 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
   private ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  @AutoLogOutput
+  public double getModulesAvgDriveCurrent(){
+    double total = 0;
+    for(int i = 0; i < modules.length; i++){
+      total += modules[0].getCurrent();
+    }
+    return total/modules.length;
   }
 
   /** Returns the position of each module in radians. */

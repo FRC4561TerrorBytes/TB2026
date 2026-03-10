@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive.*;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.extension.Extension;
@@ -29,86 +30,34 @@ public class AutoShootAndMoveCommand extends Command {
     public Drive drive;
     public Indexer indexer;
     public Shooter shooter;
-    public Intake intake;
-    public Extension extension;
     public double distanceToHub;
-    public double startTime;
-    public DoubleSupplier xSupplier;
-    public DoubleSupplier ySupplier;
-    public Supplier<Rotation2d> angleSupplier;
 
     public double targetAngle;
     public double shootSpeedRPS;
 
-    ProfiledPIDController angleController =
-        new ProfiledPIDController(
-            60,
-            0,
-            0.6,
-            new TrapezoidProfile.Constraints(8, 20)
-        );
-
-    public AutoShootAndMoveCommand(Drive drive, Indexer indexer, Shooter shooter, Extension extension, Intake intake, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Supplier<Rotation2d> angleSupplier) {
+    public AutoShootAndMoveCommand(Drive drive, Indexer indexer, Shooter shooter) {
         this.drive = drive;
         this.indexer = indexer;
         this.shooter = shooter;
-        this.extension = extension;
-        this.intake = intake;
-        this.ySupplier = xSupplier;
-        this.xSupplier = ySupplier;
-        this.angleSupplier = angleSupplier;
-        startTime = System.currentTimeMillis();
-        angleController.enableContinuousInput(-Math.PI, Math.PI);
-        addRequirements(drive, indexer, shooter);
+        addRequirements(indexer, shooter);
     }
     
     @Override
-    public void initialize() {
-        angleController.reset(drive.getRotation().getRadians());
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
 
-        Logger.recordOutput("RobotTargetAimPose", angleSupplier.get().getDegrees());
+        Logger.recordOutput("RobotTargetAimPose",drive.getRotationToHubWithVelocity().getDegrees());
         Logger.recordOutput("RobotTargetActualPose", drive.getRotation().getDegrees());
-        
-    // Construct command
-              // Get linear velocity
-              double x = -(xSupplier.getAsDouble()*xSupplier.getAsDouble()) * Math.signum(xSupplier.getAsDouble());
-              double y = -(ySupplier.getAsDouble()*ySupplier.getAsDouble()) * Math.signum(ySupplier.getAsDouble());
 
-              Translation2d linearVelocity =
-                  DriveCommands.getLinearVelocityFromJoysticks(x, y);
-
-              // Calculate angular speed
-              double omega =
-                  angleController.calculate(
-                      drive.getRotation().getRadians(), angleSupplier.get().getRadians());
-
-              // Convert to field relative speeds & send command
-              ChassisSpeeds speeds =
-                  new ChassisSpeeds(
-                      linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                      linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                      omega);
-              boolean isFlipped =
-                  DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
-              drive.runVelocity(
-                  ChassisSpeeds.fromFieldRelativeSpeeds(
-                      speeds,
-                      isFlipped
-                          ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getRotation()));
-
+        distanceToHub = drive.getDistanceFromHubWithVelocity();
 
         //getting hood angle from the table with interpolation
-        distanceToHub = drive.getDistanceFromHubWithVelocity();
-        double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
+        double hoodAngleInterpolated = Shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
         distanceToHub = drive.getDistanceToHub();
-        shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
+        shootSpeedRPS = Shooter.getFlywheelShootSpeed(distanceToHub);
         shooter.setFlywheelSpeed(shootSpeedRPS);
 
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
