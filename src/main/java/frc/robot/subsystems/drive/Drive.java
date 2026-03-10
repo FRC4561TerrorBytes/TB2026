@@ -42,10 +42,12 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,6 +61,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 
@@ -439,8 +442,63 @@ public class Drive extends SubsystemBase {
   }
 
   @AutoLogOutput
+  public Rotation2d getRotationToHubWithVelocity(){
+    return new Rotation2d(
+      AllianceFlipUtil.apply(getPointOfHubWithVelocity()).getX()-getPose().getX(),
+      AllianceFlipUtil.apply(getPointOfHubWithVelocity()).getY()-getPose().getY()
+    );
+  }
+
+  public Translation2d getPointOfHubWithVelocity(){
+
+    //final Translation2d hub = new Translation2d(AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX(),FieldConstants.Hub.topCenterPoint.getY());
+    final Translation2d hub = new Translation2d(FieldConstants.Hub.topCenterPoint.getX(),FieldConstants.Hub.topCenterPoint.getY());
+
+    ChassisSpeeds speeds = getChassisSpeeds().fromRobotRelativeSpeeds(getChassisSpeeds(),getRotation());
+    double vX = speeds.vxMetersPerSecond;
+    double vY = speeds.vyMetersPerSecond;
+
+    if(!AllianceFlipUtil.shouldFlip()){
+      vX *= -1;
+      vY *= -1;
+    }
+
+    Translation2d tempHub = hub;
+
+    for (int i = 0; i < 10; i++){
+      double time = Shooter.interpolateShooterTime(getDistanceToHub(tempHub));
+
+      tempHub = hub.plus(new Translation2d(vX * time, vY * time));
+    }
+
+    return tempHub;
+  }
+
+  @AutoLogOutput
+  public double getDistanceFromHubWithVelocity(){
+
+    ChassisSpeeds speeds = getChassisSpeeds();
+    double vX = speeds.vxMetersPerSecond;
+    double dist = getDistanceToHub();
+    double tempDist = dist;
+
+    for (int i = 0; i < 10; i++){
+      double time = Shooter.interpolateShooterTime(tempDist);
+
+      tempDist = dist + (vX * time);
+    }
+
+    return tempDist;
+  }
+
+  @AutoLogOutput
   public double getDistanceToHub(){
     return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
+  }
+
+  @AutoLogOutput
+  public double getDistanceToHub(Translation2d point){
+    return point.getDistance((FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
   }
 
   @AutoLogOutput

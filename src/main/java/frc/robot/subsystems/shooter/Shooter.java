@@ -23,8 +23,8 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterLeftBottomDisconnectedAlert;
   private final Alert shooterRightTopDisconnectedAlert;
   private final Alert shooterRightBottomDisconnectedAlert;
-  private InterpolatingDoubleTreeMap hoodAngleMapClose = new InterpolatingDoubleTreeMap();
-  private InterpolatingDoubleTreeMap hoodAngleMapFar = new InterpolatingDoubleTreeMap();
+  private static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
+  private static InterpolatingDoubleTreeMap shooterTimeMap = new InterpolatingDoubleTreeMap();
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -34,6 +34,7 @@ public class Shooter extends SubsystemBase{
     shooterRightBottomDisconnectedAlert = new Alert("Right Bottom Flywheel Disconnected", AlertType.kError);
 
     setHoodAngleMap();
+    setShooterTimeMap();
   }
 
   @Override
@@ -47,35 +48,42 @@ public class Shooter extends SubsystemBase{
     // This method will be called once per scheduler run
   }
 
-  private void setHoodAngleMap(){
+  private static void setHoodAngleMap(){
     //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
     //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
 
     //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
 
-    hoodAngleMapClose.put(Units.inchesToMeters(62), 0.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(55), 2.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(71), 4.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
+    hoodAngleMap.put(Units.inchesToMeters(62), 0.0);
+    hoodAngleMap.put(Units.inchesToMeters(55), 2.0);
+    hoodAngleMap.put(Units.inchesToMeters(71), 4.0);
+    hoodAngleMap.put(Units.inchesToMeters(87), 6.0);
+    hoodAngleMap.put(Units.inchesToMeters(105), 8.0);
 
-    hoodAngleMapFar.put(Units.inchesToMeters(135), 8.5);
+    hoodAngleMap.put(Units.inchesToMeters(135), 8.5);
 
-    hoodAngleMapFar.put(Units.inchesToMeters(200), 8.0);
-    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0);
+    hoodAngleMap.put(Units.inchesToMeters(200), 8.0);
+    hoodAngleMap.put(Units.inchesToMeters(240), 12.0);
   }
 
-  public double interpolateHoodAngle(double distanceMeters){
-    //2 IS ARITRARY DISTANCE
-    if(distanceMeters > Units.inchesToMeters(105)){
-      return hoodAngleMapFar.get(distanceMeters);
-    }
-    else{
-      return hoodAngleMapClose.get(distanceMeters);
-    }
+  private static void setShooterTimeMap(){
+    //shooterTimeMap.put(Units.inchesToMeters(62), 1.0);
+    shooterTimeMap.put(1.38, 0.9);
+    shooterTimeMap.put(1.88, 1.09);
+    shooterTimeMap.put(3.15, 1.11);
+    shooterTimeMap.put(4.55, 1.12);
+    shooterTimeMap.put(5.68, 1.16);
   }
 
-  public double getFlywheelShootSpeed(double distanceMeters){
+  public static double interpolateShooterTime(double distanceMeters){
+      return shooterTimeMap.get(distanceMeters);
+  }
+
+  public static double interpolateHoodAngle(double distanceMeters){
+      return hoodAngleMap.get(distanceMeters);
+  }
+
+  public static double getFlywheelShootSpeed(double distanceMeters){
     if(distanceMeters > Units.inchesToMeters(120)){
       return 58.0;
     }

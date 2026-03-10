@@ -40,6 +40,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoAlignAndClimb;
+import frc.robot.commands.AutoShootAndMoveCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
@@ -283,11 +285,18 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(
-                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                        Commands.parallel(
-                                Commands.run(() -> drive.stopWithX()),
-                                new AutoShootCommand(drive, indexer, shooter, extension, intake))
-                                ));
+                        Commands.sequence( new AutoShootAndMoveCommand(drive, indexer, shooter, extension, intake, ()-> driverController.getLeftX(),  ()-> driverController.getLeftY(), ()-> drive.getRotationToHubWithVelocity())));
+        
+        // driverController
+        //         .rightTrigger()
+        //         .whileTrue(
+        //                 Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
+        //                 Commands.parallel(
+        //                         Commands.run(() -> drive.stopWithX()),
+        //                         new AutoShootCommand(drive, indexer, shooter, extension, intake))
+        //                         ));
+
+
         //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         driverController
                 .rightStick()
@@ -318,6 +327,10 @@ public class RobotContainer {
         driverController
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
+
+        driverController
+                .povRight()
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension), new AutoAlignAndClimb(drive,climber)));
 
         //OPERATOR CONTROLS
 
