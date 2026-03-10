@@ -1,10 +1,13 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.Constants;
 import frc.robot.FieldConstants;
 import frc.robot.util.AllianceFlipUtil;
 
@@ -14,6 +17,7 @@ public class AutoShootCommand extends Command {
     public Indexer indexer;
     public Shooter shooter;
     public double distanceToHub;
+    public double startTime;
 
     public double targetAngle;
     public double shootSpeedRPS = 70;
@@ -22,6 +26,7 @@ public class AutoShootCommand extends Command {
         this.drive = drive;
         this.indexer = indexer;
         this.shooter = shooter;
+        startTime = System.currentTimeMillis();
         addRequirements(drive, indexer, shooter);
     }
     
@@ -39,10 +44,10 @@ public class AutoShootCommand extends Command {
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
 
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
+        if (shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             indexer.setThroughput(0.6, 0.7);
         }
-        else{
+        else {
             indexer.stop();
         }
     }

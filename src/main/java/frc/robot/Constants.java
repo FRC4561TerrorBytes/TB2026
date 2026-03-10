@@ -38,8 +38,8 @@ public final class Constants {
   }
 
   public static final int HOOD_ID = 34;
-  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 10;
-  public static final double HOOD_STATOR_CURRENT_LIMIT = 10;
+  public static final double HOOD_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double HOOD_STATOR_CURRENT_LIMIT = 20;
 
   public static final int FLYWHEEL_TOP_RIGHT_ID = 32;
   public static final int FLYWHEEL_BOTTOM_RIGHT_ID = 33;
@@ -50,7 +50,7 @@ public final class Constants {
   public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
 
   public static final int INTAKE_ID = 41;
-  public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 30;
   public static final double INTAKE_STATOR_CURRENT_LIMIT = 45;
   
 
@@ -72,8 +72,8 @@ public final class Constants {
   public static final int FUEL_KICKER_SUPPLY_CURRENT_LIMIT = 25;
 
   public static final int CLIMBER_ID = 50;
-  public static final int CLIMBER_STATOR_CURRENT_LIMIT = 120;
-  public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 60;
-  public static final double CLIMBER_UP_POSITION = 95.0;
-  public static final double CLIMBER_DOWN_POSITION = 20.0;
+  public static final int CLIMBER_STATOR_CURRENT_LIMIT = 140;
+  public static final int CLIMBER_SUPPLY_CURRENT_LIMIT = 160;
+  public static final double CLIMBER_UP_POSITION = 276.0;
+  public static final double CLIMBER_DOWN_POSITION = 58.0;
 }

@@ -34,12 +34,13 @@ public class Shoot extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    shooter.setHoodAngle(hoodAngle);
+    shooter.setFlywheelSpeed(flyWheelRPS);
+  }
 
   @Override
   public void execute() {
-
-      shooter.setHoodAngle(hoodAngle);
 
       Logger.recordOutput("LeftFlywheelUpToSpeed", shooter.leftFlywheelUpToSpeed(flyWheelRPS));
       Logger.recordOutput("RightFlywheelUpToSpeed", shooter.rightFlywheelUpToSpeed(flyWheelRPS));

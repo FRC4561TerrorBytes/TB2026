@@ -34,7 +34,7 @@ private double climberSetpoint;
 public ClimberIOReal() {
     //Update 
     climberConfig = new TalonFXConfiguration();
-    climberConfig.CurrentLimits.SupplyCurrentLimitEnable = !true;
+    climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     climberConfig.CurrentLimits.SupplyCurrentLimit = Constants.CLIMBER_SUPPLY_CURRENT_LIMIT;
     climberConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     climberConfig.CurrentLimits.StatorCurrentLimit = Constants.CLIMBER_STATOR_CURRENT_LIMIT;
