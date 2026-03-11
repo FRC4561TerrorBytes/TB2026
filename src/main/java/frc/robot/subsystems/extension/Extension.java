@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.climber.Climber;
 
 
 public class Extension extends SubsystemBase {
@@ -24,7 +25,7 @@ public class Extension extends SubsystemBase {
     ExtensionDisconnectedAlert = new Alert("Extension motor disconnected", AlertType.kError);
   }
     public void setExtensionSetpoint(double extensionSetpoint) {
-      io.setExtensionSetpoint(extensionSetpoint);
+        io.setExtensionSetpoint(extensionSetpoint);
   }
 
   public double extensionSetpoint() {

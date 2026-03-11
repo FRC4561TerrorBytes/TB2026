@@ -266,8 +266,8 @@ public class RobotContainer {
         driverController
                 .leftTrigger() // extend and run intake
                 .onTrue(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
-                                extension))
+                        Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)).andThen(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
+                                extension)))
                 .toggleOnTrue(
                         Commands.run(() -> intake.setOutput(0.8), intake));
 
@@ -327,8 +327,8 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
         driverController
-                .leftStick()
-                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension), climber.climbUp() ));
+                .povRight()
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension), climber.climbUp(), drive.driveToNewPose(drive.getClosestClimbPrePose(), 8, 4, 50, 40), drive.driveUntilObstruction(new ChassisSpeeds(-0.5,0,0), 3), climber.climbDown() ));
 
         //OPERATOR CONTROLS
 

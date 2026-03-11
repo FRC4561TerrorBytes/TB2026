@@ -28,9 +28,9 @@ public class DriveToPose extends Command {
   private boolean scoreBack = true;
 
   ProfiledPIDController xController =
-      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(2, 2));
+      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(5, 2));
   ProfiledPIDController yController =
-      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(2, 2));
+      new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(5, 2));
   ProfiledPIDController thetaController =
       new ProfiledPIDController(7, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI));
 

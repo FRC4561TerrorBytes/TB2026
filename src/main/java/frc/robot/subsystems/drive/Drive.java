@@ -325,7 +325,7 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  private ChassisSpeeds getChassisSpeeds() {
+  public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
@@ -505,6 +505,43 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput
   public double getDistanceToHub(){
     return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
+  }
+
+  @AutoLogOutput
+  public Pose2d getClosestClimbPrePose(){
+    Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
+    Pose2d rightClimb2 = AllianceFlipUtil.apply(rightClimb);
+    Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
+    Pose2d leftClimb2 = AllianceFlipUtil.apply(leftClimb);
+
+    double rightDist = getPose().getTranslation().getDistance(rightClimb2.getTranslation());
+    double leftDist = getPose().getTranslation().getDistance(leftClimb2.getTranslation());
+
+    Pose2d closest;
+
+    if(rightDist < leftDist)
+      closest = rightClimb;
+    else
+      closest = leftClimb;
+
+    return closest;
+  }
+
+  @AutoLogOutput
+  public Command driveUntilObstruction(ChassisSpeeds speeds, double timeOut){
+
+    return Commands.run(()->{
+      runVelocity(speeds);
+    }).until(()->getChassisSpeeds().vxMetersPerSecond <= 0.05 && getModulesAvgDriveCurrent() > TunerConstants.kSlipCurrent.magnitude())
+    .withTimeout(timeOut)
+    .andThen(()->stop());
+  }
+
+  @AutoLogOutput
+  public Command driveToNewPose(Pose2d newPose, double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration){
+    
+    return AutoBuilder.pathfindToPose(newPose, new PathConstraints(
+        maxVeloicty,maxAcceleration,maxRadiansVelocity,maxRadiansAcceleration));
   }
 
   @AutoLogOutput
