@@ -60,6 +60,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveToPose;
 import frc.robot.commands.Shoot;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
@@ -508,7 +509,7 @@ public class Drive extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Pose2d getClosestClimbPrePose(){
+  public Supplier<Pose2d> getClosestClimbPrePose(){
     Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
     Pose2d rightClimb2 = AllianceFlipUtil.apply(rightClimb);
     Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
@@ -524,7 +525,14 @@ public class Drive extends SubsystemBase {
     else
       closest = leftClimb;
 
-    return closest;
+    return ()-> closest;
+  }
+
+  @AutoLogOutput
+  public double flipSpeedForAlliance(double speed){
+    if(AllianceFlipUtil.shouldFlip())
+      return speed * -1;
+    return speed;
   }
 
   @AutoLogOutput
@@ -538,9 +546,9 @@ public class Drive extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Command driveToNewPose(Pose2d newPose, double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration){
+  public Command driveToNewPose(Supplier<Pose2d> newPose, double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration){
     
-    return AutoBuilder.pathfindToPose(newPose, new PathConstraints(
+    return AutoBuilder.pathfindToPose(newPose.get(), new PathConstraints(
         maxVeloicty,maxAcceleration,maxRadiansVelocity,maxRadiansAcceleration));
   }
 

@@ -32,6 +32,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -327,9 +328,8 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
         driverController
-                .povRight()
-                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension), climber.climbUp(), drive.driveToNewPose(drive.getClosestClimbPrePose(), 8, 4, 50, 40), drive.driveUntilObstruction(new ChassisSpeeds(-0.5,0,0), 3), climber.climbDown() ));
-
+                .y()
+                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), climber.climbUp(), drive.driveToNewPose(drive.getClosestClimbPrePose(),5,2,20,10), drive.driveUntilObstruction(new ChassisSpeeds(drive.flipSpeedForAlliance(-0.4),0,0), 3), climber.climbDown() ));
         //OPERATOR CONTROLS
 
         operatorController.povLeft().onTrue(climber.climbDown());
