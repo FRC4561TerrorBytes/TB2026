@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -54,6 +56,9 @@ public class BetterAutoShootCommand extends Command {
         else{
             indexer.stop();
         }
+
+        Logger.recordOutput("DriveTrainFacingHub", controller.atSetpoint());
+        Logger.recordOutput("ShooterReady", shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
     }
 
     @Override
