@@ -69,6 +69,7 @@ import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 
 import java.lang.ModuleLayer.Controller;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
@@ -509,23 +510,44 @@ public class Drive extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Supplier<Pose2d> getClosestClimbPrePose(){
-    Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
-    Pose2d rightClimb2 = AllianceFlipUtil.apply(rightClimb);
-    Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
-    Pose2d leftClimb2 = AllianceFlipUtil.apply(leftClimb);
+  public Pose2d getClimbLeftRedPose(){
+    // Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
+    // Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
+    return new Pose2d(15.103 -0.2,4.0,Rotation2d.fromDegrees(180));
+  }
 
-    double rightDist = getPose().getTranslation().getDistance(rightClimb2.getTranslation());
-    double leftDist = getPose().getTranslation().getDistance(leftClimb2.getTranslation());
+  @AutoLogOutput
+  public Pose2d getClimbRightRedPose(){
+    return new Pose2d(15.103 -0.2,4.651,Rotation2d.fromDegrees(180));
+  }
 
-    Pose2d closest;
+  @AutoLogOutput
+  public Pose2d getClimbRightBluePose(){
+    return new Pose2d(1.445 +0.2,3.413, Rotation2d.fromDegrees(0));
+  }
 
-    if(rightDist < leftDist)
-      closest = rightClimb;
-    else
-      closest = leftClimb;
+  @AutoLogOutput
+  public Pose2d getClimbLeftBluePose(){
+    new Rotation2d();
+    return new Pose2d(1.445 +0.2,4.074, Rotation2d.fromDegrees(0));
+  }
 
-    return ()-> closest;
+  @AutoLogOutput
+  public Pose2d getClosestClimbPose(){
+
+    if(DriverStation.getAlliance().isPresent()
+    && DriverStation.getAlliance().get() == Alliance.Red){
+      if(getPose().getTranslation().getDistance(getClimbRightRedPose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftRedPose().getTranslation())){
+        return getClimbRightRedPose();
+      }
+      return getClimbLeftRedPose();
+    } else {
+
+      if(getPose().getTranslation().getDistance(getClimbRightBluePose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftBluePose().getTranslation())){
+        return getClimbRightBluePose();
+      }
+      return getClimbLeftBluePose();
+    }
   }
 
   @AutoLogOutput
@@ -546,10 +568,33 @@ public class Drive extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Command driveToNewPose(Supplier<Pose2d> newPose, double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration){
+  public Command driveToNewPose(Pose2d newPose, double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration, double endVelocity){
     
-    return AutoBuilder.pathfindToPose(newPose.get(), new PathConstraints(
-        maxVeloicty,maxAcceleration,maxRadiansVelocity,maxRadiansAcceleration));
+    return Commands.defer(
+        () -> AutoBuilder.pathfindToPose(
+            newPose,
+            new PathConstraints(
+                maxVeloicty,
+                maxAcceleration,
+                maxRadiansVelocity,
+                maxRadiansAcceleration),
+            endVelocity),
+        Set.of(this));
+  }
+
+  @AutoLogOutput
+  public Command driveToClimbPose(double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration, double endVelocity){
+    
+    return Commands.defer(
+        () -> AutoBuilder.pathfindToPose(
+            getClosestClimbPose(),
+            new PathConstraints(
+                maxVeloicty,
+                maxAcceleration,
+                maxRadiansVelocity,
+                maxRadiansAcceleration),
+            endVelocity),
+        Set.of(this));
   }
 
   @AutoLogOutput
