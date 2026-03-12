@@ -535,8 +535,7 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput
   public Pose2d getClosestClimbPose(){
 
-    if(DriverStation.getAlliance().isPresent()
-    && DriverStation.getAlliance().get() == Alliance.Red){
+    if(AllianceFlipUtil.shouldFlip()){
       if(getPose().getTranslation().getDistance(getClimbRightRedPose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftRedPose().getTranslation())){
         return getClimbRightRedPose();
       }
