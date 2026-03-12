@@ -329,7 +329,12 @@ public class RobotContainer {
 
         driverController
                 .povRight()
-                .whileTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), climber.climbUp(), drive.driveToClimbPose(5,4,40,20,0), drive.driveUntilObstruction(new ChassisSpeeds(-0.4,0,0), 3), climber.climbDown() ));
+                .whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
+                        climber.climbUp(), 
+                        drive.driveToClimbPose(5,4,40,20,0), 
+                        drive.driveUntilObstruction(new ChassisSpeeds(-0.4,0,0), 3), 
+                        climber.climbDown() ));
         //OPERATOR CONTROLS
 
         operatorController.povLeft().onTrue(climber.climbDown());
