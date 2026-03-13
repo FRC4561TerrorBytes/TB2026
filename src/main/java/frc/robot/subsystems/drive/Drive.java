@@ -335,7 +335,7 @@ public class Drive extends SubsystemBase {
   public double getModulesAvgDriveCurrent(){
     double total = 0;
     for(int i = 0; i < modules.length; i++){
-      total += modules[0].getCurrent();
+      total += modules[i].getCurrent();
     }
     return total/modules.length;
   }
@@ -456,32 +456,35 @@ public class Drive extends SubsystemBase {
 
   @AutoLogOutput
   public Rotation2d getRotationToHubWithVelocity(){
+
+    Translation2d hub = getPointOfHubWithVelocity();
     return new Rotation2d(
-      AllianceFlipUtil.apply(getPointOfHubWithVelocity()).getX()-getPose().getX(),
-      AllianceFlipUtil.apply(getPointOfHubWithVelocity()).getY()-getPose().getY()
+      hub.getX()-getPose().getX(),
+      hub.getY()-getPose().getY()
     );
   }
 
   public Translation2d getPointOfHubWithVelocity(){
 
     //final Translation2d hub = new Translation2d(AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX(),FieldConstants.Hub.topCenterPoint.getY());
-    final Translation2d hub = new Translation2d(FieldConstants.Hub.topCenterPoint.getX(),FieldConstants.Hub.topCenterPoint.getY());
+    //final Translation2d hub = new Translation2d(FieldConstants.Hub.topCenterPoint.getX(),FieldConstants.Hub.topCenterPoint.getY());
+    final Translation2d hub =
+    AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
 
-    ChassisSpeeds speeds = getChassisSpeeds().fromRobotRelativeSpeeds(getChassisSpeeds(),getRotation());
+    ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(),getRotation());
+
     double vX = speeds.vxMetersPerSecond;
     double vY = speeds.vyMetersPerSecond;
 
-    if(!AllianceFlipUtil.shouldFlip()){
-      vX *= -1;
-      vY *= -1;
-    }
+    Translation2d VelocityDiffrence = new Translation2d(vX,vY);
 
     Translation2d tempHub = hub;
 
     for (int i = 0; i < 10; i++){
-      double time = Shooter.interpolateShooterTime(getDistanceToHub(tempHub));
+      double dist = getPose().getTranslation().getDistance(tempHub);
+      double time = Shooter.interpolateShooterTime(dist);
 
-      tempHub = hub.plus(new Translation2d(vX * time, vY * time));
+      tempHub = hub.plus(VelocityDiffrence.times(time));
     }
 
     return tempHub;
@@ -489,19 +492,7 @@ public class Drive extends SubsystemBase {
 
   @AutoLogOutput
   public double getDistanceFromHubWithVelocity(){
-
-    ChassisSpeeds speeds = getChassisSpeeds();
-    double vX = speeds.vxMetersPerSecond;
-    double dist = getDistanceToHub();
-    double tempDist = dist;
-
-    for (int i = 0; i < 10; i++){
-      double time = Shooter.interpolateShooterTime(tempDist);
-
-      tempDist = dist + (vX * time);
-    }
-
-    return tempDist;
+    return getPose().getTranslation().getDistance(getPointOfHubWithVelocity());
   }
 
   @AutoLogOutput
@@ -561,7 +552,7 @@ public class Drive extends SubsystemBase {
 
     return Commands.run(()->{
       runVelocity(speeds);
-    }).until(()->getChassisSpeeds().vxMetersPerSecond <= 0.05 && getModulesAvgDriveCurrent() > TunerConstants.kSlipCurrent.magnitude())
+    }).until(()-> Math.abs(getChassisSpeeds().vxMetersPerSecond) <= 0.05 && getModulesAvgDriveCurrent() > TunerConstants.kSlipCurrent.magnitude())
     .withTimeout(timeOut)
     .andThen(()->stop());
   }
