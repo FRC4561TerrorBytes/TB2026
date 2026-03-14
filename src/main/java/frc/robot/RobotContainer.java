@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
+import frc.robot.commands.BetterAutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DriveToPose;
 import frc.robot.commands.Shoot;
@@ -250,7 +251,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(6), shooter)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter));//.andThen(Commands.runOnce(() -> shooter.setHoodAngle(6), shooter)));
 
         //TRIGGERS
         //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
@@ -291,12 +292,8 @@ public class RobotContainer {
 
         driverController
                 .rightTrigger()
-                .whileTrue(
-                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                        Commands.parallel(
-                                Commands.run(() -> drive.stopWithX()),
-                                new AutoShootCommand(drive, indexer, shooter))
-                                ));
+                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
+        //driverController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(52)));
         //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         driverController
                 .rightStick()

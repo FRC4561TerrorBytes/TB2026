@@ -60,13 +60,13 @@ public class Shooter extends SubsystemBase{
     hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
 
     hoodAngleMapFar.put(Units.inchesToMeters(135), 8.5);
-
-    hoodAngleMapFar.put(Units.inchesToMeters(200), 8.0);
-    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0);
+    hoodAngleMapFar.put(3.0,7.25);
+    hoodAngleMapFar.put(3.4, 7.75);
+    hoodAngleMapFar.put(4.0, 9.4);
+    hoodAngleMapFar.put(5.0,11.0);
   }
 
   public double interpolateHoodAngle(double distanceMeters){
-    //2 IS ARITRARY DISTANCE
     if(distanceMeters > Units.inchesToMeters(105)){
       return hoodAngleMapFar.get(distanceMeters);
     }

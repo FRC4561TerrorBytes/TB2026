@@ -30,8 +30,8 @@ public class BetterAutoShootCommand extends Command {
         this.shooter = shooter;
         addRequirements(drive, indexer, shooter);
 
-        controller = new PIDController(0.075, 0, 0, 0.02);
-        controller.setTolerance(0.5);
+        controller = new PIDController(0.1, 0, 0, 0.02);
+        controller.setTolerance(1.5);
         controller.enableContinuousInput(-180, 180);
     }
 
@@ -47,6 +47,7 @@ public class BetterAutoShootCommand extends Command {
         shooter.setHoodAngle(hoodAngleInterpolated);
 
         double targetAngle = drive.getRotationToHub().getDegrees();
+        Logger.recordOutput("TargetAngleToFace", targetAngle);
         double rotaionSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees(), targetAngle), -30, 30);
         drive.runVelocity(new ChassisSpeeds(0, 0, rotaionSpeed));
 
