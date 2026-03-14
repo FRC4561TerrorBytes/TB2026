@@ -107,9 +107,9 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
         intake = 
-            new Intake(new IntakeIOReal());
+            new Intake(new IntakeIO(){});
         extension = 
-            new Extension(new ExtensionIOReal());
+            new Extension(new ExtensionIO(){});
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -117,11 +117,11 @@ public class RobotContainer {
                 new VisionIOLimelight(camera1Name, drive::getRotation));
         shooter =
             new Shooter(
-              new ShooterIOReal());
+              new ShooterIO(){});
         indexer =
-            new Indexer(new IndexerIOReal());
+            new Indexer(new IndexerIO(){});
         climber =
-            new Climber(new ClimberIOReal());
+            new Climber(new ClimberIO(){});
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -210,13 +210,6 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-            
-    intake.setDefaultCommand(
-        Commands.run( () -> intake.setOutput(0), intake));
-
-    indexer.setDefaultCommand(
-      Commands.run(() -> indexer.stop())
-    );
 
         // Trigger
     Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
@@ -231,31 +224,30 @@ public class RobotContainer {
     shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
     // Triggers
 
-    // Driver Controls
-    driverController
-        .leftTrigger() //extend and run intake
-        .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension)
-        ) 
-        .toggleOnTrue(
-            Commands.run(() -> intake.setOutput(1), intake)
-        );
+    // // Driver Controls
+    // driverController
+    //     .leftTrigger() //extend and run intake
+    //     .onTrue(
+    //         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension)
+    //     ) 
+    //     .toggleOnTrue(
+    //         Commands.run(() -> intake.setOutput(1), intake)
+    //     );
 
-    driverController
-        .b() //retract intake
-        .onTrue(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
-        );
+    // driverController
+    //     .b() //retract intake
+    //     .onTrue(
+    //         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension)
+    //     );
     driverController
         .x() 
         .whileTrue(Commands.run(()-> drive.stopWithX()));
 
-    driverController 
-        .rightTrigger()
-        .whileTrue(
-            Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-            new AutoShootCommand(drive, indexer, shooter))
-        );
+    // driverController 
+    //     .rightTrigger()
+    //     .whileTrue(
+    //         Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()))
+    //     );
     // Reset gyro to 0° when RS and LS are pressed
     driverController
         .rightStick()
@@ -273,8 +265,8 @@ public class RobotContainer {
     driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
 
 
-    driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
-    driverController.leftBumper().whileTrue(climber.climbDown());
+    // driverController.rightBumper().whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
+    // driverController.leftBumper().whileTrue(climber.climbDown());
   }
 
   /**
