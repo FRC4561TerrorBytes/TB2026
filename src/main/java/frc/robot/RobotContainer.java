@@ -284,7 +284,9 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(
-                         Commands.parallel(new AutoShootAndMoveCommand(drive, indexer, shooter), DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY(), ()-> driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())));
+                         Commands.parallel(
+                                new AutoShootAndMoveCommand(drive, indexer, shooter),
+                                 DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY(), ()-> driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())));
         
         // driverController
         //         .rightTrigger()

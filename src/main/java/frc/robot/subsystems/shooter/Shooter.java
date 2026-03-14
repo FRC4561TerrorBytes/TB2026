@@ -68,11 +68,11 @@ public class Shooter extends SubsystemBase{
 
   private static void setShooterTimeMap(){
     //shooterTimeMap.put(Units.inchesToMeters(62), 1.0);
-    shooterTimeMap.put(1.38, 0.9);
-    shooterTimeMap.put(1.88, 1.09);
-    shooterTimeMap.put(3.15, 1.11);
-    shooterTimeMap.put(4.55, 1.12);
-    shooterTimeMap.put(5.68, 1.16);
+    shooterTimeMap.put(1.38, 0.45);
+    shooterTimeMap.put(1.88, 0.55);
+    shooterTimeMap.put(3.15, 0.60);
+    shooterTimeMap.put(4.55, 0.65);
+    shooterTimeMap.put(5.68, 0.70);
   }
 
   public static double interpolateShooterTime(double distanceMeters){
