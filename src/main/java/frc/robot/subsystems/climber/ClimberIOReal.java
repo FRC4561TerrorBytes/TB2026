@@ -50,7 +50,7 @@ public ClimberIOReal() {
     climberSlot0Config.kD = 0.0; // no output for error derivative
 
     var leftMotionMagicConfig = climberConfig.MotionMagic;
-    leftMotionMagicConfig.MotionMagicAcceleration = 200; // Target acceleration of 400 rps/s (0.25 seconds to max)
+    leftMotionMagicConfig.MotionMagicAcceleration = 200; // Target acceleration of 200 rps/s (0.25 seconds to max)
     leftMotionMagicConfig.MotionMagicCruiseVelocity = 300;
     leftMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
