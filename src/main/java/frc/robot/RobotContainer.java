@@ -185,14 +185,12 @@ public class RobotContainer {
                 break;
         }
 
-        // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT
-        // OUT (FOR SIM)
+        // Register NamedCommands for use in PathPlanner
         // Set up auto routines
-        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake).withTimeout(10.0));
-        NamedCommands.registerCommand("shoot", Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                new AutoShootCommand(drive, indexer, shooter).withTimeout(9.0)));
-        // Make into the constant NOT DONE YET DONT RUN AAAAAAAAAAAAAA
-        NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
+        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake).withTimeout(10.0));
+        NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(9.0));
+        NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
+        NamedCommands.registerCommand("retractIntake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
