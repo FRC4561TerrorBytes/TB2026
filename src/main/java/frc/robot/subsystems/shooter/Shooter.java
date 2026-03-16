@@ -23,9 +23,8 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterLeftBottomDisconnectedAlert;
   private final Alert shooterRightTopDisconnectedAlert;
   private final Alert shooterRightBottomDisconnectedAlert;
-  private InterpolatingDoubleTreeMap hoodAngleMapClose = new InterpolatingDoubleTreeMap();
-  private InterpolatingDoubleTreeMap hoodAngleMapFar = new InterpolatingDoubleTreeMap();
-
+  private static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
+  private static InterpolatingDoubleTreeMap shooterTimeMap = new InterpolatingDoubleTreeMap();
   public Shooter(ShooterIO io) {
     this.io = io;
     shooterLeftTopDisconnectedAlert = new Alert("Left Top Flywheel Disconnected", AlertType.kError);
@@ -53,26 +52,33 @@ public class Shooter extends SubsystemBase{
 
     //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
 
-    hoodAngleMapClose.put(Units.inchesToMeters(62), 0.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(55), 2.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(71), 4.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
+    hoodAngleMap.put(Units.inchesToMeters(62), 0.0);
+    //shooterTimeMap.put(Units.inchesToMeters(62),1.0);
 
-    hoodAngleMapFar.put(Units.inchesToMeters(135), 8.5);
-    hoodAngleMapFar.put(3.0,7.25);
-    hoodAngleMapFar.put(3.4, 7.75);
-    hoodAngleMapFar.put(4.0, 9.4);
-    hoodAngleMapFar.put(5.0,11.0);
+    hoodAngleMap.put(Units.inchesToMeters(55), 2.0);
+    hoodAngleMap.put(Units.inchesToMeters(71), 4.0);
+    hoodAngleMap.put(Units.inchesToMeters(87), 6.0);
+    hoodAngleMap.put(Units.inchesToMeters(105), 8.0);
+
+    hoodAngleMap.put(Units.inchesToMeters(135), 8.5);
+    hoodAngleMap.put(3.0,7.25);
+    hoodAngleMap.put(3.4, 7.75);
+    hoodAngleMap.put(4.0, 9.4);
+    hoodAngleMap.put(5.0,11.0);
+
+    shooterTimeMap.put(1.38, 0.45);
+    shooterTimeMap.put(1.88, 0.55);
+    shooterTimeMap.put(3.15, 0.60);
+    shooterTimeMap.put(4.55, 0.65);
+    shooterTimeMap.put(5.68, 0.70);
   }
 
   public double interpolateHoodAngle(double distanceMeters){
-    if(distanceMeters > Units.inchesToMeters(105)){
-      return hoodAngleMapFar.get(distanceMeters);
-    }
-    else{
-      return hoodAngleMapClose.get(distanceMeters);
-    }
+      return hoodAngleMap.get(distanceMeters);
+  }
+
+  public static double interpolateShooterTime(double distanceMeters){
+      return shooterTimeMap.get(distanceMeters);
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){

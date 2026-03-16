@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.AutoShootAndMoveCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutoShootTest;
@@ -288,9 +289,18 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
+        // driverController
+        //         .rightTrigger()
+        //         .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
+
         driverController
                 .rightTrigger()
-                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
+                .whileTrue(
+                         Commands.parallel(
+                                new AutoShootAndMoveCommand(drive, indexer, shooter),
+                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())));
+
+
         //driverController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(52)));
         //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         driverController
@@ -323,6 +333,14 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
+         driverController
+                .povRight()
+                .whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
+                        climber.climbUp(), 
+                        drive.driveToClimbPose(2,1,40,20,0), 
+                        drive.driveUntilObstruction(new ChassisSpeeds(-0.3,0,0), 3), 
+                        climber.climbDown() ));
         //OPERATOR CONTROLS
 
         operatorController.povLeft().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
