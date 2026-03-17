@@ -194,7 +194,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
-        NamedCommands.registerCommand("spinupflywheels", Commands.runOnce(() -> shooter.setFlywheelSpeed(40), shooter));
+        NamedCommands.registerCommand("spinupflywheels", Commands.run(() -> shooter.setFlywheelSpeed(40), shooter));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         //YOU'RE WELCOME TEA
 
