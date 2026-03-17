@@ -47,22 +47,17 @@ public class Shooter extends SubsystemBase{
   }
 
   private void setHoodAngleMap(){
-    //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
-    //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
 
-    //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
+    //CLOSE RANGE SPEED
+    hoodAngleMap.put(1.397, 2.0);
+    hoodAngleMap.put(1.8034, 4.0);
+    hoodAngleMap.put(2.2098, 6.0);
+    hoodAngleMap.put(2.667, 8.0);
 
-    hoodAngleMap.put(Units.inchesToMeters(62), 0.0);
-    //shooterTimeMap.put(Units.inchesToMeters(62),1.0);
-
-    hoodAngleMap.put(Units.inchesToMeters(55), 2.0);
-    hoodAngleMap.put(Units.inchesToMeters(71), 4.0);
-    hoodAngleMap.put(Units.inchesToMeters(87), 6.0);
-    hoodAngleMap.put(Units.inchesToMeters(105), 8.0);
-
-    hoodAngleMap.put(Units.inchesToMeters(135), 8.5);
+    //FAR RANGE SPEED
     hoodAngleMap.put(3.0,7.25);
     hoodAngleMap.put(3.4, 7.75);
+    hoodAngleMap.put(3.429, 8.5);
     hoodAngleMap.put(4.0, 9.4);
     hoodAngleMap.put(5.0,11.0);
 
@@ -82,7 +77,7 @@ public class Shooter extends SubsystemBase{
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){
-    if(distanceMeters > Units.inchesToMeters(120)){
+    if(distanceMeters > 3.048){
       return 58.0;
     }
     else{
