@@ -53,13 +53,18 @@ public class Shooter extends SubsystemBase{
     hoodAngleMap.put(1.8034, 4.0);
     hoodAngleMap.put(2.2098, 6.0);
     hoodAngleMap.put(2.667, 8.0);
+    hoodAngleMap.put(2.9, 8.5);
 
     //FAR RANGE SPEED
     hoodAngleMap.put(3.0,7.25);
     hoodAngleMap.put(3.4, 7.75);
     hoodAngleMap.put(3.429, 8.5);
     hoodAngleMap.put(4.0, 9.4);
-    hoodAngleMap.put(5.0,11.0);
+    hoodAngleMap.put(4.5, 10.7);
+
+    //SUPER FAR RANGE
+    hoodAngleMap.put(5.0,9.5);
+    hoodAngleMap.put(5.5, 11.0);
 
     shooterTimeMap.put(2.0, 1.22);
     shooterTimeMap.put(2.3, 1.19);
@@ -77,10 +82,12 @@ public class Shooter extends SubsystemBase{
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){
-    if(distanceMeters > 3.048){
-      return 58.0;
+    if(distanceMeters > 4.8){
+      return 64.0;
     }
-    else{
+    else if(distanceMeters > 3.048){
+      return 58.0;
+    } else {
       return 52.0;
     }
   }

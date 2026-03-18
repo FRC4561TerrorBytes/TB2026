@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootAndMoveCommand;
+import frc.robot.commands.BetterAutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TowerShootCommand;
@@ -180,8 +181,10 @@ public class RobotContainer {
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
-        NamedCommands.registerCommand("shoot", new AutoShootAndMoveCommand(drive, indexer, shooter).withTimeout(9.0));
+        NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(9.0));
+        NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
+        NamedCommands.registerCommand("agitate", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
         NamedCommands.registerCommand("autoclimb", Commands.sequence(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
@@ -194,7 +197,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("spinupflywheels", Commands.run(() -> shooter.setFlywheelSpeed(40), shooter));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         //YOU'RE WELCOME TEA
-
+        // if (code no work) {code work}
+        //else {make code work}
         
         // Set up SysId routines
         autoChooser.addOption(

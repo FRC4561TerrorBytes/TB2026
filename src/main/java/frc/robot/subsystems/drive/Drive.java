@@ -549,11 +549,11 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput
   public Command driveUntilObstruction(ChassisSpeeds speeds, double timeOut){
 
-    Debouncer debounceTime = new Debouncer(0.15);
+    Debouncer debounceTime = new Debouncer(0.5);
 
     return Commands.run(()->{
       runVelocity(speeds);
-    }).until(()-> debounceTime.calculate(getModulesAvgDriveCurrent() > TunerConstants.kSlipCurrent.magnitude()))
+    }).until(()-> debounceTime.calculate(getModulesAvgDriveCurrent() > TunerConstants.kSlipCurrent.magnitude()/1.5))
     .withTimeout(timeOut)
     .andThen(()->stop());
   }
