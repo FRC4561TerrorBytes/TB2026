@@ -61,11 +61,11 @@ public class Shooter extends SubsystemBase{
     hoodAngleMap.put(4.0, 9.4);
     hoodAngleMap.put(5.0,11.0);
 
-    shooterTimeMap.put(1.38, 0.45);
-    shooterTimeMap.put(1.88, 0.55);
-    shooterTimeMap.put(3.15, 0.60);
-    shooterTimeMap.put(4.55, 0.65);
-    shooterTimeMap.put(5.68, 0.70);
+    shooterTimeMap.put(2.0, 1.22);
+    shooterTimeMap.put(2.3, 1.19);
+    shooterTimeMap.put(3.0, 1.4);
+    shooterTimeMap.put(3.8, 1.36);
+    shooterTimeMap.put(4.8, 1.27);
   }
 
   public double interpolateHoodAngle(double distanceMeters){
