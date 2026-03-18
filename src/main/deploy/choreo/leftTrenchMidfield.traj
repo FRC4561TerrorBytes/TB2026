@@ -116,6 +116,6 @@
   "splits":[0]
  },
  "events":[
-   {"name":"intake", "from":{"target":2, "targetTimestamp":1.13843, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intake"}}},
+   {"name":"intake", "from":{"target":1, "targetTimestamp":0.66703, "offset":{"exp":"0.2 s", "val":0.2}}, "event":{"type":"named", "data":{"name":"intake"}}},
    {"name":"slapdown", "from":{"target":1, "targetTimestamp":0.66703, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"slapdown"}}}]
 }

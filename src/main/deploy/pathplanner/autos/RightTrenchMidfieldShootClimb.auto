@@ -5,21 +5,47 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "rightTrenchMidfield"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "rightTrenchMidfield"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopintake"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "midfieldReturnShootRight"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "climbprep"
           }
         },
         {

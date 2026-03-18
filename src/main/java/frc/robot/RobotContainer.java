@@ -37,23 +37,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootAndMoveCommand;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.AutoShootTest;
-import frc.robot.commands.BetterAutoShootCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveToPose;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.TrenchShootCommand;
+import frc.robot.commands.TowerShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOReal;
-import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -63,21 +56,18 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extension.Extension;
 import frc.robot.subsystems.extension.ExtensionIO;
 import frc.robot.subsystems.extension.ExtensionIOReal;
-import frc.robot.subsystems.extension.ExtensionIOSim;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOReal;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
-import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.RobotVisualizer;
 
 /**
@@ -188,8 +178,9 @@ public class RobotContainer {
 
         // Register NamedCommands for use in PathPlanner
         // Set up auto routines
-        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake).withTimeout(10.0));
-        NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(9.0));
+        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
+        NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
+        NamedCommands.registerCommand("shoot", new AutoShootAndMoveCommand(drive, indexer, shooter).withTimeout(9.0));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
@@ -368,7 +359,7 @@ public class RobotContainer {
         
         operatorController
         .rightTrigger().whileTrue(
-                new TrenchShootCommand(drive, indexer, shooter)
+                new TowerShootCommand(drive, indexer, shooter)
         );
 
         operatorController
