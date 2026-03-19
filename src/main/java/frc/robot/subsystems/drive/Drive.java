@@ -558,20 +558,6 @@ public class Drive extends SubsystemBase {
     .andThen(()->stop());
   }
 
-  @AutoLogOutput
-  public Command driveToNewPose(Pose2d newPose, double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration, double endVelocity){
-    
-    return Commands.defer(
-        () -> AutoBuilder.pathfindToPose(
-            newPose,
-            new PathConstraints(
-                maxVeloicty,
-                maxAcceleration,
-                maxRadiansVelocity,
-                maxRadiansAcceleration),
-            endVelocity),
-        Set.of(this));
-  }
 
   @AutoLogOutput
   public Command driveToClimbPose(double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration, double endVelocity){

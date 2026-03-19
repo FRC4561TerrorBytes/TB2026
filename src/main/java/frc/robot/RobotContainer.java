@@ -252,7 +252,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter));//.andThen(Commands.runOnce(() -> shooter.setHoodAngle(6), shooter)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(6), shooter)));
 
         //TRIGGERS
         //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
@@ -291,20 +291,15 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        // driverController
-        //         .rightTrigger()
-        //         .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
-
         driverController
                 .rightTrigger()
                 .whileTrue(
                          Commands.parallel(
                                 new AutoShootAndMoveCommand(drive, indexer, shooter),
-                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())));
+                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
+                                ));
 
 
-        //driverController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(52)));
-        //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
         driverController
                 .rightStick()
                 .and(driverController.leftStick())
@@ -322,7 +317,6 @@ public class RobotContainer {
                 driverController::getLeftX, () -> snapRotation));
 
         driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
-        //driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
 
         driverController.rightBumper()
                 .whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
