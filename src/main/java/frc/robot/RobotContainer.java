@@ -373,6 +373,13 @@ public class RobotContainer {
                                 extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
     }
 
+    public Command retractExtenstionWithIntake(){
+        return Commands.sequence(
+                Commands.runOnce(() -> intake.setOutput(0.6), intake),
+                                Commands.runOnce(()-> extension.retractExtenstion(),extension),
+                                        Commands.runOnce(() -> intake.setOutput(0.0), intake));
+    }
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *

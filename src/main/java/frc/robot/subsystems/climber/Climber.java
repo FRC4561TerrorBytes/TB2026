@@ -51,6 +51,7 @@ public class Climber extends SubsystemBase{
     public Command climbDown(){    
         return Commands.runOnce(() -> setClimberPosition(Constants.CLIMBER_DOWN_POSITION));
     }
+    
     public void setIdleMode(NeutralModeValue idleMode) {
         io.setIdleMode(idleMode);
     }

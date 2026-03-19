@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 
 public class Extension extends SubsystemBase {
@@ -25,6 +26,14 @@ public class Extension extends SubsystemBase {
   }
     public void setExtensionSetpoint(double extensionSetpoint) {
       io.setExtensionSetpoint(extensionSetpoint);
+  }
+
+  public void retractExtenstion() {
+      io.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION);
+  }
+
+  public void extendExtenstion() {
+      io.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION);
   }
 
   public double extensionSetpoint() {
