@@ -26,7 +26,7 @@ public class VisionConstants {
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "limelight-left";
-  public static String camera1Name = "limelight-right";
+  public static String camera1Name = "limelight";
 
   public static Pose3d[] cameraOffsets = {
     new Pose3d(
@@ -42,6 +42,7 @@ public class VisionConstants {
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
   public static double maxZError = 0.75;
+  public static double maxAverageTagDistance = 5.5;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)

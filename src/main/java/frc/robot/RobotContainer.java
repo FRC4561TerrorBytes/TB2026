@@ -37,21 +37,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.AutoShootTest;
+import frc.robot.commands.AutoShootAndMoveCommand;
+import frc.robot.commands.BetterAutoShootCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveToPose;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.TrenchShootCommand;
+import frc.robot.commands.TowerShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOReal;
-import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -61,7 +57,6 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extension.Extension;
 import frc.robot.subsystems.extension.ExtensionIO;
 import frc.robot.subsystems.extension.ExtensionIOReal;
-import frc.robot.subsystems.extension.ExtensionIOSim;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOReal;
@@ -76,7 +71,6 @@ import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.RobotVisualizer;
 
 /**
@@ -186,19 +180,28 @@ public class RobotContainer {
                 break;
         }
 
-        // Register NamedCommands for use in PathPlanner // TAKE INTAKE COMMAND TIMEOUT
-        // OUT (FOR SIM)
+        // Register NamedCommands for use in PathPlanner
         // Set up auto routines
-        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(1), intake).withTimeout(10.0));
-        NamedCommands.registerCommand("shoot", Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                new AutoShootCommand(drive, indexer, shooter).withTimeout(9.0)));
-        // Make into the constant NOT DONE YET DONT RUN AAAAAAAAAAAAAA
-        NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(1)));
+        NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
+        NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
+        NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(9.0));
+        NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
+        NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
+        NamedCommands.registerCommand("agitate", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION)));
+        NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
+        NamedCommands.registerCommand("autoclimb", Commands.sequence(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
+                        climber.climbUp(), 
+                        drive.driveToClimbPose(2,1,40,20,0), 
+                        drive.driveUntilObstruction(new ChassisSpeeds(-0.3,0,0), 3), 
+                        climber.climbDown() ));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
+        NamedCommands.registerCommand("spinupflywheels", Commands.run(() -> shooter.setFlywheelSpeed(40), shooter));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
         //YOU'RE WELCOME TEA
-
+        // if (code no work) {code work}
+        //else {make code work}
         
         // Set up SysId routines
         autoChooser.addOption(
@@ -252,7 +255,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(0), shooter)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(6), shooter)));
 
         //TRIGGERS
         //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
@@ -294,12 +297,12 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(
-                        Commands.sequence(drive.alignToAngle(() -> drive.getRotationToHub()),
-                        Commands.parallel(
-                                Commands.run(() -> drive.stopWithX()),
-                                new AutoShootCommand(drive, indexer, shooter))
+                         Commands.parallel(
+                                new AutoShootAndMoveCommand(drive, indexer, shooter),
+                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
                                 ));
-        //driverController.rightTrigger().whileTrue(new AutoShootTest(indexer, shooter));
+
+
         driverController
                 .rightStick()
                 .and(driverController.leftStick())
@@ -317,7 +320,6 @@ public class RobotContainer {
                 driverController::getLeftX, () -> snapRotation));
 
         driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
-        //driverController.rightTrigger().whileTrue(drive.alignToAngle(() -> drive.getRotationToHub()));
 
         driverController.rightBumper()
                 .whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
@@ -330,6 +332,14 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
+         driverController
+                .povRight()
+                .whileTrue(Commands.sequence(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
+                        climber.climbUp(), 
+                        drive.driveToClimbPose(2,1,40,20,0), 
+                        drive.driveUntilObstruction(new ChassisSpeeds(-0.3,0,0), 3), 
+                        climber.climbDown() ));
         //OPERATOR CONTROLS
 
         operatorController.povLeft().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
@@ -356,7 +366,7 @@ public class RobotContainer {
         
         operatorController
         .rightTrigger().whileTrue(
-                new TrenchShootCommand(drive, indexer, shooter)
+                new TowerShootCommand(drive, indexer, shooter)
         );
 
         operatorController

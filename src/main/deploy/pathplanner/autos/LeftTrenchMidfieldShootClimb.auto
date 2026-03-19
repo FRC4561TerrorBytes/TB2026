@@ -19,12 +19,6 @@
         {
           "type": "named",
           "data": {
-            "name": "climbprep"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "shoot"
           }
         },

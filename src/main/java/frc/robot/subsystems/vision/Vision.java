@@ -109,6 +109,7 @@ public class Vision extends SubsystemBase {
     for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
+      disconnectedAlerts[cameraIndex].setText(inputs[cameraIndex].name + " disconnected");
 
       // Initialize logging values
       List<Pose3d> tagPoses = new LinkedList<>();
@@ -139,6 +140,7 @@ public class Vision extends SubsystemBase {
                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
                 || observation.pose().getY() < 0.0
                 || observation.pose().getY() > aprilTagLayout.getFieldWidth()
+                || observation.averageTagDistance() > maxAverageTagDistance
                 || !tagUpdate;
 
         // Add pose to log

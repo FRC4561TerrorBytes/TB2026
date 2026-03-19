@@ -21,6 +21,7 @@ import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -30,6 +31,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -59,10 +61,12 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 
 import java.lang.ModuleLayer.Controller;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.DoubleSupplier;
@@ -320,8 +324,17 @@ public class Drive extends SubsystemBase {
 
   /** Returns the measured chassis speeds of the robot. */
   @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-  private ChassisSpeeds getChassisSpeeds() {
+  public ChassisSpeeds getChassisSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  @AutoLogOutput
+  public double getModulesAvgDriveCurrent(){
+    double total = 0;
+    for(int i = 0; i < modules.length; i++){
+      total += modules[i].getCurrent();
+    }
+    return total/modules.length;
   }
 
   /** Returns the position of each module in radians. */
@@ -438,9 +451,127 @@ public class Drive extends SubsystemBase {
     );
   }
 
+   @AutoLogOutput
+  public Rotation2d getRotationToHubWithVelocity(){
+
+    Translation2d hub = getPointOfHubWithVelocity();
+    return new Rotation2d(
+      hub.getX()-getPose().getX(),
+      hub.getY()-getPose().getY()
+    );
+  }
+
+  public Translation2d getPointOfHubWithVelocity(){
+
+    //final Translation2d hub = new Translation2d(AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint).getX(),FieldConstants.Hub.topCenterPoint.getY());
+    //final Translation2d hub = new Translation2d(FieldConstants.Hub.topCenterPoint.getX(),FieldConstants.Hub.topCenterPoint.getY());
+    final Translation2d hub =
+    AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+
+    ChassisSpeeds speeds = ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(),getRotation());
+
+    double vX = speeds.vxMetersPerSecond;
+    double vY = speeds.vyMetersPerSecond;
+
+    Translation2d VelocityDiffrence = new Translation2d(vX,vY);
+
+    Translation2d tempHub = hub;
+
+    for (int i = 0; i < 3; i++){
+      double dist = getPose().getTranslation().getDistance(tempHub);
+      double time = Shooter.interpolateShooterTime(dist);
+
+      tempHub = hub.minus(VelocityDiffrence.times(time));
+    }
+
+    Logger.recordOutput("PredictedHubPose", new Pose2d(tempHub, new Rotation2d()));
+
+    return tempHub;
+  }
+
+  @AutoLogOutput
+  public double getDistanceFromHubWithVelocity(){
+    return getPose().getTranslation().getDistance(getPointOfHubWithVelocity());
+  }
+
   @AutoLogOutput
   public double getDistanceToHub(){
     return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
+  }
+
+  @AutoLogOutput
+  public Pose2d getClimbLeftRedPose(){
+    // Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
+    // Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
+    return new Pose2d(15.103 -0.6,4.0,Rotation2d.fromDegrees(180));
+  }
+
+  @AutoLogOutput
+  public Pose2d getClimbRightRedPose(){
+    return new Pose2d(15.103 -0.6,4.651,Rotation2d.fromDegrees(180));
+  }
+
+  @AutoLogOutput
+  public Pose2d getClimbRightBluePose(){
+    return new Pose2d(1.445 +0.6,3.413, Rotation2d.fromDegrees(0));
+  }
+
+  @AutoLogOutput
+  public Pose2d getClimbLeftBluePose(){
+    new Rotation2d();
+    return new Pose2d(1.445 +0.6,4.074, Rotation2d.fromDegrees(0));
+  }
+
+  @AutoLogOutput
+  public Pose2d getClosestClimbPose(){
+
+    if(AllianceFlipUtil.shouldFlip()){
+      if(getPose().getTranslation().getDistance(getClimbRightRedPose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftRedPose().getTranslation())){
+        return getClimbRightRedPose();
+      }
+      return getClimbLeftRedPose();
+    } else {
+
+      if(getPose().getTranslation().getDistance(getClimbRightBluePose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftBluePose().getTranslation())){
+        return getClimbRightBluePose();
+      }
+      return getClimbLeftBluePose();
+    }
+  }
+
+  @AutoLogOutput
+  public double flipSpeedForAlliance(double speed){
+    if(AllianceFlipUtil.shouldFlip())
+      return speed * -1;
+    return speed;
+  }
+
+  @AutoLogOutput
+  public Command driveUntilObstruction(ChassisSpeeds speeds, double timeOut){
+
+    Debouncer debounceTime = new Debouncer(0.5);
+
+    return Commands.run(()->{
+      runVelocity(speeds);
+    }).until(()-> debounceTime.calculate(getModulesAvgDriveCurrent() > TunerConstants.kSlipCurrent.magnitude()/1.5))
+    .withTimeout(timeOut)
+    .andThen(()->stop());
+  }
+
+
+  @AutoLogOutput
+  public Command driveToClimbPose(double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration, double endVelocity){
+    
+    return Commands.defer(
+        () -> AutoBuilder.pathfindToPose(
+            getClosestClimbPose(),
+            new PathConstraints(
+                maxVeloicty,
+                maxAcceleration,
+                maxRadiansVelocity,
+                maxRadiansAcceleration),
+            endVelocity),
+        Set.of(this));
   }
 
   @AutoLogOutput
