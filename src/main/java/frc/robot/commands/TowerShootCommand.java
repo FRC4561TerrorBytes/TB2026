@@ -8,7 +8,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.FieldConstants;
 import frc.robot.util.AllianceFlipUtil;
 
-public class TrenchShootCommand extends Command {
+public class TowerShootCommand extends Command {
 
     public Drive drive;
     public Indexer indexer;
@@ -18,7 +18,7 @@ public class TrenchShootCommand extends Command {
     public double targetAngle = 5.5;
     public double shootSpeedRPS = 58;
 
-    public TrenchShootCommand(Drive drive, Indexer indexer, Shooter shooter) {
+    public TowerShootCommand(Drive drive, Indexer indexer, Shooter shooter) {
         this.drive = drive;
         this.indexer = indexer;
         this.shooter = shooter;
@@ -28,15 +28,12 @@ public class TrenchShootCommand extends Command {
     @Override
     public void initialize() {
         //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
-        distanceToHub = drive.getDistanceToHub();
         shooter.setFlywheelSpeed(shootSpeedRPS);
     }
 
     @Override
     public void execute() {
-        //getting hood angle from the table with interpolation
-        double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
-        shooter.setHoodAngle(targetAngle);
+        shooter.setHoodAngle(7.25);
 
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint()){
             indexer.setThroughput(0.6, 0.7);

@@ -23,9 +23,8 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterLeftBottomDisconnectedAlert;
   private final Alert shooterRightTopDisconnectedAlert;
   private final Alert shooterRightBottomDisconnectedAlert;
-  private InterpolatingDoubleTreeMap hoodAngleMapClose = new InterpolatingDoubleTreeMap();
-  private InterpolatingDoubleTreeMap hoodAngleMapFar = new InterpolatingDoubleTreeMap();
-
+  private static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
+  private static InterpolatingDoubleTreeMap shooterTimeMap = new InterpolatingDoubleTreeMap();
   public Shooter(ShooterIO io) {
     this.io = io;
     shooterLeftTopDisconnectedAlert = new Alert("Left Top Flywheel Disconnected", AlertType.kError);
@@ -48,38 +47,54 @@ public class Shooter extends SubsystemBase{
   }
 
   private void setHoodAngleMap(){
-    //hoodAngleMap.put(Units.inchesToMeters(67), 41.0);
-    //ideally we have a whole ton more entries here but we lowk need robot for that 🙃
 
-    //hoodAngleMapClose.put(Units.inchesToMeters(135), 6.0);
+    //CLOSE RANGE SPEED
+    hoodAngleMap.put(1.397, 2.0);
+    hoodAngleMap.put(1.8034, 4.0);
+    hoodAngleMap.put(2.2098, 6.0);
+    hoodAngleMap.put(2.667, 8.0);
+    hoodAngleMap.put(2.9, 8.5);
 
-    hoodAngleMapClose.put(Units.inchesToMeters(62), 0.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(55), 2.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(71), 4.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(87), 6.0);
-    hoodAngleMapClose.put(Units.inchesToMeters(105), 8.0);
+    //FAR RANGE SPEED
+    hoodAngleMap.put(3.0,7.25);
+    hoodAngleMap.put(3.4, 7.75);
+    hoodAngleMap.put(3.429, 8.5);
+    hoodAngleMap.put(4.0, 9.4);
+    hoodAngleMap.put(4.5, 10.7);
 
-    hoodAngleMapFar.put(Units.inchesToMeters(135), 8.5);
+    //SUPER FAR RANGE
+    hoodAngleMap.put(5.0,9.5);
+    hoodAngleMap.put(5.5, 11.0);
 
-    hoodAngleMapFar.put(Units.inchesToMeters(200), 8.0);
-    hoodAngleMapFar.put(Units.inchesToMeters(240), 12.0);
+    //TIME OF FLIGHT
+    shooterTimeMap.put(1.19, 1.25);
+    shooterTimeMap.put(1.7, 1.3);
+    shooterTimeMap.put(2.2, 1.32);
+    shooterTimeMap.put(2.9, 1.22);
+    shooterTimeMap.put(3.2, 1.55);
+    shooterTimeMap.put(3.8, 1.31);
+    shooterTimeMap.put(4.1, 1.3);
+    shooterTimeMap.put(4.5, 1.33);
+    shooterTimeMap.put(4.9, 1.43);
+    shooterTimeMap.put(5.5, 1.41);
+
   }
 
   public double interpolateHoodAngle(double distanceMeters){
-    //2 IS ARITRARY DISTANCE
-    if(distanceMeters > Units.inchesToMeters(105)){
-      return hoodAngleMapFar.get(distanceMeters);
-    }
-    else{
-      return hoodAngleMapClose.get(distanceMeters);
-    }
+      return hoodAngleMap.get(distanceMeters);
+  }
+
+  public static double interpolateShooterTime(double distanceMeters){
+      return shooterTimeMap.get(distanceMeters);
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){
-    if(distanceMeters > Units.inchesToMeters(120)){
-      return 58.0;
+    if(distanceMeters > 4.8){
+      return 64.0;
     }
-    else{
+    else if(distanceMeters > 3.048){
+      return 58.0;
+    } else {
       return 52.0;
     }
   }

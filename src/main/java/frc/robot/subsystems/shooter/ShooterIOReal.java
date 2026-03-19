@@ -66,16 +66,16 @@ public class ShooterIOReal implements ShooterIO {
         flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         
         var flywheelLeftSlot0Config = flywheelConfig.Slot0;
-        flywheelLeftSlot0Config.kS = 0.4; // Add 0.25 V output to overcome static friction
-        flywheelLeftSlot0Config.kV = 0.23; // A velocity target of 1 rps results in 0.12 V output
-        flywheelLeftSlot0Config.kA = 0.23; // An acceleration of 1 rps/s requires 0.01 V output
-        flywheelLeftSlot0Config.kP = 0.65; // An error of 1 rps results in 0.11 V output
-        flywheelLeftSlot0Config.kI = 0.64; // no output for integrated error
-        flywheelLeftSlot0Config.kD = 0.02; // no output for error derivative
+        flywheelLeftSlot0Config.kS = 0.36; // Add 0.25 V output to overcome static friction
+        flywheelLeftSlot0Config.kV = 0.13; // A velocity target of 1 rps results in 0.12 V output
+        flywheelLeftSlot0Config.kA = 0.36; // An acceleration of 1 rps/s requires 0.01 V output
+        flywheelLeftSlot0Config.kP = 0.7; // An error of 1 rps results in 0.11 V output
+        flywheelLeftSlot0Config.kI = 0.0; // no output for integrated error
+        flywheelLeftSlot0Config.kD = 0.0; // no output for error derivative
 
         var flywheelMotionMagicConfig = flywheelConfig.MotionMagic;
         flywheelMotionMagicConfig.MotionMagicAcceleration = 50; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 30;
+        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 60;
         flywheelMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -165,6 +165,7 @@ public class ShooterIOReal implements ShooterIO {
         ParentDevice.optimizeBusUtilizationForAll(flywheelRightTopMotor);
         ParentDevice.optimizeBusUtilizationForAll(flywheelRightBottomMotor);
         ParentDevice.optimizeBusUtilizationForAll(hoodMotor);
+
 
         flywheelLeftBottomMotor.setControl(new Follower(flywheelLeftTopMotor.getDeviceID(), MotorAlignmentValue.Aligned));
         flywheelRightBottomMotor.setControl(new Follower(flywheelRightTopMotor.getDeviceID(), MotorAlignmentValue.Aligned));
