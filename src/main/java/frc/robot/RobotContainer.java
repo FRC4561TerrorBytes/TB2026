@@ -285,8 +285,7 @@ public class RobotContainer {
         driverController
                 .b() // retract intake
                 .onTrue(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+                        Commands.runOnce(() -> retractExtenstionWithIntake(), intake, extension));
         driverController
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
@@ -332,17 +331,17 @@ public class RobotContainer {
          driverController
                 .povRight()
                 .whileTrue(Commands.sequence(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
+                        Commands.runOnce(() -> retractExtenstionWithIntake(), intake, extension), 
                         climber.climbUp(), 
                         drive.driveToClimbPose(2,1,40,20,0), 
                         drive.driveUntilObstruction(new ChassisSpeeds(-0.3,0,0), 3), 
                         climber.climbDown() ));
         //OPERATOR CONTROLS
 
-        operatorController.povLeft().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension), climber.climbDown()));
-        operatorController.povRight().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension), climber.climbUp()));
+        operatorController.povLeft().onTrue(Commands.sequence(
+                Commands.runOnce(() -> retractExtenstionWithIntake(), intake, extension), climber.climbDown()));
+        operatorController.povRight().onTrue(Commands.sequence(
+                Commands.runOnce(() -> retractExtenstionWithIntake(), intake, extension), climber.climbUp()));
 
         operatorController
                 .y()
@@ -369,8 +368,7 @@ public class RobotContainer {
         operatorController
                 .b() // retract intake
                 .onTrue(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+                        retractExtenstionWithIntake());
     }
 
     public Command retractExtenstionWithIntake(){
