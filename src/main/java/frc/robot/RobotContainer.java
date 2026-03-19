@@ -374,7 +374,7 @@ public class RobotContainer {
     }
 
     public Command retractExtenstionWithIntake(){
-        return  Commands.runOnce(() -> intake.setOutput(0.6), intake).withTimeout(0.5).andThen
+        return  Commands.runOnce(() -> intake.setOutput(0.6), intake).withTimeout(0.5).alongWith
                         (Commands.runOnce(()-> extension.retractExtenstion(),extension));
     }
 
