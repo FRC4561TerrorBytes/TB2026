@@ -57,7 +57,7 @@ public class AutoShootAndMoveCommand extends Command {
         //getting hood angle from the table with interpolation
         double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
         shooter.setHoodAngle(hoodAngleInterpolated);
-        distanceToHub = drive.getDistanceToHub();
+        
         shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
         shooter.setFlywheelSpeed(shootSpeedRPS);
 
