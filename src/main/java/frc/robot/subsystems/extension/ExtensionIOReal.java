@@ -57,7 +57,7 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionPIDConfig.kV = 3.2;
     extensionPIDConfig.kA = 0.04;
     extensionPIDConfig.kP = 10; 
-    extensionPIDConfig.kI = 0;
+    extensionPIDConfig.kI = 0.1;
     extensionPIDConfig.kD = 0;
 
     var cancoderConfig = new CANcoderConfiguration();
@@ -135,6 +135,10 @@ public class ExtensionIOReal implements ExtensionIO{
 
   }
 
+  @Override
+  public void setExtensionOutput(double voltage){
+    extensionMotor.set(voltage);
+  }
 
    @Override
   public void setExtensionSetpoint(double position) {

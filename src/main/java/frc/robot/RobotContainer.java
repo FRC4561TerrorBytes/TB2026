@@ -189,8 +189,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("autoclimb", Commands.sequence(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
                         climber.climbUp(), 
-                        drive.driveToClimbPose(2,1,40,20,0), 
-                        drive.driveUntilObstruction(new ChassisSpeeds(-0.3,0,0), 3), 
+                        drive.driveToClimbPose(2.5,1,40,20,0), 
+                        drive.driveUntilObstruction(new ChassisSpeeds(-0.5,0,0), 3), 
                         climber.climbDown() ));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));

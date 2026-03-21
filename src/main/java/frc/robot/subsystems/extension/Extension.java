@@ -27,6 +27,10 @@ public class Extension extends SubsystemBase {
       io.setExtensionSetpoint(extensionSetpoint);
   }
 
+  public void setExtensionOutput(double extensionVoltage) {
+      io.setExtensionOutput(extensionVoltage);;
+  }
+
   public double extensionSetpoint() {
     return inputs.extensionSetpoint;
   }
