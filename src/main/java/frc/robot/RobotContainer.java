@@ -272,7 +272,7 @@ public class RobotContainer {
                         Commands.sequence(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)),Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                                 extension)))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.8), intake));
+                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(driverRumbleCommand()));
         
         // driverController
         //         .leftTrigger() // extend and run intake
@@ -346,11 +346,11 @@ public class RobotContainer {
 
         operatorController
                 .y()
-                .whileTrue(new Shoot(indexer, shooter, 40, 10));
+                .whileTrue(new Shoot(indexer, shooter, 50, 10));
 
         operatorController
                 .x()
-                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 40, 10)));
+                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 50, 10)));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
@@ -359,7 +359,7 @@ public class RobotContainer {
                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                         extension))
                 .toggleOnTrue((
-                        Commands.runOnce(() -> intake.setOutput(0.2), intake)));
+                        Commands.runOnce(() -> intake.setOutput(0.2), intake).alongWith(driverRumbleCommand())));
         
         operatorController
         .rightTrigger().whileTrue(
