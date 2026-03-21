@@ -151,12 +151,6 @@
               }
             ]
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autoclimb"
-          }
         }
       ]
     }
