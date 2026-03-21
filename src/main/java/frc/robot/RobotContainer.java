@@ -289,7 +289,7 @@ public class RobotContainer {
                 .b() // retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
         driverController
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
