@@ -503,7 +503,8 @@ public class Drive extends SubsystemBase {
   public Pose2d getClimbLeftRedPose(){
     // Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
     // Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
-    return new Pose2d(15.103 -0.6,4.0,Rotation2d.fromDegrees(180));
+    //og was y = 4
+    return new Pose2d(15.103 -0.6,3.972,Rotation2d.fromDegrees(180));
   }
 
   @AutoLogOutput
