@@ -71,9 +71,9 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionConfig.Feedback.FeedbackRemoteSensorID = extensionEncoder.getDeviceID();
     extensionConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     extensionConfig.Feedback.RotorToSensorRatio = Constants.EXTENSION_GEAR_RATIO;
-    extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 150 / Constants.EXTENSION_GEAR_RATIO;
+    extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 200 / Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicAcceleration =
-    extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.025;
+    extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.02;
     extensionConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     extensionConfig.ClosedLoopGeneral.ContinuousWrap = false;
