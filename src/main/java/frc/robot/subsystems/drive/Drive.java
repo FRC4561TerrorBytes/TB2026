@@ -477,11 +477,11 @@ public class Drive extends SubsystemBase {
 
     Translation2d tempHub = hub;
 
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < 4; i++){
       double dist = getPose().getTranslation().getDistance(tempHub);
       double time = Shooter.interpolateShooterTime(dist);
 
-      tempHub = hub.minus(VelocityDiffrence.times(time));
+      tempHub = hub.minus(VelocityDiffrence.times(time*1.1));
     }
 
     Logger.recordOutput("PredictedHubPose", new Pose2d(tempHub, new Rotation2d()));
