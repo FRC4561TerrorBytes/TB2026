@@ -62,8 +62,8 @@ public final class Constants {
   public static final double EXTENSION_AGITATE_POSITION = 0.15;
   public static final double EXTENSION_RETRACTED_POSITION = 0.37;
 
-  public static final int INDEXER_STATOR_CURRENT_LIMIT = 25;
-  public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 30;
+  public static final int INDEXER_STATOR_CURRENT_LIMIT = 40;
+  public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 35;
   public static final int INDEXER_LEFT_MOTOR_ID = 21;
   public static final int INDEXER_RIGHT_MOTOR_ID = 22;
   
