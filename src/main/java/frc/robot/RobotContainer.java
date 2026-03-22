@@ -400,7 +400,7 @@ public class RobotContainer {
                         Commands.waitSeconds(0.6),
                         Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension),
                         Commands.waitSeconds(0.6))
-                ));
+                )).finallyDo(()->Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension));
     }
 
     public void autoExit() {
