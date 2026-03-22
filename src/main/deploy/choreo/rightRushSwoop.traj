@@ -354,7 +354,7 @@
   "splits":[0]
  },
  "events":[
-   {"name":"slapdown", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.8 s", "val":0.8}}, "event":{"type":"named", "data":{"name":"slapdown"}}},
+   {"name":"slapdown", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.5 s", "val":0.5}}, "event":{"type":"named", "data":{"name":"slapdown"}}},
    {"name":"spinupflywheels", "from":{"target":8, "targetTimestamp":9.01368, "offset":{"exp":"0.4 s", "val":0.4}}, "event":{"type":"named", "data":{"name":"spinupflywheels"}}},
    {"name":"hoodup", "from":{"target":8, "targetTimestamp":9.01368, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"hoodup"}}}]
 }
