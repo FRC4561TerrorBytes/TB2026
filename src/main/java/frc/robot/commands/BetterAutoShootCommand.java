@@ -49,9 +49,10 @@ public class BetterAutoShootCommand extends Command {
         double targetAngle = drive.getRotationToHub().getDegrees();
         Logger.recordOutput("TargetAngleToFace", targetAngle);
         double rotaionSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees(), targetAngle), -30, 30);
-        drive.runVelocity(new ChassisSpeeds(0, 0, rotaionSpeed));
-
-        if(controller.atSetpoint()){
+        if(!controller.atSetpoint()){
+            drive.runVelocity(new ChassisSpeeds(0, 0, rotaionSpeed));
+        }
+        else{
             drive.stopWithX();
         }
 
