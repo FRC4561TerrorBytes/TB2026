@@ -302,7 +302,8 @@ public class RobotContainer {
                                 new BetterAutoShootCommand(drive, indexer, shooter),
                                 agitateBalls()
                 ))
-                .onFalse(Commands.runOnce(()->extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
+                .onFalse(
+                        Commands.runOnce(()->extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
 
 
         driverController
