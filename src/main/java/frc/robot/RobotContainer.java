@@ -327,8 +327,8 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
         driverController
-                .povDown()
-                .whileTrue(agitateBalls());
+                .povLeft()
+                .whileTrue(Commands.run(()-> agitateBalls(), intake, extension));
 
          driverController
                 .povRight()
@@ -385,10 +385,10 @@ public class RobotContainer {
     public Command agitateBalls(){
         return Commands.parallel(
                 Commands.sequence(
-                        Commands.runOnce(()-> intake.setOutput(-0.1), intake),
-                        Commands.waitSeconds(0.2),
                         Commands.runOnce(()-> intake.setOutput(0.6), intake),
-                        Commands.waitSeconds(1)),
+                        Commands.waitSeconds(1),
+                        Commands.runOnce(()-> intake.setOutput(-0.1), intake),
+                        Commands.waitSeconds(0.2)),
                 Commands.sequence(
                         Commands.runOnce(()-> extension.setExtensionSetpoint(0.15), extension),
                         Commands.waitSeconds(1),
