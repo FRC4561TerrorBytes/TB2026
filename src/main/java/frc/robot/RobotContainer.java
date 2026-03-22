@@ -386,17 +386,17 @@ public class RobotContainer {
     }
 
     public Command agitateBalls(){
-        return Commands.parallel(
+        return Commands.repeatingSequence(Commands.parallel(
                 Commands.sequence(
                         Commands.runOnce(()-> intake.setOutput(0.6), intake),
                         Commands.waitSeconds(1),
-                        Commands.runOnce(()-> intake.setOutput(-0.1), intake),
+                        Commands.runOnce(()-> intake.setOutput(-0.3), intake),
                         Commands.waitSeconds(0.2)),
                 Commands.sequence(
                         Commands.runOnce(()-> extension.setExtensionSetpoint(0.15), extension),
                         Commands.waitSeconds(1),
                         Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension))
-                );
+                ));
     }
 
     public void autoExit() {
