@@ -182,6 +182,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(7.0));
+         NamedCommands.registerCommand("shootpreload", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("agitate", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION)));
@@ -293,11 +294,7 @@ public class RobotContainer {
 
         driverController
                 .rightTrigger()
-                .whileTrue(
-                         Commands.parallel(
-                                new AutoShootAndMoveCommand(drive, indexer, shooter),
-                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
-                                ));
+                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
 
 
         driverController
@@ -339,18 +336,17 @@ public class RobotContainer {
                         climber.climbDown() ));
         //OPERATOR CONTROLS
 
-        operatorController.povLeft().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension), climber.climbDown()));
-        operatorController.povRight().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension), climber.climbUp()));
-
+        operatorController.povLeft().onTrue(climber.climbDown());
         operatorController
                 .y()
                 .whileTrue(new Shoot(indexer, shooter, 50, 10));
 
         operatorController
                 .x()
-                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 50, 10)));
+                .whileTrue(Commands.parallel(
+                                new AutoShootAndMoveCommand(drive, indexer, shooter),
+                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
+                                ));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
