@@ -297,7 +297,11 @@ public class RobotContainer {
 
         driverController
                 .rightTrigger()
-                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
+                .whileTrue(
+                        Commands.parallel(
+                                new BetterAutoShootCommand(drive, indexer, shooter),
+                                agitateBalls()
+                ));
 
 
         driverController
@@ -329,9 +333,9 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
-        driverController
-                .povLeft()
-                .whileTrue(agitateBalls());
+        // driverController
+        //         .povLeft()
+        //         .whileTrue(agitateBalls());
 
          driverController
                 .povRight()
@@ -365,9 +369,8 @@ public class RobotContainer {
                         Commands.runOnce(() -> intake.setOutput(0.2), intake).alongWith(driverRumbleCommand())));
         
         operatorController
-        .rightTrigger().whileTrue(
-                new TowerShootCommand(drive, indexer, shooter)
-        );
+                .rightTrigger()
+                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
 
         operatorController
                 .b() // retract intake
@@ -390,10 +393,10 @@ public class RobotContainer {
                 Commands.sequence(
                         Commands.runOnce(()-> intake.setOutput(0.6), intake),
                         Commands.waitSeconds(1),
-                        Commands.runOnce(()-> intake.setOutput(-0.3), intake),
+                        Commands.runOnce(()-> intake.setOutput(-0.2), intake),
                         Commands.waitSeconds(0.2)),
                 Commands.sequence(
-                        Commands.runOnce(()-> extension.setExtensionSetpoint(0.15), extension),
+                        Commands.runOnce(()-> extension.setExtensionSetpoint(0.175), extension),
                         Commands.waitSeconds(1),
                         Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 ));
