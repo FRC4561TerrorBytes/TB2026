@@ -326,6 +326,10 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
+        driverController
+                .povDown()
+                .whileTrue(agitateBalls());
+
          driverController
                 .povRight()
                 .whileTrue(Commands.sequence(
@@ -376,6 +380,20 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autoChooser.get();
+    }
+
+    public Command agitateBalls(){
+        return Commands.parallel(
+                Commands.sequence(
+                        Commands.runOnce(()-> intake.setOutput(-0.1), intake),
+                        Commands.waitSeconds(0.2),
+                        Commands.runOnce(()-> intake.setOutput(0.6), intake),
+                        Commands.waitSeconds(1)),
+                Commands.sequence(
+                        Commands.runOnce(()-> extension.setExtensionSetpoint(0.15), extension),
+                        Commands.waitSeconds(1),
+                        Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension))
+                );
     }
 
     public void autoExit() {
