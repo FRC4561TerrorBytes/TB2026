@@ -397,7 +397,7 @@ public class RobotContainer {
                         Commands.waitSeconds(0.2)),
                 Commands.sequence(
                         Commands.runOnce(()-> extension.setExtensionSetpoint(0.175), extension),
-                        Commands.waitSeconds(1),
+                        Commands.waitSeconds(1.5),
                         Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 ));
     }
