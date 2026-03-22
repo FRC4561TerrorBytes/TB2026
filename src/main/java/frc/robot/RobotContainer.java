@@ -331,7 +331,7 @@ public class RobotContainer {
 
         driverController
                 .povLeft()
-                .whileTrue(Commands.run(()-> agitateBalls(), intake, extension));
+                .whileTrue(agitateBalls());
 
          driverController
                 .povRight()
