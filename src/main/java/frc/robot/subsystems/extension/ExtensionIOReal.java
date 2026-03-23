@@ -57,7 +57,7 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionPIDConfig.kV = 3.2;
     extensionPIDConfig.kA = 0.04;
     extensionPIDConfig.kP = 10; 
-    extensionPIDConfig.kI = 0;
+    extensionPIDConfig.kI = 0.1;
     extensionPIDConfig.kD = 0;
 
     var cancoderConfig = new CANcoderConfiguration();
@@ -71,9 +71,9 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionConfig.Feedback.FeedbackRemoteSensorID = extensionEncoder.getDeviceID();
     extensionConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     extensionConfig.Feedback.RotorToSensorRatio = Constants.EXTENSION_GEAR_RATIO;
-    extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 100 / Constants.EXTENSION_GEAR_RATIO;
+    extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 200 / Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicAcceleration =
-    extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.030;
+    extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.02;
     extensionConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     extensionConfig.ClosedLoopGeneral.ContinuousWrap = false;
@@ -135,6 +135,10 @@ public class ExtensionIOReal implements ExtensionIO{
 
   }
 
+  @Override
+  public void setExtensionOutput(double voltage){
+    extensionMotor.set(voltage);
+  }
 
    @Override
   public void setExtensionSetpoint(double position) {

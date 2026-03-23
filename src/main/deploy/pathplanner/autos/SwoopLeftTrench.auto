@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "shootpreload"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -29,6 +35,18 @@
                       "data": {
                         "name": "intake"
                       }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 6.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stopintake"
+                      }
                     }
                   ]
                 }
@@ -40,6 +58,18 @@
           "type": "named",
           "data": {
             "name": "stopintake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "retractintake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -59,7 +89,73 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 6.5
+                        "waitTime": 4.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "agitate"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "slapdown"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "agitate"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "slapdown"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "agitate"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
                       }
                     },
                     {
@@ -77,7 +173,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autoclimb"
+            "name": "shoot"
           }
         }
       ]

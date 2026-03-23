@@ -181,7 +181,8 @@ public class RobotContainer {
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
-        NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(9.0));
+        NamedCommands.registerCommand("shoot", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(7.0));
+         NamedCommands.registerCommand("shootpreload", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("agitate", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION)));
@@ -189,8 +190,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("autoclimb", Commands.sequence(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
                         climber.climbUp(), 
-                        drive.driveToClimbPose(2,1,40,20,0), 
-                        drive.driveUntilObstruction(new ChassisSpeeds(-0.3,0,0), 3), 
+                        drive.driveToClimbPose(2.5,1,40,20,0), 
+                        drive.driveUntilObstruction(new ChassisSpeeds(-0.5,0,0), 3), 
                         climber.climbDown() ));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
@@ -272,7 +273,7 @@ public class RobotContainer {
                         Commands.sequence(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)),Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                                 extension)))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.8), intake));
+                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(driverRumbleCommand()));
         
         // driverController
         //         .leftTrigger() // extend and run intake
@@ -286,7 +287,7 @@ public class RobotContainer {
                 .b() // retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
         driverController
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
@@ -294,10 +295,12 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(
-                         Commands.parallel(
-                                new AutoShootAndMoveCommand(drive, indexer, shooter),
-                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
-                                ));
+                        Commands.parallel(
+                                new BetterAutoShootCommand(drive, indexer, shooter),
+                                agitateBalls()
+                ))
+                .onFalse(
+                        Commands.runOnce(()->extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
 
 
         driverController
@@ -329,6 +332,10 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
+        // driverController
+        //         .povLeft()
+        //         .whileTrue(agitateBalls());
+
          driverController
                 .povRight()
                 .whileTrue(Commands.sequence(
@@ -339,18 +346,17 @@ public class RobotContainer {
                         climber.climbDown() ));
         //OPERATOR CONTROLS
 
-        operatorController.povLeft().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension), climber.climbDown()));
-        operatorController.povRight().onTrue(Commands.sequence(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension), climber.climbUp()));
-
+        operatorController.povLeft().onTrue(climber.climbDown());
         operatorController
                 .y()
-                .whileTrue(new Shoot(indexer, shooter, 40, 10));
+                .whileTrue(new Shoot(indexer, shooter, 50, 10));
 
         operatorController
                 .x()
-                .whileTrue(Commands.parallel(DriveCommands.joystickDriveAtAngle(drive, ()-> driverController.getLeftY()*-1, ()-> driverController.getLeftX()*-1, ()-> drive.getRotationToPass() ), new Shoot(indexer, shooter, 40, 10)));
+                .whileTrue(Commands.parallel(
+                                new AutoShootAndMoveCommand(drive, indexer, shooter),
+                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
+                                ));
 
         operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
@@ -359,12 +365,11 @@ public class RobotContainer {
                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                         extension))
                 .toggleOnTrue((
-                        Commands.runOnce(() -> intake.setOutput(0.2), intake)));
+                        Commands.runOnce(() -> intake.setOutput(0.2), intake).alongWith(driverRumbleCommand())));
         
         operatorController
-        .rightTrigger().whileTrue(
-                new TowerShootCommand(drive, indexer, shooter)
-        );
+                .rightTrigger()
+                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
 
         operatorController
                 .b() // retract intake
@@ -380,6 +385,21 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autoChooser.get();
+    }
+
+    public Command agitateBalls(){
+        return Commands.repeatingSequence(Commands.parallel(
+                Commands.sequence(
+                        Commands.runOnce(()-> intake.setOutput(0.6), intake),
+                        Commands.waitSeconds(1),
+                        Commands.runOnce(()-> intake.setOutput(-0.2), intake),
+                        Commands.waitSeconds(0.3)),
+                Commands.sequence(
+                        Commands.runOnce(()-> extension.setExtensionSetpoint(0.175), extension),
+                        Commands.waitSeconds(0.6),
+                        Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension),
+                        Commands.waitSeconds(0.6))
+                ));
     }
 
     public void autoExit() {
