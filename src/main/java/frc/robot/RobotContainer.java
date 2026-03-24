@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoShootAndMoveCommand;
-import frc.robot.commands.BetterAutoShootCommand;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterSpeedup;
@@ -183,7 +183,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", shoot().withTimeout(7.0));
-         NamedCommands.registerCommand("shootpreload", new BetterAutoShootCommand(drive, indexer, shooter).withTimeout(3.5));
+         NamedCommands.registerCommand("shootpreload", new AutoShootCommand(drive, indexer, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
@@ -330,7 +330,7 @@ public class RobotContainer {
         
         operatorController
                 .rightTrigger()
-                .whileTrue(new BetterAutoShootCommand(drive, indexer, shooter));
+                .whileTrue(new AutoShootCommand(drive, driverController::getLeftX, driverController::getLeftX, indexer, shooter));
 
         operatorController
                 .b()
@@ -373,16 +373,9 @@ public class RobotContainer {
     }
 
     public Command shoot(){
-        return Commands.sequence(
-                new ShooterSpeedup(shooter, drive::getDistanceToHub), //initial speedup to get shooter spinning and hood up while moving
-                Commands.parallel(
-                        new ShotAlignAndStop(drive), 
-                        new ShooterSpeedup(shooter, drive::getDistanceToHub)
-                        ),
-                Commands.parallel(
-                        Commands.runOnce(() -> indexer.setThroughput(0.6, 0.7), indexer), //hi Manbir
-                        agitateBalls()
-                )
+        return Commands.parallel(
+                new AutoShootCommand(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter);
+                agitateBalls()
         );
     }
 
