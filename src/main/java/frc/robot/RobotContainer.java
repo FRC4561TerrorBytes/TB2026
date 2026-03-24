@@ -43,7 +43,9 @@ import frc.robot.commands.AutoShootAndMoveCommand;
 import frc.robot.commands.BetterAutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShooterSpeedup;
 import frc.robot.commands.TowerShootCommand;
+import frc.robot.commands.ShotAlignAndStop;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
@@ -298,10 +300,12 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(
-                        Commands.parallel(
-                                new BetterAutoShootCommand(drive, indexer, shooter),
-                                agitateBalls()
-                ))
+                        Commands.sequence(
+                                new ShooterSpeedup(shooter, drive),
+                                new ShotAlignAndStop(drive),
+                                Commands.runOnce(() -> indexer.setThroughput(0.6, 0.7), indexer)
+                        )
+                )
                 .onFalse(
                         Commands.runOnce(()->extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
 
