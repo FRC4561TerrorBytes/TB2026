@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AutoShootAndMoveCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.RobotCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterSpeedup;
 import frc.robot.commands.ShotAlignAndStop;
@@ -182,12 +183,12 @@ public class RobotContainer {
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
-        NamedCommands.registerCommand("shoot", shoot().withTimeout(7.0));
-         NamedCommands.registerCommand("shootpreload", shoot().withTimeout(3.5));
+        NamedCommands.registerCommand("shoot", RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter).withTimeout(7.0));
+         NamedCommands.registerCommand("shootpreload", RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
-        NamedCommands.registerCommand("autoclimb", autoClimb());
+        NamedCommands.registerCommand("autoclimb", RobotCommands.autoClimb(drive, extension, climber));
         NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
         NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
         NamedCommands.registerCommand("spinupflywheels", Commands.run(() -> shooter.setFlywheelSpeed(40), shooter));
@@ -249,7 +250,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(lerpHood(drive::getDistanceToHub)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(shooter.lerpHood(drive::getDistanceToHub)));
 
 
         // DRIVER CONTROLS
@@ -259,7 +260,7 @@ public class RobotContainer {
                         Commands.sequence(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)),Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                                 extension)))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(driverRumbleCommand()));
+                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)));
 
         driverController
                 .b() // retract intake
@@ -272,7 +273,7 @@ public class RobotContainer {
 
         driverController
                 .rightTrigger()
-                .whileTrue(shoot())
+                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter))
                 .onFalse(
                         Commands.runOnce(()->extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
 
@@ -304,7 +305,8 @@ public class RobotContainer {
 
          driverController
                 .povRight()
-                .whileTrue(autoClimb());
+                .whileTrue(RobotCommands.autoClimb(drive, extension, climber));
+                //AHHHHH SO MUCH TYPING
 
         //OPERATOR CONTROLS
         operatorController.povLeft().onTrue(climber.climbDown());
@@ -326,7 +328,7 @@ public class RobotContainer {
                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
                         extension))
                 .toggleOnTrue((
-                        Commands.runOnce(() -> intake.setOutput(0.2), intake).alongWith(driverRumbleCommand())));
+                        Commands.runOnce(() -> intake.setOutput(0.2), intake).alongWith(RobotCommands.driverRumbleCommand(driverController))));
         
         operatorController
                 .rightTrigger()
@@ -348,41 +350,6 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
-    public Command agitateBalls(){
-        return Commands.repeatingSequence(Commands.parallel(
-                Commands.sequence(
-                        Commands.runOnce(()-> intake.setOutput(0.6), intake),
-                        Commands.waitSeconds(1),
-                        Commands.runOnce(()-> intake.setOutput(-0.2), intake),
-                        Commands.waitSeconds(0.3)),
-                Commands.sequence(
-                        Commands.runOnce(()-> extension.setExtensionSetpoint(0.175), extension),
-                        Commands.waitSeconds(0.6),
-                        Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension),
-                        Commands.waitSeconds(0.6))
-                ));
-    }
-
-    public Command autoClimb(){
-        return Commands.sequence(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
-                        climber.climbUp(), 
-                        drive.driveToClimbPose(2.5,1,40,20,0), 
-                        drive.driveUntilObstruction(new ChassisSpeeds(-0.5,0,0), 3), 
-                        climber.climbDown());
-    }
-
-    public Command shoot(){
-        return Commands.parallel(
-                new AutoShootCommand(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter);
-                agitateBalls()
-        );
-    }
-
-    public Command lerpHood(DoubleSupplier distance){
-        return Commands.run(() -> shooter.setHoodAngle(shooter.interpolateHoodAngle(distance.getAsDouble())), shooter);
-    }
-
     public void autoExit() {
         climber.setIdleMode(NeutralModeValue.Coast);
     }
@@ -391,17 +358,5 @@ public class RobotContainer {
         if(climber.getClimberPosition() >= Constants.CLIMBER_DOWN_POSITION){
             climber.setClimberPosition(Constants.CLIMBER_UP_POSITION);
         }
-    }
-
-    private Command driverRumbleCommand() {
-        return Commands.startEnd(
-                () -> {
-                        driverController.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-                        Logger.recordOutput("RobotContainer/Rumbling", true);
-                },
-                () -> {
-                        driverController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
-                        Logger.recordOutput("RobotContainer/Rumbling", false);
-                });
     }
 }

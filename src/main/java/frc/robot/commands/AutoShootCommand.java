@@ -57,11 +57,11 @@ public class AutoShootCommand extends Command {
         double targetAngle = drive.getRotationToHub().getDegrees();
         Logger.recordOutput("TargetAngleToFace", targetAngle);
 
-        double rotaionSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees(), targetAngle), -30, 30);
+        double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees(), targetAngle), -30, 30);
         double linearVelocity = Math.sqrt(Math.pow(joystickX.getAsDouble(), 2) + Math.pow(joystickY.getAsDouble(), 2));
 
         if(!controller.atSetpoint()){
-            drive.runVelocity(new ChassisSpeeds(-joystickX.getAsDouble(), -joystickY.getAsDouble(), rotaionSpeed));
+            drive.runVelocity(new ChassisSpeeds(-joystickX.getAsDouble(), -joystickY.getAsDouble(), rotationSpeed));
         }
         else if(linearVelocity < 0.1){
             drive.stopWithX();

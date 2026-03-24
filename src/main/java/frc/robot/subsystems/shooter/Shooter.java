@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -133,6 +135,10 @@ public class Shooter extends SubsystemBase{
   @AutoLogOutput(key = "Shooter/rightFlywheelUpToSpeed")
   public boolean rightFlywheelUpToSpeed(double rotationsPerSecond){
     return Math.abs(inputs.flywheelRightTopVelocity - rotationsPerSecond) < 6.0;
+  }
+
+  public Command lerpHood(DoubleSupplier distance){
+      return Commands.run(() -> this.setHoodAngle(interpolateHoodAngle(distance.getAsDouble())), this);
   }
 
   public void idleFlywheels(){
