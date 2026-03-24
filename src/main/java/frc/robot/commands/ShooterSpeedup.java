@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
@@ -15,23 +17,20 @@ import frc.robot.util.AllianceFlipUtil;
 
 public class ShooterSpeedup extends Command {
     public Shooter shooter;
-    public Drive drive;
     public double distanceToHub;
 
     public double targetAngle;
     public double shootSpeedRPS = 70;
     PIDController controller;
 
-    public ShooterSpeedup(Shooter shooter, Drive drive) {
+    public ShooterSpeedup(Shooter shooter, DoubleSupplier distanceToHubSupplier) {
         this.shooter = shooter;
-        this.drive = drive;
+        this.distanceToHub = distanceToHubSupplier.getAsDouble();
         addRequirements(shooter);
     }
 
     @Override
     public void execute() {
-        //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
-        distanceToHub = drive.getDistanceToHub();
         shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
         shooter.setFlywheelSpeed(shootSpeedRPS);
         //getting hood angle from the table with interpolation
