@@ -298,9 +298,15 @@ public class RobotContainer {
                 .rightTrigger()
                 .whileTrue(
                         Commands.sequence(
-                                new ShooterSpeedup(shooter, drive),
-                                new ShotAlignAndStop(drive),
-                                Commands.runOnce(() -> indexer.setThroughput(0.6, 0.7), indexer)
+                                new ShooterSpeedup(shooter, drive), //initial speedup to get shooter spinning and hood up while moving
+                                Commands.parallel(
+                                        new ShotAlignAndStop(drive), 
+                                        new ShooterSpeedup(shooter, drive)
+                                        ),
+                                Commands.parallel(
+                                        Commands.runOnce(() -> indexer.setThroughput(0.6, 0.7), indexer), //hi Manbir
+                                        agitateBalls()
+                                )
                         )
                 )
                 .onFalse(
