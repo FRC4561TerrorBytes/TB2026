@@ -12,16 +12,16 @@ public class ShotAlignAndStop extends Command {
 
     public Drive drive;
     public double distanceToHub;
-
+    public boolean robotMoving;
     public double targetAngle;
     PIDController controller;
-
     public ShotAlignAndStop(Drive drive) {
         this.drive = drive;
         addRequirements(drive);
         controller = new PIDController(0.1, 0, 0, 0.02);
         controller.setTolerance(1.5);
         controller.enableContinuousInput(-180, 180);
+        robotMoving = Math.abs(drive.getChassisSpeeds().vxMetersPerSecond) < 0.1 && Math.abs(drive.getChassisSpeeds().vyMetersPerSecond) < 0.1;
     }
 
     @Override
@@ -32,8 +32,9 @@ public class ShotAlignAndStop extends Command {
         if(controller.atSetpoint()){
             drive.stopWithX();
         }
-        else if(!controller.atSetpoint()){
+        else if(!controller.atSetpoint() && !robotMoving){
             drive.runVelocity(new ChassisSpeeds(0, 0, rotationSpeed));
+            robotMoving = false;
         }
 
         Logger.recordOutput("DriveTrainFacingHub", controller.atSetpoint());
