@@ -16,6 +16,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -244,7 +246,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.run(() -> shooter.setHoodAngle(shooter.interpolateHoodAngle(drive.getDistanceToHub())), shooter)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(lerpHood(drive::getDistanceToHub)));
 
 
         // DRIVER CONTROLS
@@ -369,16 +371,20 @@ public class RobotContainer {
 
     public Command shoot(){
         return Commands.sequence(
-                new ShooterSpeedup(shooter, () -> drive.getDistanceToHub()), //initial speedup to get shooter spinning and hood up while moving
+                new ShooterSpeedup(shooter, drive::getDistanceToHub), //initial speedup to get shooter spinning and hood up while moving
                 Commands.parallel(
                         new ShotAlignAndStop(drive), 
-                        new ShooterSpeedup(shooter, () -> drive.getDistanceToHub())
+                        new ShooterSpeedup(shooter, drive::getDistanceToHub)
                         ),
                 Commands.parallel(
                         Commands.runOnce(() -> indexer.setThroughput(0.6, 0.7), indexer), //hi Manbir
                         agitateBalls()
                 )
         );
+    }
+
+    public Command lerpHood(DoubleSupplier distance){
+        return Commands.run(() -> shooter.setHoodAngle(shooter.interpolateHoodAngle(distance.getAsDouble())), shooter);
     }
 
     public void autoExit() {
