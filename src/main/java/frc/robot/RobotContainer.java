@@ -180,7 +180,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", shoot().withTimeout(7.0));
-         NamedCommands.registerCommand("shootpreload", new AutoShootCommand(drive, indexer, shooter).withTimeout(3.5));
+         NamedCommands.registerCommand("shootpreload", new AutoShootCommand(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
