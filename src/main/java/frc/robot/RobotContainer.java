@@ -255,7 +255,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.runOnce(() -> shooter.setHoodAngle(6), shooter)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(Commands.run(() -> shooter.setHoodAngle(shooter.interpolateHoodAngle(drive.getDistanceToHub())), shooter)));
 
         //TRIGGERS
         //Trigger bumpPositionTrigger = new Trigger(() -> drive.closeToBump());
