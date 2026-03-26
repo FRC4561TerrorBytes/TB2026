@@ -44,9 +44,6 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterSpeedup;
 import frc.robot.commands.ShotAlignAndStop;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOReal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -88,7 +85,7 @@ public class RobotContainer {
     private final Extension extension;
     private final Shooter shooter;
     private final Indexer indexer;
-    private final Climber climber;
+    
 
     Rotation2d snapRotation;
     // Controller
@@ -120,7 +117,7 @@ public class RobotContainer {
                 shooter = new Shooter(
                         new ShooterIOReal());
                 indexer = new Indexer(new IndexerIOReal());
-                climber = new Climber(new ClimberIOReal());
+        
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -142,8 +139,6 @@ public class RobotContainer {
                         new ShooterIO() {
                         });
                 indexer = new Indexer(new IndexerIO() {
-                });
-                climber = new Climber(new ClimberIO() {
                 });
                 break;
             default:
@@ -171,8 +166,6 @@ public class RobotContainer {
                         });
                 indexer = new Indexer(new IndexerIO() {
                 });
-                climber = new Climber(new ClimberIO() {
-                });
                 break;
         }
 
@@ -185,9 +178,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
-        NamedCommands.registerCommand("autoclimb", RobotCommands.autoClimb(drive, extension, climber));
-        NamedCommands.registerCommand("climbprep", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_UP_POSITION)));
-        NamedCommands.registerCommand("climbfull", Commands.runOnce(() -> climber.setClimberPosition(Constants.CLIMBER_DOWN_POSITION)));
         NamedCommands.registerCommand("spinupflywheels", Commands.run(() -> shooter.setFlywheelSpeed(40), shooter));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -254,8 +244,7 @@ public class RobotContainer {
         driverController
                 .leftTrigger() // extend and run intake
                 .onTrue(
-                        Commands.sequence(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)),Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
-                                extension)))
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .toggleOnTrue(
                         Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)));
 
@@ -287,11 +276,6 @@ public class RobotContainer {
 
         driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
 
-        driverController.rightBumper()
-                .whileTrue(climber.climbUp().beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
-
-        driverController.leftBumper().whileTrue(climber.climbDown());
-
         driverController
                 .povUp()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(0.1), shooter));
@@ -300,13 +284,9 @@ public class RobotContainer {
                 .povDown()
                 .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
 
-         driverController
-                .povRight()
-                .whileTrue(RobotCommands.autoClimb(drive, extension, climber));
                 //AHHHHH SO MUCH TYPING
 
         //OPERATOR CONTROLS
-        operatorController.povLeft().onTrue(climber.climbDown());
         operatorController
                 .y()
                 .whileTrue(new Shoot(indexer, shooter, 50, 10));
@@ -317,8 +297,6 @@ public class RobotContainer {
                                 new AutoShootAndMoveCommand(drive, indexer, shooter),
                                 DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
                                 ));
-
-        operatorController.a().whileTrue(Commands.runOnce(() -> climber.setClimberPosition(0.0)).beforeStarting(() -> climber.setIdleMode(NeutralModeValue.Brake)));
 
 
         operatorController.leftTrigger().onTrue(
@@ -348,12 +326,10 @@ public class RobotContainer {
     }
 
     public void autoExit() {
-        climber.setIdleMode(NeutralModeValue.Coast);
+       
     }
 
     public void teleopEnter(){
-        if(climber.getClimberPosition() >= Constants.CLIMBER_DOWN_POSITION){
-            climber.setClimberPosition(Constants.CLIMBER_UP_POSITION);
-        }
+        
     }
 }

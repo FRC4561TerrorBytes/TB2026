@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.extension.Extension;
 import frc.robot.subsystems.indexer.Indexer;
@@ -38,16 +37,6 @@ public class RobotCommands {
                         Commands.runOnce(()-> extension.setExtensionOutput(Constants.EXTENSION_EXTENDED_POSITION), extension),
                         Commands.waitSeconds(0.6))
                 ));
-    }
-
-    public static Command autoClimb(Drive drive, Extension extension, Climber climber){
-        return Commands.sequence(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension), 
-            climber.climbUp(), 
-            drive.driveToClimbPose(2.5,1,40,20,0), 
-            drive.driveUntilObstruction(new ChassisSpeeds(-0.5,0,0), 3), 
-            climber.climbDown()
-            );
     }
 
     public static Command driverRumbleCommand(CommandXboxController driverController) {
