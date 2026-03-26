@@ -500,47 +500,6 @@ public class Drive extends SubsystemBase {
   }
 
   @AutoLogOutput
-  public Pose2d getClimbLeftRedPose(){
-    // Pose2d rightClimb = new Pose2d(1.445 +0.5,3.413,new Rotation2d());
-    // Pose2d leftClimb = new Pose2d(1.445 +0.5,4.074,new Rotation2d());
-    //og was y = 4
-    return new Pose2d(15.103 -0.6,3.972,Rotation2d.fromDegrees(180));
-  }
-
-  @AutoLogOutput
-  public Pose2d getClimbRightRedPose(){
-    return new Pose2d(15.103 -0.6,4.651,Rotation2d.fromDegrees(180));
-  }
-
-  @AutoLogOutput
-  public Pose2d getClimbRightBluePose(){
-    return new Pose2d(1.445 +0.6,3.413, Rotation2d.fromDegrees(0));
-  }
-
-  @AutoLogOutput
-  public Pose2d getClimbLeftBluePose(){
-    new Rotation2d();
-    return new Pose2d(1.445 +0.6,4.074, Rotation2d.fromDegrees(0));
-  }
-
-  @AutoLogOutput
-  public Pose2d getClosestClimbPose(){
-
-    if(AllianceFlipUtil.shouldFlip()){
-      if(getPose().getTranslation().getDistance(getClimbRightRedPose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftRedPose().getTranslation())){
-        return getClimbRightRedPose();
-      }
-      return getClimbLeftRedPose();
-    } else {
-
-      if(getPose().getTranslation().getDistance(getClimbRightBluePose().getTranslation()) < getPose().getTranslation().getDistance(getClimbLeftBluePose().getTranslation())){
-        return getClimbRightBluePose();
-      }
-      return getClimbLeftBluePose();
-    }
-  }
-
-  @AutoLogOutput
   public double flipSpeedForAlliance(double speed){
     if(AllianceFlipUtil.shouldFlip())
       return speed * -1;
@@ -560,20 +519,6 @@ public class Drive extends SubsystemBase {
   }
 
 
-  @AutoLogOutput
-  public Command driveToClimbPose(double maxVeloicty, double maxAcceleration, double maxRadiansVelocity, double maxRadiansAcceleration, double endVelocity){
-    
-    return Commands.defer(
-        () -> AutoBuilder.pathfindToPose(
-            getClosestClimbPose(),
-            new PathConstraints(
-                maxVeloicty,
-                maxAcceleration,
-                maxRadiansVelocity,
-                maxRadiansAcceleration),
-            endVelocity),
-        Set.of(this));
-  }
 
   @AutoLogOutput
   public Rotation2d getRotationToPass(){
