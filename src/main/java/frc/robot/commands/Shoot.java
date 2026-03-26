@@ -46,7 +46,7 @@ public class Shoot extends Command {
       Logger.recordOutput("RightFlywheelUpToSpeed", shooter.rightFlywheelUpToSpeed(flyWheelRPS));
 
       if(shooter.leftFlywheelUpToSpeed(flyWheelRPS) && shooter.rightFlywheelUpToSpeed(flyWheelRPS) &&shooter.hoodAtSetpoint()){
-          indexer.setThroughput(0.7, 0.6);
+          indexer.setThroughput(0.9, 0.8);
       }
       else{
           indexer.stop();
