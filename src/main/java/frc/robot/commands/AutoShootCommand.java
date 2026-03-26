@@ -7,8 +7,12 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
@@ -58,19 +62,31 @@ public class AutoShootCommand extends Command {
         Logger.recordOutput("TargetAngleToFace", targetAngle);
 
         double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees(), targetAngle), -30, 30);
-        double linearVelocity = Math.sqrt(Math.pow(joystickX.getAsDouble(), 2) + Math.pow(joystickY.getAsDouble(), 2));
 
-        if(!controller.atSetpoint()){
-            drive.runVelocity(new ChassisSpeeds(-joystickX.getAsDouble(), -joystickY.getAsDouble(), rotationSpeed));
-        }
-        else if(linearVelocity < 0.1){
+        double x = (joystickY.getAsDouble() * joystickY.getAsDouble()) * Math.signum(-joystickY.getAsDouble());
+        double y = (joystickX.getAsDouble() * joystickX.getAsDouble()) * Math.signum(-joystickX.getAsDouble());
+        Translation2d linearVelocity = DriveCommands.getLinearVelocityFromJoysticks(x, y);
+
+        boolean isFlipped =
+            DriverStation.getAlliance().isPresent()
+                && DriverStation.getAlliance().get() == Alliance.Red;
+        
+        ChassisSpeeds speeeeeeeeds = new ChassisSpeeds(
+                linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(), 
+                linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), 
+                rotationSpeed);
+
+          drive.runVelocity(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  speeeeeeeeds,
+                  isFlipped
+                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getRotation()));
+        if(Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < Math.pow(0.05, 2) && controller.atSetpoint()){
             drive.stopWithX();
         }
-        else{
-            drive.runVelocity(new ChassisSpeeds(-joystickX.getAsDouble(), -joystickY.getAsDouble(), 0));
-        }
 
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint() && controller.atSetpoint() && linearVelocity < 0.1){
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint() && controller.atSetpoint() && Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < Math.pow(0.05, 2)){
             indexer.setThroughput(0.6, 0.7);
         }
         else{

@@ -21,18 +21,6 @@
           "data": {
             "name": "shoot"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "climbFromLeftShoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "climbfull"
-          }
         }
       ]
     }
