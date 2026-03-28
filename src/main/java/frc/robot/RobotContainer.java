@@ -173,8 +173,8 @@ public class RobotContainer {
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
-        NamedCommands.registerCommand("shoot", RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter).withTimeout(7.0));
-         NamedCommands.registerCommand("shootpreload", RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter).withTimeout(3.5));
+        NamedCommands.registerCommand("shoot", RobotCommands.shootNoJoysticks(drive, indexer, intake, extension, shooter).withTimeout(7.0));
+         NamedCommands.registerCommand("shootpreload", RobotCommands.shootPreload(drive, indexer, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
