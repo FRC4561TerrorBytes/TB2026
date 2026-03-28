@@ -34,19 +34,25 @@ public class AutoShootCommand extends Command {
     DoubleSupplier joystickX;
     DoubleSupplier joystickY;
 
-    public AutoShootCommand(Drive drive, DoubleSupplier X, DoubleSupplier Y, Indexer indexer, Shooter shooter) {
+    public AutoShootCommand(Drive drive, Indexer indexer, Shooter shooter){
         this.drive = drive;
         this.indexer = indexer;
         this.shooter = shooter;
         addRequirements(drive, indexer, shooter);
 
-        joystickX = X;
-        joystickY = Y;
-
         controller = new PIDController(2.5, 0, 0, 0.02);
         controller.setTolerance(Units.degreesToRadians(1.5));
         controller.enableContinuousInput(-Math.PI, Math.PI);
     }
+
+    public AutoShootCommand(Drive drive, DoubleSupplier X, DoubleSupplier Y, Indexer indexer, Shooter shooter) {
+        this(drive, indexer, shooter);
+        
+        joystickX = X;
+        joystickY = Y;
+    }
+
+    
 
     @Override
     public void execute() {

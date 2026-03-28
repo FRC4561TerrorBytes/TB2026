@@ -24,6 +24,17 @@ public class RobotCommands {
         );
     }
 
+    public static Command shootNoJoysticks(Drive drive, Indexer indexer, Intake intake, Extension extension, Shooter shooter){
+        return Commands.parallel(
+                new AutoShootCommand(drive, indexer, shooter),
+                agitateBalls(intake, extension)
+        );
+    }
+
+    public static Command shootPreload(Drive drive, Indexer indexer, Shooter shooter){
+        return new AutoShootCommand(drive, indexer, shooter);
+    }
+
     public static Command agitateBalls(Intake intake, Extension extension){
         return Commands.repeatingSequence(Commands.parallel(
                 Commands.sequence(
