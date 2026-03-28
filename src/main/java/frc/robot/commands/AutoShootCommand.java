@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -42,14 +43,13 @@ public class AutoShootCommand extends Command {
         joystickX = X;
         joystickY = Y;
 
-        controller = new PIDController(0.1, 0, 0, 0.02);
-        controller.setTolerance(1.5);
-        controller.enableContinuousInput(-180, 180);
+        controller = new PIDController(2.5, 0, 0, 0.02);
+        controller.setTolerance(Units.degreesToRadians(1.5));
+        controller.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
     public void execute() {
-        //distanceToHub = drive.getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
         distanceToHub = drive.getDistanceToHub();
         shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
         shooter.setFlywheelSpeed(shootSpeedRPS);
@@ -61,7 +61,7 @@ public class AutoShootCommand extends Command {
         double targetAngle = drive.getRotationToHub().getDegrees();
         Logger.recordOutput("TargetAngleToFace", targetAngle);
 
-        double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getDegrees(), targetAngle), -30, 30);
+        double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getRadians(), Units.degreesToRadians(targetAngle)), -drive.getMaxAngularSpeedRadPerSec(), drive.getMaxAngularSpeedRadPerSec());
 
         double x = (joystickY.getAsDouble() * joystickY.getAsDouble()) * Math.signum(-joystickY.getAsDouble());
         double y = (joystickX.getAsDouble() * joystickX.getAsDouble()) * Math.signum(-joystickX.getAsDouble());
@@ -87,7 +87,7 @@ public class AutoShootCommand extends Command {
         }
 
         if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint() && controller.atSetpoint() && Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < Math.pow(0.05, 2)){
-            indexer.setThroughput(0.6, 0.7);
+            indexer.setThroughput(0.9, 0.8);
         }
         else{
             indexer.stop();
