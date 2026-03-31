@@ -88,7 +88,6 @@ public class RobotContainer {
   private final Shooter shooter;
   private final Indexer indexer;
   private final Leds leds;
-  private final Climber climber;
 
     Rotation2d snapRotation;
     // Controller
