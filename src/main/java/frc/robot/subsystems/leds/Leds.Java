@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.util.FieldConstants.ReefLevel;
 import frc.robot.util.VirtualSubsystem;
 import java.util.List;
 import java.util.Optional;
@@ -24,13 +23,12 @@ public class Leds extends VirtualSubsystem {
   }
 
   // Robot state tracking
+  public int loopCycleCount = 0;
   public boolean endgameAlert = false;
-  public boolean endofAutonomous = false;
-  public boolean hubActive = false;
   public boolean autoScoring = false;
   public boolean intakeRunning = false;
   public boolean visionDisconnected = false;
-  public Color hexColor = Color.kBlue;
+  public Color hexColor = Color.kBlack;
   public Color secondaryHexColor = Color.kBlack;
 
   private Optional<Alliance> alliance = Optional.empty();
@@ -66,10 +64,6 @@ public class Leds extends VirtualSubsystem {
   private static final double waveDisabledDuration = 2.0;
   private static final double autoFadeTime = 2.5; // 3s nominal
   private static final double autoFadeMaxTime = 5.0; // Return to normal
-  private static final Color l1PriorityColor = Color.kOrangeRed;
-  private static final Color l2PriorityColor = Color.kGreen;
-  private static final Color l3PriorityColor = Color.kPurple;
-  private static final Color l4PriorityColor = Color.kBlack;
 
   private Leds() {
     leds = new AddressableLED(0);
@@ -92,13 +86,6 @@ public class Leds extends VirtualSubsystem {
             });
     loadingNotifier.startPeriodic(0.02);
   }
-  if (DriverStation.getMatchTime() < 30) {
-    endgameAlert = true;
-  }
-  else {
-    endgameAlert = false;
-  }
-
 
   public synchronized void periodic() {
     // Update alliance color
@@ -121,6 +108,7 @@ public class Leds extends VirtualSubsystem {
     if (DriverStation.isEStopped()) {
       estopped = true;
     }
+    estopped = true;
 
     // Exit during initial cycles
     loopCycleCount += 1;
@@ -131,21 +119,79 @@ public class Leds extends VirtualSubsystem {
     // Stop loading notifier if running
     loadingNotifier.stop();
 
+    // Select LED mode
+    solid(fullSection, Color.kBlack); // Default to off
+    if (estopped) {
+      solid(fullSection, Color.kRed);
+    } 
+    else if (DriverStation.isDisabled()) {
+      if (lastEnabledAuto && Timer.getTimestamp() - lastEnabledTime < autoFadeMaxTime) {
+        // Auto fade
+        wave(
+            new Section(
+                0,
+                (int) (length * (1 - ((Timer.getTimestamp() - lastEnabledTime) / autoFadeTime)))),
+            Color.kGold,
+            Color.kDarkBlue,
+            waveFastCycleLength,
+            waveFastDuration);
+      } else if (prideLeds) {
+        // Pride stripes
+        stripes(
+            fullSection,
+            List.of(
+                Color.kBlack,
+                Color.kRed,
+                Color.kOrangeRed,
+                Color.kYellow,
+                Color.kGreen,
+                Color.kBlue,
+                Color.kPurple,
+                Color.kBlack,
+                new Color(0.15, 0.3, 1.0),
+                Color.kDeepPink,
+                Color.kWhite,
+                Color.kDeepPink,
+                new Color(0.15, 0.3, 1.0)),
+            3,
+            5.0);
+      } else {
+        // Default pattern
+        wave(
+            fullSection,
+            disabledColor,
+            secondaryDisabledColor,
+            waveDisabledCycleLength,
+            waveDisabledDuration);
+      }
 
-    solid(fullSection, Color.kGreen);
-    
+    } 
+    else if (DriverStation.isAutonomous()) {
+      wave(fullSection, Color.kGreen, Color.kPurple, waveFastCycleLength, waveFastDuration);
+    } 
+    else {
+      solid(topSection, hexColor);
+      solid(bottomSection, secondaryHexColor);
 
+      // Intake running
+      if (intakeRunning) {
+        strobe(bottomThreeQuartSection, Color.kBlack, Color.kBlue, strobeDuration);
+      }
+
+      // Auto scoring
+      if (autoScoring) {
+        rainbow(bottomThreeQuartSection, rainbowCycleLength, rainbowDuration);
+      }
+
+      // Endgame alert
+      if (endgameAlert) {
+        strobe(fullSection, Color.kRed, Color.kGold, strobeDuration);
+      }
+    }
 
     // Update LEDs
     leds.setData(buffer);
-
-    Logger.recordOutput("AutoLineup/Manual Mode", manualElevator);
   }
-
-  if(intakeRunning) {
-    strobe(fullSection, Color.kYellow, Color.kBlack, strobeDuration);
-  }
-  else 
 
   private Color solid(Section section, Color color) {
     if (color != null) {

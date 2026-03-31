@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -60,7 +61,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
@@ -68,6 +68,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.RobotVisualizer;
+import frc.robot.subsystems.leds.Leds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -241,14 +242,14 @@ public class RobotContainer {
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
         shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(shooter.lerpHood(drive::getDistanceToHub)));
 
-
         // DRIVER CONTROLS
         driverController
                 .leftTrigger() // extend and run intake
                 .onTrue(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension).andThen(Commands.runOnce(() -> Leds.getInstance().intakeRunning = true)))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)));
+                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)))
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().intakeRunning = false));
 
         driverController
                 .b() // retract intake
