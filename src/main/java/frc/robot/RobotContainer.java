@@ -87,7 +87,7 @@ public class RobotContainer {
   private final Extension extension;
   private final Shooter shooter;
   private final Indexer indexer;
-  private final Leds leds;
+  private final Leds leds = Leds.getInstance();
 
     Rotation2d snapRotation;
     // Controller
