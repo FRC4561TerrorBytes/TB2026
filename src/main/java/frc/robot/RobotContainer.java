@@ -66,6 +66,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.RobotVisualizer;
+import frc.robot.subsystems.leds.Leds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -85,6 +86,7 @@ public class RobotContainer {
     private final Extension extension;
     private final Shooter shooter;
     private final Indexer indexer;
+    private final Leds leds;
     
 
     Rotation2d snapRotation;
@@ -99,6 +101,7 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        leds = Leds.getInstance();
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
@@ -117,7 +120,6 @@ public class RobotContainer {
                 shooter = new Shooter(
                         new ShooterIOReal());
                 indexer = new Indexer(new IndexerIOReal());
-        
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -242,7 +244,8 @@ public class RobotContainer {
 
         // DRIVER CONTROLS
         driverController
-                .leftTrigger() // extend and run intake
+                .leftTrigger()
+                .onTrue(Commands.runOnce(() -> leds.getInstance().intakeRunning = true)) // extend and run intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .toggleOnTrue(
