@@ -93,6 +93,7 @@ public class RobotContainer {
     // Controller
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
+    private final CommandXboxController testingController = new CommandXboxController(2);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -292,7 +293,7 @@ public class RobotContainer {
         //OPERATOR CONTROLS
         operatorController
                 .y()
-                .whileTrue(new Shoot(indexer, shooter, 50, 10));
+                .whileTrue(new Shoot(indexer, shooter, 20, 10));
 
         operatorController
                 .x()
@@ -302,11 +303,9 @@ public class RobotContainer {
                                 ));
 
 
-        operatorController.leftTrigger().onTrue(
-                Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION),
-                        extension))
+        operatorController.leftTrigger()
                 .toggleOnTrue((
-                        Commands.runOnce(() -> intake.setOutput(0.2), intake).alongWith(RobotCommands.driverRumbleCommand(driverController))));
+                        Commands.run(() -> intake.setOutput(0.75), intake)));
         
         operatorController
                 .rightTrigger()
@@ -317,6 +316,11 @@ public class RobotContainer {
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
                                 extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+
+
+        testingController.leftTrigger().onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
+        testingController.b().onTrue(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension));
     }
 
     /**

@@ -46,6 +46,7 @@ public class IndexerIOReal implements IndexerIO {
     indexerRightConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
     indexerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     indexerRightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    indexerRightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     tryUntilOk(5, () -> indexerRightMotor.getConfigurator().apply(indexerRightConfig, 0.25));
 
     indexerRightCurrent = indexerRightMotor.getStatorCurrent();
@@ -68,7 +69,7 @@ public class IndexerIOReal implements IndexerIO {
     indexerLeftConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
     indexerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     indexerLeftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    indexerLeftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    indexerLeftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     tryUntilOk(5, () -> indexerLeftMotor.getConfigurator().apply(indexerLeftConfig, 0.25));
 
     indexerLeftCurrent = indexerLeftMotor.getStatorCurrent();

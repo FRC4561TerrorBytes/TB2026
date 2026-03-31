@@ -53,7 +53,7 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var extensionPIDConfig = new Slot0Configs();
     extensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
-    extensionPIDConfig.kS = 0.28;
+    extensionPIDConfig.kS = 0.8;
     extensionPIDConfig.kV = 3.2;
     extensionPIDConfig.kA = 0.04;
     extensionPIDConfig.kP = 10; 
@@ -62,7 +62,7 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var cancoderConfig = new CANcoderConfiguration();
     cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    cancoderConfig.MagnetSensor.MagnetOffset = -0.333496;
+    cancoderConfig.MagnetSensor.MagnetOffset = -0.141357;
     tryUntilOk(5, () -> extensionEncoder.getConfigurator().apply(cancoderConfig, 0.25));
 
     var extensionConfig = new TalonFXConfiguration();
@@ -74,8 +74,6 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionConfig.MotionMagic.MotionMagicCruiseVelocity = 200 / Constants.EXTENSION_GEAR_RATIO;
     extensionConfig.MotionMagic.MotionMagicAcceleration =
     extensionConfig.MotionMagic.MotionMagicCruiseVelocity / 0.02;
-    extensionConfig.MotionMagic.MotionMagicExpo_kV = 0.12 * Constants.EXTENSION_GEAR_RATIO;
-    extensionConfig.MotionMagic.MotionMagicExpo_kA = 0.1;
     extensionConfig.ClosedLoopGeneral.ContinuousWrap = false;
     extensionConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.EXTENSION_STATOR_CURRENT_LIMIT;
@@ -143,6 +141,6 @@ public class ExtensionIOReal implements ExtensionIO{
    @Override
   public void setExtensionSetpoint(double position) {
     extensionSetpoint = position;
-    extensionMotor.setControl(m_request_extension.withPosition(extensionSetpoint));
+    //extensionMotor.setControl(m_request_extension.withPosition(extensionSetpoint));
   }
 }
