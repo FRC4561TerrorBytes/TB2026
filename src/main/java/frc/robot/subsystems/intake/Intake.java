@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.Leds;
 import edu.wpi.first.math.util.Units;
 
 public class Intake extends SubsystemBase {
@@ -28,6 +29,7 @@ public class Intake extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Intake/Io", inputs);
     IntakeDisconnectedAlert.set(!inputs.intakeMotorConnected);
+    Leds.getInstance().intakeDisconncted = !inputs.intakeMotorConnected;
   }
   
   

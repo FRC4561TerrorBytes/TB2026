@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.extension;
 
+import com.google.gson.internal.TroubleshootingGuide;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -41,11 +43,13 @@ public class ExtensionIOSim implements ExtensionIO{
       extensionAppliedVolts = extensionController.calculate(inputs.extensionAngle, extensionSetpoint);
     }
 
+    inputs.extensionEncoderConnected = true;
+    inputs.extensionMotorConnected = true;
+
     extensionMotorSim.setInputVoltage(MathUtil.clamp(extensionAppliedVolts, -12.0, 12.0));
     extensionMotorSim.update(LOOP_PERIOD_SECS);
 
     inputs.extensionAngle = extensionMotorSim.getAngularPositionRotations() / 1.0;
-    inputs.extensionMotorConnected = true;
     inputs.extensionSetpoint = this.extensionSetpoint;
     inputs.extensionVoltage = this.extensionAppliedVolts;
   }

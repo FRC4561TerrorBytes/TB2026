@@ -30,6 +30,12 @@ private static final double LOOP_PERIOD_SECS = 0.02;
     flywheelRightMotor.update(LOOP_PERIOD_SECS);
     hoodMotor.update(LOOP_PERIOD_SECS);
     flywheelLeftMotor.update(LOOP_PERIOD_SECS);
+
+    inputs.flywheelLeftTopConnected = true;
+    inputs.flywheelLeftBottomConnected = true;
+    inputs.flywheelRightTopConnected = true;
+    inputs.flywheelRightBottomConnected = true;
+    inputs.hoodConnected = true;
   }
 
   public void setflywheelLeftVoltage(double voltage) {

@@ -61,6 +61,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.FieldConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
@@ -238,8 +239,22 @@ public class Drive extends SubsystemBase {
     // Update gyro alert
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
 
+    Leds.getInstance().driveDisconnected = !driveConnected();
+
     field.setRobotPose(getPose());
     SmartDashboard.putData("Field", field);
+  }
+
+  public boolean driveConnected(){
+    if(!gyroInputs.connected && !Constants.currentMode.equals(Mode.SIM)){
+      return false;
+    }
+    for(int i = 0; i < 4; i++){
+      if(!modules[i].moduleConnected()){
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

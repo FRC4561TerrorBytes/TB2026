@@ -53,15 +53,19 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.extension.Extension;
 import frc.robot.subsystems.extension.ExtensionIO;
 import frc.robot.subsystems.extension.ExtensionIOReal;
+import frc.robot.subsystems.extension.ExtensionIOSim;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOReal;
+import frc.robot.subsystems.indexer.IndexerIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
+import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -134,15 +138,11 @@ public class RobotContainer {
                 vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
                 }, new VisionIO() {
                 });
-                intake = new Intake(new IntakeIO() {
-                }); // for actual code use intake IO sim
-                extension = new Extension(new ExtensionIO() {
-                });
+                intake = new Intake(new IntakeIOSim()); // for actual code use intake IO sim
+                extension = new Extension(new ExtensionIOSim());
                 shooter = new Shooter(
-                        new ShooterIO() {
-                        });
-                indexer = new Indexer(new IndexerIO() {
-                });
+                        new ShooterIOSim());
+                indexer = new Indexer(new IndexerIOSim());
                 break;
             default:
                 // Replayed robot, disable IO implementations

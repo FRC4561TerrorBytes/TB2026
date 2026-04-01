@@ -226,7 +226,7 @@ public class ShooterIOReal implements ShooterIO {
         inputs.flywheelRightBottomVoltage = flywheelRightBottomVoltage.getValueAsDouble();
         inputs.flywheelRightBottomCurrent = flywheelRightBottomCurrent.getValueAsDouble();
         inputs.flywheelRightSpeedSetpoint = flywheelRightSpeedSetpoint;
-
+        
         inputs.hoodVelocity = hoodVelocity.getValueAsDouble();
         inputs.hoodVoltage = hoodVoltage.getValueAsDouble();
         inputs.hoodCurrent = hoodCurrent.getValueAsDouble();

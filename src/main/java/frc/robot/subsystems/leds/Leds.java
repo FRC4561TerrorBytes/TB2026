@@ -11,6 +11,10 @@ import frc.robot.util.VirtualSubsystem;
 import java.util.List;
 import java.util.Optional;
 
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
+
 public class Leds extends VirtualSubsystem {
   private static Leds instance;
 
@@ -26,9 +30,17 @@ public class Leds extends VirtualSubsystem {
   public boolean endgameAlert = false;
   public boolean autoScoring = false;
   public boolean intakeRunning = false;
+
+  public boolean robotOk = false;
+  public boolean driveDisconnected = false;
+  public boolean extensionDisconnected = false;
+  public boolean indexerDisconnected = false;
+  public boolean intakeDisconncted = false;
+  public boolean shooterDisconnected = false;
   public boolean visionDisconnected = false;
-  public Color hexColor = Color.kBlack;
-  public Color secondaryHexColor = Color.kBlack;
+
+  public Color hexColor = Color.kDarkGreen;
+  public Color secondaryHexColor = Color.kDarkGreen;
 
   private Optional<Alliance> alliance = Optional.empty();
   private Color disabledColor = Color.kGreen;
@@ -153,12 +165,22 @@ public class Leds extends VirtualSubsystem {
             5.0);
       } else {
         // Default pattern
-        wave(
-            fullSection,
-            disabledColor,
-            secondaryDisabledColor,
-            waveDisabledCycleLength,
-            waveDisabledDuration);
+        // wave(
+        //     fullSection,
+        //     disabledColor,
+        //     secondaryDisabledColor,
+        //     waveDisabledCycleLength,
+        //     waveDisabledDuration);
+        robotOk = !driveDisconnected && !extensionDisconnected && !indexerDisconnected && !intakeDisconncted && !shooterDisconnected;
+        if(robotOk && !visionDisconnected){
+          bounce(Color.kDarkGreen, disabledColor, 3, 2.0);
+        }
+        else if(robotOk && visionDisconnected){
+          strobe(fullSection, Color.kBlack, Color.kYellow, breathSlowDuration);
+        }
+        else{
+          strobe(fullSection, Color.kBlack, Color.kRed, breathSlowDuration);
+        }
       }
 
     } 
@@ -264,6 +286,22 @@ public class Leds extends VirtualSubsystem {
           (int) (Math.floor((double) (i - offset) / stripeLength) + colors.size()) % colors.size();
       colorIndex = colors.size() - 1 - colorIndex;
       buffer.setLED(i, colors.get(colorIndex));
+    }
+  }
+
+  private void bounce(Color bgColor, Color bounceColor, int bounceLength, double duration){
+    int offset = (int) (Timer.getTimestamp() % duration / duration * (length * 2 - 2*bounceLength));
+    if(offset > length - bounceLength){
+      offset = (length-bounceLength) - (offset - (length-bounceLength));
+      
+    }
+    for(int i = 0; i < length; i++){
+      if(i >= offset && i < offset + bounceLength){
+        buffer.setLED(i, bounceColor);
+      }
+      else{
+        buffer.setLED(i, bgColor);
+      }
     }
   }
 

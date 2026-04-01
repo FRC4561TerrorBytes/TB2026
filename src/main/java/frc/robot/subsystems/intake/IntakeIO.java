@@ -16,7 +16,6 @@ public interface IntakeIO {
     public double intakeVoltage = 0.0;
     public double intakeMotorTemp = 0.0;
     public boolean intakeMotorConnected = false;
-    public boolean intakeEncoderConnected = false;
     public double intakeSpeed = 0.0;
 
   }

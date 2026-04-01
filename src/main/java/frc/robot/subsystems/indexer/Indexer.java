@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.Leds;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Indexer extends SubsystemBase {
@@ -38,6 +40,7 @@ public class Indexer extends SubsystemBase {
     indexerRightDisconnectedAlert.set(!inputs.indexerRightConnected);
     indexerLeftDisconnectedAlert.set(!inputs.indexerLeftConnected);
     fuelKickerDisconnectedAlert.set(!inputs.fuelKickerConnected);
+    Leds.getInstance().indexerDisconnected = !inputs.indexerLeftConnected || !inputs.indexerRightConnected || !inputs.fuelKickerConnected;
     // This method will be called once per scheduler run
   }
 

@@ -29,6 +29,8 @@ public class IntakeIOSim implements IntakeIO{
         inputs.intakeVoltage = intakeAppliedVolts;
         inputs.intakeStatorCurrent = Math.abs(intakeMotor.getCurrentDrawAmps());
 
+        inputs.intakeMotorConnected = true;
+
     }
     public void setOutput(double speed){
         intakeAppliedVolts = MathUtil.clamp(speed * 12, -12, 12);

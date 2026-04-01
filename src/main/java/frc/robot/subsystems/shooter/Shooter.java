@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase{
@@ -25,6 +26,7 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterLeftBottomDisconnectedAlert;
   private final Alert shooterRightTopDisconnectedAlert;
   private final Alert shooterRightBottomDisconnectedAlert;
+  private final Alert shooterHoodDisconnectedAlert;
   private static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
   private static InterpolatingDoubleTreeMap shooterTimeMap = new InterpolatingDoubleTreeMap();
   public Shooter(ShooterIO io) {
@@ -33,6 +35,7 @@ public class Shooter extends SubsystemBase{
     shooterLeftBottomDisconnectedAlert = new Alert("Left Bottom Flywheel Disconnected", AlertType.kError);
     shooterRightTopDisconnectedAlert = new Alert("Right Top Flywheel Disconnected", AlertType.kError);
     shooterRightBottomDisconnectedAlert = new Alert("Right Bottom Flywheel Disconnected", AlertType.kError);
+    shooterHoodDisconnectedAlert = new Alert("Hood Disconnected", AlertType.kError);
 
     setHoodAngleMap();
   }
@@ -45,6 +48,13 @@ public class Shooter extends SubsystemBase{
     shooterLeftBottomDisconnectedAlert.set(!inputs.flywheelLeftBottomConnected);
     shooterRightTopDisconnectedAlert.set(!inputs.flywheelRightTopConnected);
     shooterRightBottomDisconnectedAlert.set(!inputs.flywheelRightBottomConnected);
+    shooterHoodDisconnectedAlert.set(!inputs.hoodConnected);
+    Leds.getInstance().shooterDisconnected = 
+      !inputs.flywheelLeftTopConnected || 
+      !inputs.flywheelRightTopConnected || 
+      !inputs.flywheelLeftBottomConnected || 
+      !inputs.flywheelRightBottomConnected || 
+      !inputs.hoodConnected;
     // This method will be called once per scheduler run
   }
 

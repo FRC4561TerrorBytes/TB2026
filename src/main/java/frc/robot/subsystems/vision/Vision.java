@@ -31,6 +31,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import frc.robot.FieldConstants;
 import frc.robot.util.GeomUtil;
@@ -98,6 +99,8 @@ public class Vision extends SubsystemBase {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
     }
+
+    Leds.getInstance().visionDisconnected = !visionConnected();
 
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
@@ -207,6 +210,15 @@ public class Vision extends SubsystemBase {
     Logger.recordOutput(
         "Vision/Summary/RobotPosesRejected",
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
+  }
+
+  private boolean visionConnected(){
+    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+      if(!inputs[cameraIndex].connected){
+        return false;
+      }
+    }
+    return true;
   }
 
   @FunctionalInterface

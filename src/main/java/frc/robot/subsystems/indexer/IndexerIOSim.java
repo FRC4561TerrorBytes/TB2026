@@ -34,6 +34,10 @@ public class IndexerIOSim implements IndexerIO {
     leftIndexerMotor.update(LOOP_PERIOD_SECS);
     rightIndexerMotor.update(LOOP_PERIOD_SECS);
     kickerMotor.update(LOOP_PERIOD_SECS);
+
+    inputs.indexerLeftConnected = true;
+    inputs.indexerRightConnected = true;
+    inputs.fuelKickerConnected = true;
   }
 
   public void setThroughput(double indexerSpeed, double kickerSpeed) {

@@ -12,16 +12,19 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.Leds;
 
 
 public class Extension extends SubsystemBase {
   private ExtensionIO io;
   private ExtensionIOInputsAutoLogged inputs = new ExtensionIOInputsAutoLogged();
-  private final Alert ExtensionDisconnectedAlert;
+  private final Alert ExtensionMotorDisconnectedAlert;
+  private final Alert ExtensionEncoderDisconnectedAlert;
   /** Creates a new Extension. */
   public Extension(ExtensionIO io) {
     this.io = io;
-    ExtensionDisconnectedAlert = new Alert("Extension motor disconnected", AlertType.kError);
+    ExtensionMotorDisconnectedAlert = new Alert("Extension motor disconnected", AlertType.kError);
+    ExtensionEncoderDisconnectedAlert = new Alert("Extension encoder disconnected", AlertType.kError);
   }
     public void setExtensionSetpoint(double extensionSetpoint) {
       io.setExtensionSetpoint(extensionSetpoint);
@@ -39,7 +42,9 @@ public class Extension extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Extension/Io", inputs);
-    ExtensionDisconnectedAlert.set(!inputs.extensionMotorConnected);
+    ExtensionMotorDisconnectedAlert.set(!inputs.extensionMotorConnected);
+    ExtensionEncoderDisconnectedAlert.set(!inputs.extensionEncoderConnected);
+    Leds.getInstance().extensionDisconnected = !inputs.extensionMotorConnected || !inputs.extensionEncoderConnected;
     // This method will be called once per scheduler run
   }
 

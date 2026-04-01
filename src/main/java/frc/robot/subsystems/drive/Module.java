@@ -77,6 +77,10 @@ public class Module {
     turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
   }
 
+  public boolean moduleConnected(){
+    return inputs.driveConnected && inputs.turnConnected && inputs.turnEncoderConnected;
+  }
+
   /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
   public void runSetpoint(SwerveModuleState state) {
     // Optimize velocity setpoint
