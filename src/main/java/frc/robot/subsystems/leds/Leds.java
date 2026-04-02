@@ -13,6 +13,8 @@ import frc.robot.util.VirtualSubsystem;
 import java.util.List;
 import java.util.Optional;
 
+import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
+
 public class Leds extends VirtualSubsystem {
   private static Leds instance;
 
@@ -57,7 +59,7 @@ public class Leds extends VirtualSubsystem {
   // Constants
   private static final boolean prideLeds = false;
   private static final int minLoopCycleCount = 10;
-  private static final int length = 36;
+  private static final int length = 65;
   private static final Section fullSection = new Section(0, length);
   private static final Section topSection = new Section(length / 2, length);
   private static final Section bottomSection = new Section(0, length / 2);
@@ -77,7 +79,7 @@ public class Leds extends VirtualSubsystem {
   private static final double autoFadeMaxTime = 5.0; // Return to normal
 
   private Leds() {
-    leds = new AddressableLED(9);
+    leds = new AddressableLED(0);
     buffer = new AddressableLEDBuffer(length);
     leds.setLength(length);
     leds.setData(buffer);
@@ -197,10 +199,11 @@ public class Leds extends VirtualSubsystem {
       // Auto scoring
       if (autoScoring) {
         if(autoScoreAtRotationSetpoint){
-          rainbow(fullSection, rainbowCycleLength, rainbowDuration);
+          //rainbow(fullSection, rainbowCycleLength, rainbowDuration);
+          wave(fullSection, Color.kBlack, Color.kYellow, waveFastCycleLength, waveFastDuration);
         }
         else{
-          solid(new Section(0, (int)(autoScoreRotatePercent*length)), Color.kGreen);
+          gradient(new Section(0, (int)(autoScoreRotatePercent*length)), disabledColor, Color.kGreen);
           solid(new Section((int)(autoScoreRotatePercent*length), length), Color.kBlack);
         }
       }
@@ -279,7 +282,7 @@ public class Leds extends VirtualSubsystem {
       double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
       double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
       double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
-      buffer.setLED(i, new Color(red, green, blue));
+      buffer.setLED(length - 1 - i, new Color(red, green, blue));
     }
   }
 
@@ -306,6 +309,17 @@ public class Leds extends VirtualSubsystem {
       else{
         buffer.setLED(i, bgColor);
       }
+    }
+  }
+
+  private void gradient(Section section, Color c1, Color c2){
+    //HI MANBIR :D
+    //int offset = (int)(Timer.getTimestamp() % duration / duration)*length;
+    double redDifference = c2.red - c1.red;
+    double greenDifference = c2.green - c1.green;
+    double blueDifference = c2.blue - c1.blue;
+    for(int i = section.start; i < section.end; i++){
+      buffer.setLED(i, new Color(c1.red + redDifference*i / length, c1.green + greenDifference*i / length, c1.blue + blueDifference*i / length));
     }
   }
 
