@@ -247,7 +247,7 @@ public class RobotContainer {
             () ->
                 DriverStation.isTeleopEnabled()
                     && DriverStation.getMatchTime() > 0
-                    && DriverStation.getMatchTime() <= 20)
+                    && DriverStation.getMatchTime() <= 30)
         .onTrue(
             RobotCommands.driverRumbleCommand(driverController)
                 .withTimeout(2.0)
