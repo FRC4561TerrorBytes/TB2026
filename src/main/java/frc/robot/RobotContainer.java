@@ -28,6 +28,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootAndMoveCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
@@ -90,7 +92,6 @@ public class RobotContainer {
     private final Extension extension;
     private final Shooter shooter;
     private final Indexer indexer;
-    private final Leds leds;
     
 
     Rotation2d snapRotation;
@@ -106,7 +107,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        leds = Leds.getInstance();
         switch (Constants.currentMode) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
@@ -242,15 +242,27 @@ public class RobotContainer {
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
         shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(shooter.lerpHood(drive::getDistanceToHub)));
 
-
+        //TRIGGERS
+        new Trigger(
+            () ->
+                DriverStation.isTeleopEnabled()
+                    && DriverStation.getMatchTime() > 0
+                    && DriverStation.getMatchTime() <= 20)
+        .onTrue(
+            RobotCommands.driverRumbleCommand(driverController)
+                .withTimeout(2.0)
+                .beforeStarting(() -> Leds.getInstance().endgameAlert = true)
+                .finallyDo(() -> Leds.getInstance().endgameAlert = false));
+                
         // DRIVER CONTROLS
         driverController
-                .leftTrigger()
-                .onTrue(Commands.runOnce(() -> leds.getInstance().intakeRunning = true)) // extend and run intake
+                .leftTrigger() // extend and run intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)));
+                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)))
+                .toggleOnTrue(Commands.run(() -> Leds.getInstance().intakeRunning = true))
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().intakeRunning = false));
 
         driverController
                 .b() // retract intake
@@ -264,8 +276,10 @@ public class RobotContainer {
         driverController
                 .rightTrigger()
                 .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter))
+                .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
                 .onFalse(
-                        Commands.runOnce(()->extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false));
 
 
         driverController

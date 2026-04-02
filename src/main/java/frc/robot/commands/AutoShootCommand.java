@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.FieldConstants;
 import frc.robot.util.AllianceFlipUtil;
 
@@ -43,6 +44,9 @@ public class AutoShootCommand extends Command {
         controller = new PIDController(2.5, 0, 0, 0.02);
         controller.setTolerance(Units.degreesToRadians(1.5));
         controller.enableContinuousInput(-Math.PI, Math.PI);
+
+        Leds.getInstance().autoScoreAtRotationSetpoint = false;
+        Leds.getInstance().autoScoreRotatePercent = 0.0;
     }
 
     public AutoShootCommand(Drive drive, DoubleSupplier X, DoubleSupplier Y, Indexer indexer, Shooter shooter) {
@@ -99,12 +103,17 @@ public class AutoShootCommand extends Command {
             indexer.stop();
         }
 
+        Leds.getInstance().autoScoreAtRotationSetpoint = controller.atSetpoint();
+        Leds.getInstance().autoScoreRotatePercent = 1.0 - (Math.abs(controller.getError())/Math.PI);
+
         Logger.recordOutput("DriveTrainFacingHub", controller.atSetpoint());
         Logger.recordOutput("ShooterReady", shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
     }
 
     @Override
     public void end(boolean interrupted) {
+        Leds.getInstance().autoScoreAtRotationSetpoint = false;
+        Leds.getInstance().autoScoreRotatePercent = 0.0;
         shooter.stop();
         indexer.stop();
     }

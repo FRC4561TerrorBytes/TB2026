@@ -7,13 +7,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.util.VirtualSubsystem;
 import java.util.List;
 import java.util.Optional;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
 
 public class Leds extends VirtualSubsystem {
   private static Leds instance;
@@ -29,6 +27,8 @@ public class Leds extends VirtualSubsystem {
   public int loopCycleCount = 0;
   public boolean endgameAlert = false;
   public boolean autoScoring = false;
+  public double autoScoreRotatePercent = 0.0;
+  public boolean autoScoreAtRotationSetpoint = false;
   public boolean intakeRunning = false;
 
   public boolean robotOk = false;
@@ -63,7 +63,7 @@ public class Leds extends VirtualSubsystem {
   private static final Section bottomSection = new Section(0, length / 2);
   private static final Section topQuartSection = new Section((length / 4) * 3, length);
   private static final Section bottomThreeQuartSection = new Section(0, (length / 4) * 3);
-  private static final double strobeDuration = 0.1;
+  private static final double strobeDuration = 0.2;
   private static final double breathFastDuration = 0.5;
   private static final double breathSlowDuration = 1.0;
   private static final double rainbowCycleLength = 25.0;
@@ -164,16 +164,14 @@ public class Leds extends VirtualSubsystem {
             3,
             5.0);
       } else {
-        // Default pattern
-        // wave(
-        //     fullSection,
-        //     disabledColor,
-        //     secondaryDisabledColor,
-        //     waveDisabledCycleLength,
-        //     waveDisabledDuration);
+        // Default pattern for disabled
         robotOk = !driveDisconnected && !extensionDisconnected && !indexerDisconnected && !intakeDisconncted && !shooterDisconnected;
+
+        if(Constants.currentMode.equals(Mode.SIM)){
+          visionDisconnected = false;
+        }
         if(robotOk && !visionDisconnected){
-          bounce(Color.kDarkGreen, disabledColor, 3, 2.0);
+          bounce(disabledColor, Color.kDarkGreen, length/5, 2.0);
         }
         else if(robotOk && visionDisconnected){
           strobe(fullSection, Color.kBlack, Color.kYellow, breathSlowDuration);
@@ -188,17 +186,23 @@ public class Leds extends VirtualSubsystem {
       wave(fullSection, Color.kGreen, Color.kPurple, waveFastCycleLength, waveFastDuration);
     } 
     else {
-      solid(topSection, hexColor);
-      solid(bottomSection, secondaryHexColor);
+      //Default pattern for teleop
+      wave(fullSection, disabledColor, secondaryDisabledColor, waveDisabledCycleLength, waveDisabledDuration);
 
       // Intake running
       if (intakeRunning) {
-        strobe(bottomThreeQuartSection, Color.kBlack, Color.kBlue, strobeDuration);
+        strobe(fullSection, Color.kBlack, Color.kBlue, strobeDuration);
       }
 
       // Auto scoring
       if (autoScoring) {
-        rainbow(bottomThreeQuartSection, rainbowCycleLength, rainbowDuration);
+        if(autoScoreAtRotationSetpoint){
+          rainbow(fullSection, rainbowCycleLength, rainbowDuration);
+        }
+        else{
+          solid(new Section(0, (int)(autoScoreRotatePercent*length)), Color.kGreen);
+          solid(new Section((int)(autoScoreRotatePercent*length), length), Color.kBlack);
+        }
       }
 
       // Endgame alert
