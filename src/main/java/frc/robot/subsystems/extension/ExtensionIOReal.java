@@ -62,7 +62,7 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var cancoderConfig = new CANcoderConfiguration();
     cancoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    cancoderConfig.MagnetSensor.MagnetOffset = -0.141357;
+    cancoderConfig.MagnetSensor.MagnetOffset = -0.476074;
     tryUntilOk(5, () -> extensionEncoder.getConfigurator().apply(cancoderConfig, 0.25));
 
     var extensionConfig = new TalonFXConfiguration();
