@@ -260,9 +260,12 @@ public class RobotContainer {
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .toggleOnTrue(
-                        Commands.run(() -> intake.setOutput(0.8), intake).alongWith(RobotCommands.driverRumbleCommand(driverController)))
-                .toggleOnTrue(Commands.run(() -> Leds.getInstance().intakeRunning = true))
-                .onFalse(Commands.runOnce(() -> Leds.getInstance().intakeRunning = false));
+                        Commands.startRun(
+                                () -> Leds.getInstance().intakeRunning = true, 
+                                () -> intake.setOutput(0.8), 
+                                intake)
+                        .alongWith(RobotCommands.driverRumbleCommand(driverController))
+                        .finallyDo(() -> Leds.getInstance().intakeRunning = false));
 
         driverController
                 .b() // retract intake
@@ -317,9 +320,16 @@ public class RobotContainer {
                                 ));
 
 
-        operatorController.leftTrigger()
-                .toggleOnTrue((
-                        Commands.run(() -> intake.setOutput(0.75), intake)));
+        operatorController.leftTrigger() // extend and run intake
+                .onTrue(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
+                .toggleOnTrue(
+                        Commands.startRun(
+                                () -> Leds.getInstance().intakeRunning = true, 
+                                () -> intake.setOutput(0.8), 
+                                intake)
+                        .alongWith(RobotCommands.driverRumbleCommand(driverController))
+                        .finallyDo(() -> Leds.getInstance().intakeRunning = false));
         
         operatorController
                 .rightTrigger()

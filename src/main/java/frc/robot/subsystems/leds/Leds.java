@@ -191,7 +191,7 @@ public class Leds extends VirtualSubsystem {
 
       // Intake running
       if (intakeRunning) {
-        strobe(fullSection, Color.kBlack, Color.kBlue, strobeDuration);
+        strobe(fullSection, Color.kBlack, Color.kViolet, strobeDuration);
       }
 
       // Auto scoring
