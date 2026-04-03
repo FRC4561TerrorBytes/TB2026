@@ -219,7 +219,10 @@ public class Leds extends VirtualSubsystem {
     leds.setData(buffer);
   }
 
-  /** Sets all LEDs in a section to a solid color */
+  /** Sets all LEDs in a section to a solid color 
+   * @param section - the section of the LEDs to apply the solid color to
+   * @param color - the color to set the section to
+  */
   private Color solid(Section section, Color color) {
     if (color != null) {
       for (int i = section.start(); i < section.end(); i++) {
@@ -229,7 +232,13 @@ public class Leds extends VirtualSubsystem {
     return color;
   }
 
-  /** Creates a strobe effect with two colors anda set duration*/
+  /**
+   * Creates a strobe effect that flashes between two colors in a set duration
+   * @param section - the section of the LEDs to apply the strobe to
+   * @param c1 - the first color
+   * @param c2 - the second color
+   * @param duration - the duration of the strobe effect
+   */
   private Color strobe(Section section, Color c1, Color c2, double duration) {
     boolean c1On = ((Timer.getTimestamp() % duration) / duration) > 0.5;
     return solid(section, c1On ? c1 : c2);
@@ -261,7 +270,12 @@ public class Leds extends VirtualSubsystem {
     return breath(section, c1, c2, duration, Timer.getTimestamp());
   }
 
-  /** Creates a rainbow effect across a section for a set time that moves*/
+  /**
+   * Creates a rainbow effect across a section for a set time that moves
+   * @param section - the section of the LEDs to apply the rainbow to
+   * @param cycleLength - the length of each rainbow cycle
+   * @param duration - the duration of the rainbow effect
+   */
   private void rainbow(Section section, double cycleLength, double duration) {
     double x = (1 - ((Timer.getTimestamp() / duration) % 1.0)) * 180.0;
     double xDiffPerLed = 180.0 / cycleLength;
@@ -271,7 +285,14 @@ public class Leds extends VirtualSubsystem {
       buffer.setHSV(i, (int) x, 255, 255);
     }
   }
-  /** Creates a wave effect across a section for a set time that moves*/
+  /**
+   * Creates a wave effect across a section for a set time that moves
+   * @param section - the section of the LEDs to apply the wave to
+   * @param c1 - the first color
+   * @param c2 - the second color
+   * @param cycleLength - the length of each wave cycle
+   * @param duration - the duration of the wave effect
+  */
   private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
     double x = (1 - ((Timer.getTimestamp() % duration) / duration)) * 2.0 * Math.PI;
     double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
@@ -291,7 +312,13 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
-  /** Creates a stripe effect with a list of colors where the length of each individual stripe is equal */
+  /** Creates a stripe effect with a list of colors where the length of each individual stripe is equal 
+   * 
+   * @param section - the section of the LEDs to apply the stripes to
+   * @param colors - the list of colors to use for the stripes
+   * @param stripeLength - the length of each individual stripe
+   * @param duration - the duration of the stripe effect
+   */
   private void stripes(Section section, List<Color> colors, int stripeLength, double duration) {
     int offset = (int) (Timer.getTimestamp() % duration / duration * stripeLength * colors.size());
     for (int i = section.end() - 1; i >= section.start(); i--) {
@@ -302,7 +329,13 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
-  /** Creates a moving stripe above a background color that bounces from side to side for a specified bounce length at a specified duration*/
+  /**
+   * Creates a moving stripe above a background color that bounces from side to side for a specified bounce length at a specified duration
+   * @param bgColor - Color that will show up behind the bouncing color
+   * @param bounceColor - Color of the bouncing stripe
+   * @param bounceLength - Length of the bouncing stripe
+   * @param duration - Duration of the bouncing effect
+   */
   private void bounce(Color bgColor, Color bounceColor, int bounceLength, double duration){
     int offset = (int) (Timer.getTimestamp() % duration / duration * (length * 2 - 2*bounceLength));
     if(offset > length - bounceLength){
@@ -318,7 +351,15 @@ public class Leds extends VirtualSubsystem {
       }
     }
   }
-  /**  Creates a gradient in a section between two colors. (Does not move [yet])*/
+
+  /**
+   * Creates a gradient in a section between two colors. 
+   * @param section - the section of the LEDs to apply the gradient to
+   * @param c1 - the color on the left side of the gradient
+   * @param c2 - the color on the right side of the gradient  
+   * 
+   * @return Gradient on LED strip - sets the LEDs in the section to a gradient between the two colors
+   */
   private void gradient(Section section, Color c1, Color c2){
     //HI MANBIR :D
     //int offset = (int)(Timer.getTimestamp() % duration / duration)*length;

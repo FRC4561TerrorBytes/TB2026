@@ -15,6 +15,11 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 
 public class RobotCommands {
+
+    /**
+     * Locks Drivetrain to orbit the hub while spinning up shooter. Once shooter is up to speed the command waits for joysticks to stop, then shoots. 
+     * @return
+     */
     public static Command shoot(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Indexer indexer, Intake intake, Extension extension, Shooter shooter){
         return Commands.parallel(
             new AutoShootCommand(drive, xSupplier, ySupplier, indexer, shooter),
@@ -22,6 +27,7 @@ public class RobotCommands {
         );
     }
 
+    /** Autoaligns the robot to the hub then locks wheels while shooting. */
     public static Command shootNoJoysticks(Drive drive, Indexer indexer, Intake intake, Extension extension, Shooter shooter){
         return Commands.parallel(
                 new AutoShootCommand(drive, indexer, shooter),
@@ -29,10 +35,12 @@ public class RobotCommands {
         );
     }
 
+    /** Shoots the preload fuel without bringing intake in to agitate fuel. */
     public static Command shootPreload(Drive drive, Indexer indexer, Shooter shooter){
         return new AutoShootCommand(drive, indexer, shooter);
     }
 
+    /** Agitates the balls by moving intake in and out*/
     public static Command agitateBalls(Intake intake, Extension extension){
         return Commands.repeatingSequence(Commands.parallel(
                 Commands.sequence(
