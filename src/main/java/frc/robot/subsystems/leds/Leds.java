@@ -130,6 +130,7 @@ public class Leds extends VirtualSubsystem {
     loadingNotifier.stop();
 
     // Select LED mode
+    
     solid(fullSection, Color.kBlack); // Default to off
     if (estopped) {
       solid(fullSection, Color.kRed);
@@ -218,6 +219,7 @@ public class Leds extends VirtualSubsystem {
     leds.setData(buffer);
   }
 
+  /** Sets all LEDs in a section to a solid color */
   private Color solid(Section section, Color color) {
     if (color != null) {
       for (int i = section.start(); i < section.end(); i++) {
@@ -227,11 +229,13 @@ public class Leds extends VirtualSubsystem {
     return color;
   }
 
+  /** Creates a strobe effect with two colors anda set duration*/
   private Color strobe(Section section, Color c1, Color c2, double duration) {
     boolean c1On = ((Timer.getTimestamp() % duration) / duration) > 0.5;
     return solid(section, c1On ? c1 : c2);
   }
 
+  /** Creates a breath effect that fades between two colors in a set duration */
   private Color breath(Section section, Color c1, Color c2, double duration, double timestamp) {
     double x = ((timestamp % duration) / duration) * 2.0 * Math.PI;
     double ratio = (Math.sin(x) + 1.0) / 2.0;
@@ -252,11 +256,12 @@ public class Leds extends VirtualSubsystem {
     var color = new Color(red, green, blue);
     return color;
   }
-
+  /** Function to run to create a breath effect */
   private Color breath(Section section, Color c1, Color c2, double duration) {
     return breath(section, c1, c2, duration, Timer.getTimestamp());
   }
 
+  /** Creates a rainbow effect across a section for a set time that moves*/
   private void rainbow(Section section, double cycleLength, double duration) {
     double x = (1 - ((Timer.getTimestamp() / duration) % 1.0)) * 180.0;
     double xDiffPerLed = 180.0 / cycleLength;
@@ -266,7 +271,7 @@ public class Leds extends VirtualSubsystem {
       buffer.setHSV(i, (int) x, 255, 255);
     }
   }
-
+  /** Creates a wave effect across a section for a set time that moves*/
   private void wave(Section section, Color c1, Color c2, double cycleLength, double duration) {
     double x = (1 - ((Timer.getTimestamp() % duration) / duration)) * 2.0 * Math.PI;
     double xDiffPerLed = (2.0 * Math.PI) / cycleLength;
@@ -286,6 +291,7 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
+  /** Creates a stripe effect with a list of colors where the length of each individual stripe is equal */
   private void stripes(Section section, List<Color> colors, int stripeLength, double duration) {
     int offset = (int) (Timer.getTimestamp() % duration / duration * stripeLength * colors.size());
     for (int i = section.end() - 1; i >= section.start(); i--) {
@@ -296,6 +302,7 @@ public class Leds extends VirtualSubsystem {
     }
   }
 
+  /** Creates a moving stripe above a background color that bounces from side to side for a specified bounce length at a specified duration*/
   private void bounce(Color bgColor, Color bounceColor, int bounceLength, double duration){
     int offset = (int) (Timer.getTimestamp() % duration / duration * (length * 2 - 2*bounceLength));
     if(offset > length - bounceLength){
@@ -311,15 +318,20 @@ public class Leds extends VirtualSubsystem {
       }
     }
   }
-
+  /**  Creates a gradient in a section between two colors. (Does not move [yet])*/
   private void gradient(Section section, Color c1, Color c2){
     //HI MANBIR :D
     //int offset = (int)(Timer.getTimestamp() % duration / duration)*length;
     double redDifference = c2.red - c1.red;
     double greenDifference = c2.green - c1.green;
     double blueDifference = c2.blue - c1.blue;
-    for(int i = section.start; i < section.end; i++){
-      buffer.setLED(i, new Color(c1.red + redDifference*i / length, c1.green + greenDifference*i / length, c1.blue + blueDifference*i / length));
+
+    for(int i = section.start; i < section.end; i++){ 
+      double redValue = c1.red + redDifference * i / length;
+      double greenValue = c1.green + greenDifference * i / length;
+      double blueValue = c1.blue + blueDifference * i / length;
+
+      buffer.setLED(i, new Color(redValue, greenValue, blueValue));  
     }
   }
 
