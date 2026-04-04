@@ -66,16 +66,17 @@ public class ShooterIOReal implements ShooterIO {
         flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         
         var flywheelLeftSlot0Config = flywheelConfig.Slot0;
-        flywheelLeftSlot0Config.kS = 0.36; // Add 0.25 V output to overcome static friction
-        flywheelLeftSlot0Config.kV = 0.13; // A velocity target of 1 rps results in 0.12 V output
-        flywheelLeftSlot0Config.kA = 0.36; // An acceleration of 1 rps/s requires 0.01 V output
-        flywheelLeftSlot0Config.kP = 0.7; // An error of 1 rps results in 0.11 V output
+        flywheelLeftSlot0Config.kS = 0.3; // Add 0.25 V output to overcome static friction
+        //RECALC SAYS 0.39 for kV with the new shooter changes
+        flywheelLeftSlot0Config.kV = 0.1; // A velocity target of 1 rps results in 0.12 V output
+        flywheelLeftSlot0Config.kA = 0.06; // An acceleration of 1 rps/s requires 0.01 V output
+        flywheelLeftSlot0Config.kP = 0.35; // An error of 1 rps results in 0.11 V output
         flywheelLeftSlot0Config.kI = 0.0; // no output for integrated error
         flywheelLeftSlot0Config.kD = 0.0; // no output for error derivative
 
         var flywheelMotionMagicConfig = flywheelConfig.MotionMagic;
         flywheelMotionMagicConfig.MotionMagicAcceleration = 50; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 60;
+        flywheelMotionMagicConfig.MotionMagicCruiseVelocity = 90;
         flywheelMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

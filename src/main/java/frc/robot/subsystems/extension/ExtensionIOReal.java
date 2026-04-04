@@ -53,10 +53,10 @@ public class ExtensionIOReal implements ExtensionIO{
 
     var extensionPIDConfig = new Slot0Configs();
     extensionPIDConfig.GravityType = GravityTypeValue.Arm_Cosine;
-    extensionPIDConfig.kS = 0.8;
-    extensionPIDConfig.kV = 3.2;
+    extensionPIDConfig.kS = 1.1;
+    extensionPIDConfig.kV = 4;
     extensionPIDConfig.kA = 0.04;
-    extensionPIDConfig.kP = 10; 
+    extensionPIDConfig.kP = 30.0; 
     extensionPIDConfig.kI = 0.1;
     extensionPIDConfig.kD = 0;
 
@@ -141,6 +141,6 @@ public class ExtensionIOReal implements ExtensionIO{
    @Override
   public void setExtensionSetpoint(double position) {
     extensionSetpoint = position;
-    //extensionMotor.setControl(m_request_extension.withPosition(extensionSetpoint));
+    extensionMotor.setControl(m_request_extension.withPosition(extensionSetpoint));
   }
 }
