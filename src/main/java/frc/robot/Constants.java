@@ -53,6 +53,7 @@ public final class Constants {
   public static final int INTAKE_ID_RIGHT = 43;
   public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 40;
   public static final double INTAKE_STATOR_CURRENT_LIMIT = 80;
+  public static final double INTAKE_SPEED = 0.4;
   
   public static final int EXTENSION_ID = 40;
   public static final double EXTENSION_GEAR_RATIO = 36.818;
@@ -60,7 +61,7 @@ public final class Constants {
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 50;
   public static final int EXTENSION_CANCODER_ID = 41;
   public static final double EXTENSION_EXTENDED_POSITION = 0.0;
-  public static final double EXTENSION_AGITATE_POSITION = 0.15;
+  public static final double EXTENSION_AGITATE_POSITION = 0.12;
   public static final double EXTENSION_RETRACTED_POSITION = 0.35;
 
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 40;

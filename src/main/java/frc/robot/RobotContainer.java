@@ -16,12 +16,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
-import java.util.function.DoubleSupplier;
-
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -30,7 +26,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,11 +36,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootAndMoveCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.Pass;
 import frc.robot.commands.RobotCommands;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.ShooterSpeedup;
-import frc.robot.commands.ShotAlignAndStop;
-import frc.robot.commands.Pass;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -65,6 +58,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
@@ -73,7 +67,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.RobotVisualizer;
-import frc.robot.subsystems.leds.Leds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -177,7 +170,7 @@ public class RobotContainer {
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(0.8), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
-        NamedCommands.registerCommand("shoot", RobotCommands.shootNoJoysticks(drive, indexer, intake, extension, shooter).withTimeout(7.0));
+        NamedCommands.registerCommand("shoot", RobotCommands.shootNoJoysticks(drive, indexer, shooter).withTimeout(7.0));
          NamedCommands.registerCommand("shootpreload", RobotCommands.shootPreload(drive, indexer, shooter).withTimeout(3.5));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
@@ -264,7 +257,7 @@ public class RobotContainer {
                 .toggleOnTrue(
                         Commands.startRun(
                                 () -> Leds.getInstance().intakeRunning = true, 
-                                () -> intake.setOutput(0.8), 
+                                () -> intake.setOutput(Constants.INTAKE_SPEED), 
                                 intake)
                         .alongWith(RobotCommands.driverRumbleCommand(driverController))
                         .finallyDo(() -> Leds.getInstance().intakeRunning = false));
@@ -280,7 +273,7 @@ public class RobotContainer {
 
         driverController
                 .rightTrigger()
-                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, intake, extension, shooter))
+                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
                 .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
@@ -318,7 +311,7 @@ public class RobotContainer {
                 .toggleOnTrue(
                         Commands.startRun(
                                 () -> Leds.getInstance().intakeRunning = true, 
-                                () -> intake.setOutput(0.8), 
+                                () -> intake.setOutput(Constants.INTAKE_SPEED), 
                                 intake)
                         .alongWith(RobotCommands.driverRumbleCommand(driverController))
                         .finallyDo(() -> Leds.getInstance().intakeRunning = false));
@@ -331,7 +324,7 @@ public class RobotContainer {
                 .b() // retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
+                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(Constants.INTAKE_SPEED), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
 
         testingController.leftTrigger().onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
