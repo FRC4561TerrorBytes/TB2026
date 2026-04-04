@@ -17,23 +17,33 @@ public class IntakeIOSim implements IntakeIO{
     
     private double intakeAppliedVolts = 0.0;
 
-    private DCMotorSim intakeMotor = 
+    private DCMotorSim intakeLeftMotor = 
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.01, 1.0),
+          DCMotor.getKrakenX44(1));
+    private DCMotorSim intakeRightMotor = 
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX44(1), 0.01, 1.0),
           DCMotor.getKrakenX44(1));
 
     @Override
     public void updateInputs(IntakeIOInputs inputs){
-        intakeMotor.update(LOOP_PERIOD_SECS);
-        inputs.intakeSpeed = Units.radiansToDegrees(intakeMotor.getAngularVelocityRadPerSec());
-        inputs.intakeVoltage = intakeAppliedVolts;
-        inputs.intakeStatorCurrent = Math.abs(intakeMotor.getCurrentDrawAmps());
-
-        inputs.intakeMotorConnected = true;
+        intakeLeftMotor.update(LOOP_PERIOD_SECS);
+        inputs.intakeLeftSpeed = Units.radiansToDegrees(intakeLeftMotor.getAngularVelocityRadPerSec());
+        inputs.intakeLeftVoltage = intakeAppliedVolts;
+        inputs.intakeLeftStatorCurrent = Math.abs(intakeLeftMotor.getCurrentDrawAmps());
+        
+        intakeRightMotor.update(LOOP_PERIOD_SECS);
+        inputs.intakeRightSpeed = Units.radiansToDegrees(intakeRightMotor.getAngularVelocityRadPerSec());
+        inputs.intakeRightVoltage = intakeAppliedVolts;
+        inputs.intakeRightStatorCurrent = Math.abs(intakeRightMotor.getCurrentDrawAmps());
+        inputs.intakeLeftMotorConnected = true;
+        inputs.intakeRightMotorConnected = true;
 
     }
     public void setOutput(double speed){
         intakeAppliedVolts = MathUtil.clamp(speed * 12, -12, 12);
-        intakeMotor.setInputVoltage(intakeAppliedVolts);
+        intakeLeftMotor.setInputVoltage(intakeAppliedVolts);
+        intakeRightMotor.setInputVoltage(intakeAppliedVolts);
     }
 }

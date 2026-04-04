@@ -6,30 +6,30 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.leds.Leds;
-import edu.wpi.first.math.util.Units;
 
 public class Intake extends SubsystemBase {
   private IntakeIO io;
   private IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-  private final Alert IntakeDisconnectedAlert;
+  private final Alert IntakeLeftDisconnectedAlert;
+  private final Alert IntakeRightDisconnectedAlert;
 
   public Intake(IntakeIO io) {
     this.io = io;
-    IntakeDisconnectedAlert = new Alert("Intake motor disconnected", AlertType.kError);
+    IntakeLeftDisconnectedAlert = new Alert("Left intake motor disconnected", AlertType.kError);
+    IntakeRightDisconnectedAlert = new Alert("Right intake motor disconnected", AlertType.kError);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake/Io", inputs);
-    IntakeDisconnectedAlert.set(!inputs.intakeMotorConnected);
-    Leds.getInstance().intakeDisconncted = !inputs.intakeMotorConnected;
+    IntakeLeftDisconnectedAlert.set(!inputs.intakeLeftMotorConnected);
+    IntakeRightDisconnectedAlert.set(!inputs.intakeRightMotorConnected);
+    Leds.getInstance().intakeDisconncted = !inputs.intakeLeftMotorConnected || !inputs.intakeRightMotorConnected;
   }
   
   

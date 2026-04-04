@@ -11,13 +11,19 @@ public interface IntakeIO {
     @AutoLog
   public static class IntakeIOInputs {
 
-    public double intakeStatorCurrent = 0.0;
-    public double intakeSupplyCurrent = 0.0;
-    public double intakeVoltage = 0.0;
-    public double intakeMotorTemp = 0.0;
-    public boolean intakeMotorConnected = false;
-    public double intakeSpeed = 0.0;
+    public double intakeLeftStatorCurrent = 0.0;
+    public double intakeLeftSupplyCurrent = 0.0;
+    public double intakeLeftVoltage = 0.0;
+    public double intakeLeftMotorTemp = 0.0;
+    public boolean intakeLeftMotorConnected = false;
+    public double intakeLeftSpeed = 0.0;
 
+    public double intakeRightStatorCurrent = 0.0;
+    public double intakeRightSupplyCurrent = 0.0;
+    public double intakeRightVoltage = 0.0;
+    public double intakeRightMotorTemp = 0.0;
+    public boolean intakeRightMotorConnected = false;
+    public double intakeRightSpeed = 0.0;
   }
   
   public default void updateInputs(IntakeIOInputs inputs) {}

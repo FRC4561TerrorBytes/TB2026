@@ -95,33 +95,43 @@ public class IntakeIOReal implements IntakeIO{
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    var IntakeStatus =
+    var IntakeLeftStatus =
         BaseStatusSignal.refreshAll(
             intakeLeftStatorCurrent,
             intakeLeftSupplyCurrent,
             intakeLeftSpeed,
             intakeLeftVoltage,
-            intakeLeftTemp,
+            intakeLeftTemp);
 
+      var IntakeRightStatus = 
+        BaseStatusSignal.refreshAll(
             intakeRightStatorCurrent,
         intakeRightSupplyCurrent,
         intakeRightSpeed,
         intakeRightVoltage,
         intakeRightTemp);
-    inputs.intakeMotorConnected = IntakeStatus.isOK();
-    inputs.intakeStatorCurrent = intakeLeftStatorCurrent.getValueAsDouble();
-    inputs.intakeSupplyCurrent = intakeLeftSupplyCurrent.getValueAsDouble();
-    inputs.intakeSpeed = intakeMotorLeft.getVelocity().getValueAsDouble();
-    inputs.intakeVoltage = intakeMotorLeft.getMotorVoltage().getValueAsDouble();
 
-    intakeLeftAlert.set(!inputs.intakeMotorConnected);
+    inputs.intakeLeftMotorConnected = IntakeLeftStatus.isOK();
+    inputs.intakeLeftStatorCurrent = intakeLeftStatorCurrent.getValueAsDouble();
+    inputs.intakeLeftSupplyCurrent = intakeLeftSupplyCurrent.getValueAsDouble();
+    inputs.intakeLeftSpeed = intakeMotorLeft.getVelocity().getValueAsDouble();
+    inputs.intakeLeftVoltage = intakeMotorLeft.getMotorVoltage().getValueAsDouble();
+
+    inputs.intakeRightMotorConnected = IntakeRightStatus.isOK();
+    inputs.intakeRightStatorCurrent = intakeRightStatorCurrent.getValueAsDouble();
+    inputs.intakeRightSupplyCurrent = intakeRightSupplyCurrent.getValueAsDouble();
+    inputs.intakeRightSpeed = intakeMotorRight.getVelocity().getValueAsDouble();
+    inputs.intakeRightVoltage = intakeMotorRight.getMotorVoltage().getValueAsDouble();
+
+    intakeLeftAlert.set(!inputs.intakeLeftMotorConnected);
+    intakeRightAlert.set(!inputs.intakeRightMotorConnected);
   }
 
  
 
   @Override
   public void setOutput(double speed) {
-    intakeMotorLeft.set(speed);
+    intakeMotorRight.set(speed);
   }
 
 }

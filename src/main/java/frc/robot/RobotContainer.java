@@ -45,6 +45,7 @@ import frc.robot.commands.RobotCommands;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ShooterSpeedup;
 import frc.robot.commands.ShotAlignAndStop;
+import frc.robot.commands.Pass;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -285,6 +286,7 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false));
 
+        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter));
 
         driverController
                 .rightStick()
@@ -298,16 +300,6 @@ public class RobotContainer {
 
         driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
 
-        driverController
-                .povUp()
-                .onTrue(Commands.runOnce(() -> shooter.nudge(0.1), shooter));
-
-        driverController
-                .povDown()
-                .onTrue(Commands.runOnce(() -> shooter.nudge(-0.1), shooter));
-
-                //AHHHHH SO MUCH TYPING
-
         //OPERATOR CONTROLS
         operatorController
                 .y()
@@ -319,7 +311,6 @@ public class RobotContainer {
                                 new AutoShootAndMoveCommand(drive, indexer, shooter),
                                 DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
                                 ));
-
 
         operatorController.leftTrigger() // extend and run intake
                 .onTrue(
@@ -337,31 +328,11 @@ public class RobotContainer {
                 .whileTrue(new AutoShootCommand(drive, driverController::getLeftX, driverController::getLeftX, indexer, shooter));
 
         operatorController
-                .b()
+                .b() // retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.runOnce(() -> intake.setOutput(0.0), intake)));
+                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
 
-
-        // testingController.leftTrigger() // extend and run intake
-        //         .onTrue(
-        //                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
-        //         .toggleOnTrue(
-        //                 Commands.startRun(
-        //                         () -> Leds.getInstance().intakeRunning = true, 
-        //                         () -> intake.setOutput(0.8), 
-        //                         intake)
-        //                 .alongWith(RobotCommands.driverRumbleCommand(driverController))
-        //                 .finallyDo(() -> Leds.getInstance().intakeRunning = false));
-        // testingController.b() // retract intake
-        //         .onTrue(
-        //                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-        //                         extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
-
-        testingController
-                .y()
-                .whileTrue(new Shoot(indexer, shooter, 15, 10));
-        testingController.a().onTrue(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
     }
 
     /**

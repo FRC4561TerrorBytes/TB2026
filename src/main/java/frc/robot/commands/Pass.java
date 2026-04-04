@@ -7,45 +7,45 @@ package frc.robot.commands;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.shooter.Shooter;
 
-public class Shoot extends Command {
+public class Pass extends Command {
 
+  public Drive drive;
   public Indexer indexer;
   public Shooter shooter;
-
-  public double flyWheelRPS;
-  public double hoodAngle;
   
   /**
    * Shoots forward pretty much, auto makes it aim at bump and shoot.
    */
-  public Shoot(Indexer indexer, Shooter shooter, double flyWheelRPS, double hoodAngle) {
-    this.hoodAngle = hoodAngle;
-    this.flyWheelRPS = flyWheelRPS;
+  public Pass(Drive drive, Indexer indexer, Shooter shooter) {
     this.indexer = indexer;
     this.shooter = shooter;
+    this.drive = drive;
     addRequirements(indexer, shooter);
   }
 
   @Override
   public void initialize() {
-    shooter.setHoodAngle(hoodAngle);
-    shooter.setFlywheelSpeed(flyWheelRPS);
+
   }
 
   @Override
   public void execute() {
 
-      Logger.recordOutput("LeftFlywheelUpToSpeed", shooter.leftFlywheelUpToSpeed(flyWheelRPS));
-      Logger.recordOutput("RightFlywheelUpToSpeed", shooter.rightFlywheelUpToSpeed(flyWheelRPS));
+    double flywheelRPS = shooter.getFlywheelShootSpeed(drive.getDistanceToHub());
+    double hoodAngle = shooter.interpolateHoodAngle(drive.getDistanceToHub());
 
-      if(shooter.leftFlywheelUpToSpeed(flyWheelRPS) && shooter.rightFlywheelUpToSpeed(flyWheelRPS) &&shooter.hoodAtSetpoint()){
-          indexer.setThroughput(0.9, 0.8);
+    shooter.setFlywheelSpeed(flywheelRPS);
+    shooter.setHoodAngle(hoodAngle);
+
+      if(shooter.leftFlywheelUpToSpeed(flywheelRPS) && shooter.rightFlywheelUpToSpeed(flywheelRPS) &&shooter.hoodAtSetpoint()){
+        indexer.setThroughput(0.9, 0.8);
       }
       else{
-          indexer.stop();
+        indexer.stop();
       }
   }
 
