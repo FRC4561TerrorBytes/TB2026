@@ -45,7 +45,7 @@ public class IndexerIOReal implements IndexerIO {
     indexerRightConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
     indexerRightConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
     indexerRightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    indexerRightConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    indexerRightConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
     indexerRightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     tryUntilOk(5, () -> indexerRightMotor.getConfigurator().apply(indexerRightConfig, 0.25));
 
@@ -68,7 +68,7 @@ public class IndexerIOReal implements IndexerIO {
     indexerLeftConfig.CurrentLimits.StatorCurrentLimit = Constants.INDEXER_STATOR_CURRENT_LIMIT;
     indexerLeftConfig.CurrentLimits.SupplyCurrentLimit = Constants.INDEXER_SUPPLY_CURRENT_LIMIT;
     indexerLeftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    indexerLeftConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    indexerLeftConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
     indexerLeftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     tryUntilOk(5, () -> indexerLeftMotor.getConfigurator().apply(indexerLeftConfig, 0.25));
 
@@ -91,7 +91,7 @@ public class IndexerIOReal implements IndexerIO {
     fuelKickerConfig.CurrentLimits.StatorCurrentLimit = Constants.FUEL_KICKER_STATOR_CURRENT_LIMIT;
     fuelKickerConfig.CurrentLimits.SupplyCurrentLimit = Constants.FUEL_KICKER_SUPPLY_CURRENT_LIMIT;
     fuelKickerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    fuelKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    fuelKickerConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
     tryUntilOk(5, () -> fuelKickerMotor.getConfigurator().apply(fuelKickerConfig, 0.25));
 
     fuelKickerStatorCurrent = fuelKickerMotor.getStatorCurrent();

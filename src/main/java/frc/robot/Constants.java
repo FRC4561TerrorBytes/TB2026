@@ -47,12 +47,12 @@ public final class Constants {
   public static final int FLYWHEEL_BOTTOM_LEFT_ID = 31;
   public static final double FLYWHEELS_CIRCUMFERENCE = 0;
   public static final double FLYWHEELS_SUPPLY_CURRENT_LIMIT = 30;
-  public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 60;
+  public static final double FLYWHEELS_STATOR_CURRENT_LIMIT = 50;
 
   public static final int INTAKE_ID_LEFT = 42;
   public static final int INTAKE_ID_RIGHT = 43;
   public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 40;
-  public static final double INTAKE_STATOR_CURRENT_LIMIT = 80;
+  public static final double INTAKE_STATOR_CURRENT_LIMIT = 40;
   public static final double INTAKE_SPEED = 0.4;
   
   public static final int EXTENSION_ID = 40;

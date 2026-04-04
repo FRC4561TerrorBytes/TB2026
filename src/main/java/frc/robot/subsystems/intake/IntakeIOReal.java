@@ -57,7 +57,7 @@ public class IntakeIOReal implements IntakeIO{
     intakeConfig.CurrentLimits.StatorCurrentLimit = Constants.INTAKE_STATOR_CURRENT_LIMIT;
     intakeConfig.CurrentLimits.SupplyCurrentLimit = Constants.INTAKE_SUPPLY_CURRENT_LIMIT;
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
     tryUntilOk(5, () -> intakeMotorLeft.getConfigurator().apply(intakeConfig, 0.25));
     tryUntilOk(5, () -> intakeMotorRight.getConfigurator().apply(intakeConfig, 0.25));
 

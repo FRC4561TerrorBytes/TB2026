@@ -79,7 +79,7 @@ public class ExtensionIOReal implements ExtensionIO{
     extensionConfig.CurrentLimits.StatorCurrentLimit = Constants.EXTENSION_STATOR_CURRENT_LIMIT;
     extensionConfig.CurrentLimits.SupplyCurrentLimit = Constants.EXTENSION_SUPPLY_CURRENT_LIMIT;
     extensionConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    extensionConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    extensionConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
     extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = !true;
     extensionConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.32;
     tryUntilOk(5, () -> extensionMotor.getConfigurator().apply(extensionConfig, 0.25));

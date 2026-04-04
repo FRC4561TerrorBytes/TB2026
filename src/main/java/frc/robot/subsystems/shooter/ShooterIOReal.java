@@ -109,7 +109,7 @@ public class ShooterIOReal implements ShooterIO {
         hoodConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         hoodConfig.CurrentLimits.StatorCurrentLimit = Constants.HOOD_STATOR_CURRENT_LIMIT;
 
-        hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
         hoodConfig.CurrentLimits.SupplyCurrentLimit = Constants.HOOD_SUPPLY_CURRENT_LIMIT;
 
         hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
