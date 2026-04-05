@@ -26,8 +26,8 @@ def getButtonMapping(controller, button):
 
 
 img = Image.open('controllerMapGenerator/XboxNavigation.png')
-font = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=36)
-titleFont = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=48)
+font = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=48)
+titleFont = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=72)
 # Call draw Method to add 2D graphics in an image
 I1 = ImageDraw.Draw(img)
 
@@ -35,12 +35,12 @@ I1 = ImageDraw.Draw(img)
 I1.text((630, 120), getButtonMapping('driverController','leftTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
 I1.text((1200, 120), getButtonMapping('driverController','rightTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
 I1.text((1450, 300), getButtonMapping('driverController','y'), fill=(0, 0, 0), font=font)
-I1.text((1450, 480), getButtonMapping('driverController','b'), fill=(0, 0, 0), font=font)
+I1.text((1450, 470), getButtonMapping('driverController','b'), fill=(0, 0, 0), font=font)
 I1.text((1450, 560), getButtonMapping('driverController','x'), fill=(0, 0, 0), font=font)
 #I1.text((1450, 820), getButtonMapping('driverController','a'), fill=(0, 0, 0), font=font)
-I1.text((100,510), "Drive - Translate", fill=(0, 0, 0), font=font, align="rm")
-I1.text((1020,920), "Drive - Rotate", fill=(0, 0, 0), font=font, align="mm")
-I1.text((750, 10), "Driver Controller Map", fill=(0, 0, 0), font=font, align="mm")
+I1.text((10,500), "Drive - Translate", fill=(0, 0, 0), font=font, align="rm")
+I1.text((980,920), "Drive - Rotate", fill=(0, 0, 0), font=font, align="mm")
+I1.text((825, 0), "Driver", fill=(0, 0, 0), font=titleFont, align="mm")
 
 
 # Display edited image
