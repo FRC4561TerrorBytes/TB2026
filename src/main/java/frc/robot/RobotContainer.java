@@ -250,8 +250,7 @@ public class RobotContainer {
                 .finallyDo(() -> Leds.getInstance().endgameAlert = false));
                 
         // DRIVER CONTROLS
-        driverController
-                .leftTrigger() // extend and run intake
+        driverController.leftTrigger() //Extend and run intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .toggleOnTrue(
@@ -262,24 +261,23 @@ public class RobotContainer {
                         .alongWith(RobotCommands.driverRumbleCommand(driverController))
                         .finallyDo(() -> Leds.getInstance().intakeRunning = false));
 
-        driverController
-                .b() // retract intake
+        driverController.b() //Retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
                                 extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
-        driverController
-                .x()
+        
+                                driverController.x() // Stop With X
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        driverController
-                .rightTrigger()
+        driverController.rightTrigger() //Shoot
                 .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
                 .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false));
 
-        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter));
+        driverController.rightBumper() // Pass
+                .whileTrue(new Pass(drive, indexer, shooter));
 
         driverController
                 .rightStick()
@@ -291,7 +289,8 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-        driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
+        driverController.y() //Unjam Indexer
+                .whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
 
         //OPERATOR CONTROLS
         operatorController
