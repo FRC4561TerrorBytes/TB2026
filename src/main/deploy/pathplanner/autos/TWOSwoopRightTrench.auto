@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "leftRushSwoop"
+                  "pathName": "rightRushSwoop"
                 }
               },
               {
@@ -67,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SecondSwoopLeft"
+                  "pathName": "rightSecondSwoopOut"
                 }
               },
               {
@@ -107,7 +107,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SecondSwoopLeftReturn"
+            "pathName": "SecondSwoopRightReturn"
           }
         },
         {
