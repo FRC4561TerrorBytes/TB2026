@@ -514,6 +514,13 @@ public class Drive extends SubsystemBase {
     return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()));
   }
 
+  @AutoLogOutput(key = "Passing/DistanceToPassPoint")
+  public double getDistanceToPassPoint(){
+    double robotX = getPose().getX();
+    double hubX = AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()).getX();
+    return Math.abs(robotX - hubX) + 2.2;
+  }
+
   @AutoLogOutput
   public double flipSpeedForAlliance(double speed){
     if(AllianceFlipUtil.shouldFlip())

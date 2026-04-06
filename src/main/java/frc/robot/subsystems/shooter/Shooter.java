@@ -101,14 +101,16 @@ public class Shooter extends SubsystemBase{
   }
 
   public double getFlywheelShootSpeed(double distanceMeters){
+    if(distanceMeters > 7){
+      return 68.0;
+    }
     if(distanceMeters > 4.8){
       return 64.0;
     }
-    else if(distanceMeters > 3.048){
+    if(distanceMeters > 3.048){
       return 58.0;
-    } else {
-      return 52.0;
     }
+    return 52.0;
   }
 
   public void setHoodAngle(double angle){

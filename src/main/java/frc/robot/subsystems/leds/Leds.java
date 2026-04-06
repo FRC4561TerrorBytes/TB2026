@@ -13,8 +13,6 @@ import frc.robot.util.VirtualSubsystem;
 import java.util.List;
 import java.util.Optional;
 
-import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
-
 public class Leds extends VirtualSubsystem {
   private static Leds instance;
 
@@ -29,6 +27,7 @@ public class Leds extends VirtualSubsystem {
   public int loopCycleCount = 0;
   public boolean endgameAlert = false;
   public boolean autoScoring = false;
+  public boolean passing = false;
   public double autoScoreRotatePercent = 0.0;
   public boolean autoScoreAtRotationSetpoint = false;
   public boolean intakeRunning = false;
@@ -66,7 +65,7 @@ public class Leds extends VirtualSubsystem {
   private static final Section topQuartSection = new Section((length / 4) * 3, length);
   private static final Section bottomThreeQuartSection = new Section(0, (length / 4) * 3);
   private static final double strobeDuration = 0.2;
-  private static final double breathFastDuration = 0.5;
+  private static final double breathFastDuration = 0.25;
   private static final double breathSlowDuration = 1.0;
   private static final double rainbowCycleLength = 25.0;
   private static final double rainbowDuration = 0.25;
@@ -197,10 +196,14 @@ public class Leds extends VirtualSubsystem {
         strobe(fullSection, Color.kBlack, Color.kViolet, strobeDuration);
       }
 
+      //Passing
+      if(passing){
+        rainbow(fullSection, rainbowCycleLength, breathFastDuration);
+      }
+
       // Auto scoring
       if (autoScoring) {
         if(autoScoreAtRotationSetpoint){
-          //rainbow(fullSection, rainbowCycleLength, rainbowDuration);
           wave(fullSection, Color.kBlack, Color.kYellow, waveFastCycleLength, waveFastDuration);
         }
         else{
@@ -282,7 +285,7 @@ public class Leds extends VirtualSubsystem {
     for (int i = section.end() - 1; i >= section.start(); i--) {
       x += xDiffPerLed;
       x %= 180.0;
-      buffer.setHSV(i, (int) x, 255, 255);
+      buffer.setHSV(section.end() - i - 1, (int) x, 255, 255);
     }
   }
   /**
