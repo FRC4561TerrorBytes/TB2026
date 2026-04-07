@@ -41,6 +41,9 @@ public class AutoShootCommand extends Command {
         controller.setTolerance(Units.degreesToRadians(1.5));
         controller.enableContinuousInput(-Math.PI, Math.PI);
 
+        joystickX = () -> 0.0;
+        joystickY = () -> 0.0;
+
         Leds.getInstance().autoScoreAtRotationSetpoint = false;
         Leds.getInstance().autoScoreRotatePercent = 0.0;
     }
