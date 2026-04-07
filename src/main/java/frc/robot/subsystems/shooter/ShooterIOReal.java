@@ -122,16 +122,16 @@ public class ShooterIOReal implements ShooterIO {
         hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         var hoodSlot0Config = hoodConfig.Slot0;
-        hoodSlot0Config.kS = 0.2; // Add 0.4 V output to overcome static friction
+        hoodSlot0Config.kS = 0.44; // Add 0.4 V output to overcome static friction
         hoodSlot0Config.kV = 0.15; // A velocity target of 1 rps results in 0.12 V output
         hoodSlot0Config.kA = 0.05; // An acceleration of 1 rps/s requires 0.01 V output
         hoodSlot0Config.kP = 1.2; // An error of 1 rps results in 0.11 V output
         hoodSlot0Config.kI = 0.0; // no output for integrated error
-        hoodSlot0Config.kD = 0.2; // no output for error derivative
+        hoodSlot0Config.kD = 0.4; // no output for error derivative
 
         var hoodMotionMagicConfig = hoodConfig.MotionMagic;
-        hoodMotionMagicConfig.MotionMagicAcceleration = 10; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        hoodMotionMagicConfig.MotionMagicCruiseVelocity = 10;
+        hoodMotionMagicConfig.MotionMagicAcceleration = 30; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        hoodMotionMagicConfig.MotionMagicCruiseVelocity = 15;
         hoodMotionMagicConfig.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         hoodMotor.getConfigurator().apply(hoodConfig);

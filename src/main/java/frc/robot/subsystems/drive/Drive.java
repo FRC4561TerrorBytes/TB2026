@@ -518,7 +518,7 @@ public class Drive extends SubsystemBase {
   public double getDistanceToPassPoint(){
     double robotX = getPose().getX();
     double hubX = AllianceFlipUtil.apply(FieldConstants.Hub.innerCenterPoint.toTranslation2d()).getX();
-    return Math.abs(robotX - hubX) + 2.2;
+    return Math.abs(robotX - hubX) + 2.5;
   }
 
   @AutoLogOutput
