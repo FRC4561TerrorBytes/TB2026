@@ -78,6 +78,9 @@ public class Shooter extends SubsystemBase{
     hoodAngleMap.put(5.0,9.5);
     hoodAngleMap.put(5.5, 11.0);
 
+    hoodAngleMap.put(7.1, 11.0);
+    hoodAngleMap.put(11.0, 13.1);
+
     //TIME OF FLIGHT
     shooterTimeMap.put(1.19, 1.25);
     shooterTimeMap.put(1.7, 1.3);
