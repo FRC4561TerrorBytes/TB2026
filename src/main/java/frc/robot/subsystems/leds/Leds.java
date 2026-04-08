@@ -96,7 +96,7 @@ public class Leds extends VirtualSubsystem {
                 leds.setData(buffer);
               }
             });
-    loadingNotifier.startPeriodic(0.02);
+    loadingNotifier.startPeriodic(0.02); //ygyygy
   }
 
   public synchronized void periodic() {
@@ -219,6 +219,7 @@ public class Leds extends VirtualSubsystem {
     }
 
     // Update LEDs
+    applyBrightness(0.5);
     leds.setData(buffer);
   }
 
@@ -376,6 +377,13 @@ public class Leds extends VirtualSubsystem {
       double blueValue = c1.blue + blueDifference * i / length;
 
       buffer.setLED(i, new Color(redValue, greenValue, blueValue));  
+    }
+  }
+
+  private void applyBrightness(double brightness){
+    for(int i = 0; i < length; i++){
+      Color originalColor = buffer.getLED(i);
+      buffer.setLED(i, new Color(originalColor.red * brightness, originalColor.green * brightness, originalColor.blue * brightness));
     }
   }
 

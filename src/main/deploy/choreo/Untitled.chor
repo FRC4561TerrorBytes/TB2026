@@ -274,7 +274,7 @@
  "generationFeatures":[],
  "codegen":{
   "root":"choreo",
-  "genVars":true,
+  "genVars":false,
   "genTrajData":true,
   "useChoreoLib":true
  }
