@@ -105,7 +105,7 @@ public class Shooter extends SubsystemBase{
 
   public double getFlywheelShootSpeed(double distanceMeters){
     if(distanceMeters > 7){
-      return 68.0;
+      return 76.0;
     }
     if(distanceMeters > 4.8){
       return 64.0;
