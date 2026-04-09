@@ -145,11 +145,11 @@ public class Shooter extends SubsystemBase{
 
   @AutoLogOutput(key = "Shooter/leftFlywheelUpToSpeed")
   public boolean leftFlywheelUpToSpeed(double rotationsPerSecond){
-    return Math.abs(inputs.flywheelLeftTopVelocity - rotationsPerSecond) < 6.0;
+    return Math.abs(inputs.flywheelLeftTopVelocity - rotationsPerSecond) < 3.0;
   }
   @AutoLogOutput(key = "Shooter/rightFlywheelUpToSpeed")
   public boolean rightFlywheelUpToSpeed(double rotationsPerSecond){
-    return Math.abs(inputs.flywheelRightTopVelocity - rotationsPerSecond) < 6.0;
+    return Math.abs(inputs.flywheelRightTopVelocity - rotationsPerSecond) < 3.0;
   }
 
   public Command lerpHood(DoubleSupplier distance){
