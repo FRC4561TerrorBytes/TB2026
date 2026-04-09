@@ -94,6 +94,5 @@
   "splits":[0]
  },
  "events":[
-   {"name":"Marker", "from":{"target":2, "targetTimestamp":1.26918, "offset":{"exp":"-0.1 s", "val":-0.1}}, "event":{"type":"named", "data":{"name":"slapdown"}}},
-   {"name":"Marker", "from":{"target":null, "targetTimestamp":null, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"slapdown", "from":{"target":2, "targetTimestamp":1.26918, "offset":{"exp":"-0.1 s", "val":-0.1}}, "event":{"type":"named", "data":{"name":"slapdown"}}}]
 }

@@ -37,8 +37,8 @@ public class AutoShootCommand extends Command {
         this.shooter = shooter;
         addRequirements(drive, indexer, shooter);
 
-        controller = new PIDController(9, 0, 0, 0.02);
-        controller.setTolerance(Units.degreesToRadians(1.5));
+        controller = new PIDController(9, 0, 0.5, 0.02);
+        controller.setTolerance(Units.degreesToRadians(2.0));
         controller.enableContinuousInput(-Math.PI, Math.PI);
 
         joystickX = () -> 0.0;

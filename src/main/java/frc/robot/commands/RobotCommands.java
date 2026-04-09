@@ -47,9 +47,9 @@ public class RobotCommands {
                         Commands.runOnce(()-> intake.setOutput(0.0), intake),
                         Commands.waitSeconds(0.3)),
                 Commands.sequence(
-                        Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION), extension),
-                        Commands.waitSeconds(1.0),
                         Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
+                        Commands.waitSeconds(1.0),
+                        Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION), extension),
                         Commands.waitSeconds(1.0))
                 ));
     }
