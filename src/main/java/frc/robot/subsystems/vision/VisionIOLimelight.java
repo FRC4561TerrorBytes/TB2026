@@ -62,7 +62,9 @@ private final double[] tagOverrides = {13, 14, 29, 30};
         table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
     rawFiducialsSubscriber = table.getDoubleArrayTopic("rawfiducials").subscribe(new double[] {});
 
-    table.getEntry("fiducial_id_filters_set").setDoubleArray(tagOverrides);
+    if(name.equals("limelight-left")){
+      table.getEntry("fiducial_id_filters_set").setDoubleArray(tagOverrides);
+    }
   }
 
   @Override
