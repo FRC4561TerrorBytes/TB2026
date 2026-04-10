@@ -61,7 +61,7 @@ public final class Constants {
   public static final double EXTENSION_STATOR_CURRENT_LIMIT = 50;
   public static final int EXTENSION_CANCODER_ID = 41;
   public static final double EXTENSION_EXTENDED_POSITION = 0.0;
-  public static final double EXTENSION_AGITATE_POSITION = 0.25;
+  public static final double EXTENSION_AGITATE_POSITION = 0.30;
   public static final double EXTENSION_RETRACTED_POSITION = 0.35;
 
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 40;

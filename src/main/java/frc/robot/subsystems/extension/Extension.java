@@ -5,6 +5,8 @@
 package frc.robot.subsystems.extension;
 
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -46,6 +48,10 @@ public class Extension extends SubsystemBase {
     ExtensionEncoderDisconnectedAlert.set(!inputs.extensionEncoderConnected);
     Leds.getInstance().extensionDisconnected = !inputs.extensionMotorConnected || !inputs.extensionEncoderConnected;
     // This method will be called once per scheduler run
+  }
+
+  public boolean isExtentionBelowCurrent(double current){
+    return current < inputs.extensionSupplyCurrent;
   }
 
   public Pose3d getPivotPose(){
