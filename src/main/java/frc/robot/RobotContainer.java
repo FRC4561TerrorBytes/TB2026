@@ -291,10 +291,10 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-        driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
+        //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
 
-        driverController.povUp().whileTrue( RobotCommands.agitateBalls(intake, extension));
+        driverController.y().whileTrue( RobotCommands.agitateBallsTest(intake, extension));
 
         //OPERATOR CONTROLS
         operatorController
