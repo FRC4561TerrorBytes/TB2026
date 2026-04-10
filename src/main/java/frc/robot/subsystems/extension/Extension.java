@@ -54,6 +54,10 @@ public class Extension extends SubsystemBase {
     return current < Math.abs(inputs.extensionSupplyCurrent);
   }
 
+  public boolean isExtentionAboveCurrent(double current){
+    return current > Math.abs(inputs.extensionSupplyCurrent);
+  }
+
   public Pose3d getPivotPose(){
     return new Pose3d(0.23,0,0.185, new Rotation3d(0,(-90*Math.PI)/180,0));
   }

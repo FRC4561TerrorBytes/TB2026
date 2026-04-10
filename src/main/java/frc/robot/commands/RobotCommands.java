@@ -49,10 +49,12 @@ public class RobotCommands {
                 Commands.sequence(
                         Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
                         Commands.waitSeconds(1.0),
-                        Commands.sequence(
-                        Commands.run( () -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION) , extension),
-                        Commands.waitSeconds(1.0)
-                        ).onlyWhile(()-> extension.isExtentionBelowCurrent(5)))));
+                        Commands.run(() -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION), extension).onlyWhile(() -> extension.isExtentionBelowCurrent(5)).withTimeout(1)
+                        // Commands.sequence(
+                        //     Commands.run( () -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION) , extension),
+                        //     Commands.waitSeconds(1.0)
+                        // ).onlyWhile(()-> extension.isExtentionAboveCurrent(5))
+                        )));
     }
 
     public static Command driverRumbleCommand(CommandXboxController driverController) {
