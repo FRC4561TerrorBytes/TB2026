@@ -93,11 +93,11 @@ public class AutoShootCommand extends Command {
                       : drive.getRotation()));
 
         Logger.recordOutput("AutoShoot/linearVelocity", Math.hypot(linearVelocity.getX(), linearVelocity.getY()));
-        if(Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < 0.1 && controller.atSetpoint()){
+        if(Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < 0.3 && controller.atSetpoint()){
             drive.stopWithX();
         }
 
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint() && controller.atSetpoint() && Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < 0.1){
+        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint() && controller.atSetpoint() && Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < 0.3){
             indexer.setThroughput(0.9, 0.8);
         }
         else{
