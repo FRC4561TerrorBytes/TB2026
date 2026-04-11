@@ -35,7 +35,7 @@ public class RobotCommands {
     }
 
     public static Command shootWithAgitate(Drive drive, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
-        return Commands.parallel(new AutoShootCommand(drive, indexer, shooter), agitateBalls(intake, extension));
+        return Commands.parallel(new AutoShootCommand(drive, indexer, shooter), agitateBallsTest(intake, extension));
     }
 
     /** Agitates the balls by moving intake in and out*/
