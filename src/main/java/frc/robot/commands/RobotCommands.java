@@ -57,9 +57,7 @@ public class RobotCommands {
     }
 
     public static Command agitateBallsTest(Intake intake, Extension extension){
-        return Commands.sequence(
-            Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
-            Commands.parallel(
+        return Commands.parallel(
                 Commands.repeatingSequence(
                         Commands.runOnce(()-> intake.setOutput(Constants.INTAKE_SPEED), intake),
                         Commands.waitSeconds(1),
@@ -70,7 +68,7 @@ public class RobotCommands {
                         Commands.waitSeconds(1),
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION), extension),
                         Commands.waitSeconds(1)
-                        ))
+                        )
         );
     }
 
