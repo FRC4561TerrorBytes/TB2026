@@ -112,7 +112,7 @@ public class RobotContainer {
                 intake = new Intake(new IntakeIOReal());
                 extension = new Extension(new ExtensionIOReal());
                 vision = new Vision(
-                        drive::addVisionMeasurement,
+                        drive::addVisionMeasurement,      
                         new VisionIOLimelight(camera0Name, drive::getRotation),
                         new VisionIOLimelight(camera1Name, drive::getRotation));
                 shooter = new Shooter(
@@ -294,6 +294,8 @@ public class RobotContainer {
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
 
         driverController.y().whileTrue(RobotCommands.agitateBallsTest(intake, extension));
+
+        driverController.povUp().whileTrue(Commands.run(() -> intake.setOutput(-Constants.INTAKE_SPEED), intake));
 
         //OPERATOR CONTROLS
         operatorController

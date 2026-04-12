@@ -51,8 +51,8 @@ public final class Constants {
 
   public static final int INTAKE_ID_LEFT = 42;
   public static final int INTAKE_ID_RIGHT = 43;
-  public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 40;
-  public static final double INTAKE_STATOR_CURRENT_LIMIT = 50;
+  public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 70;
+  public static final double INTAKE_STATOR_CURRENT_LIMIT = 60;
   public static final double INTAKE_SPEED = 0.4;
   
   public static final int EXTENSION_ID = 40;
