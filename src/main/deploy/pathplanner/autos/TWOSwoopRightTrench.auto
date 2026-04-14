@@ -37,6 +37,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "shoot"
@@ -49,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RightSecondSwoopOut"
+                  "pathName": "rightSecondSwoopOut"
                 }
               },
               {

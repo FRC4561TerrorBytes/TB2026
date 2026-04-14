@@ -5,6 +5,8 @@
 package frc.robot.subsystems.extension;
 
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose3d;

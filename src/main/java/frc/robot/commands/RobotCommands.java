@@ -35,7 +35,7 @@ public class RobotCommands {
     }
 
     public static Command shootWithAgitate(Drive drive, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
-        return Commands.parallel(new AutoShootCommand(drive, indexer, shooter), agitateBalls(intake, extension));
+        return Commands.parallel(new AutoShootCommand(drive, indexer, shooter), agitateBallsTest(intake, extension));
     }
 
     /** Agitates the balls by moving intake in and out*/
@@ -46,12 +46,30 @@ public class RobotCommands {
                         Commands.waitSeconds(1),
                         Commands.runOnce(()-> intake.setOutput(0.0), intake),
                         Commands.waitSeconds(0.3)),
+               
                 Commands.sequence(
-                        Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
-                        Commands.waitSeconds(1.0),
+                            Commands.run( () -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION) , extension),
+                            Commands.waitSeconds(1.0),
+                            Commands.run( () -> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION) , extension),
+                            Commands.waitSeconds(1.0)
+                        )
+                        ));
+    }
+
+    public static Command agitateBallsTest(Intake intake, Extension extension){
+        return Commands.parallel(
+                Commands.repeatingSequence(
+                        Commands.runOnce(()-> intake.setOutput(Constants.INTAKE_SPEED), intake),
+                        Commands.waitSeconds(1),
+                        Commands.runOnce(()-> intake.setOutput(0.0), intake),
+                        Commands.waitSeconds(0.3)),
+                Commands.repeatingSequence(
                         Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION), extension),
-                        Commands.waitSeconds(1.0))
-                ));
+                        Commands.waitSeconds(0.5),
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
+                        Commands.waitSeconds(0.5)
+                        )
+        );
     }
 
     public static Command driverRumbleCommand(CommandXboxController driverController) {

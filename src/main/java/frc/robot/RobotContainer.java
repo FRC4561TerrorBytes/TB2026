@@ -33,8 +33,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoShootAndMoveCommand;
-import frc.robot.commands.AutoShootCommand;
+import frc.robot.commands.AutoShootCommand; 
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.Pass;
 import frc.robot.commands.RobotCommands;
@@ -113,7 +112,7 @@ public class RobotContainer {
                 intake = new Intake(new IntakeIOReal());
                 extension = new Extension(new ExtensionIOReal());
                 vision = new Vision(
-                        drive::addVisionMeasurement,
+                        drive::addVisionMeasurement,      
                         new VisionIOLimelight(camera0Name, drive::getRotation),
                         new VisionIOLimelight(camera1Name, drive::getRotation));
                 shooter = new Shooter(
@@ -291,20 +290,17 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-        driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
+        //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
+
+        driverController.y().whileTrue(RobotCommands.agitateBallsTest(intake, extension));
+
+        driverController.povUp().whileTrue(Commands.run(() -> intake.setOutput(-Constants.INTAKE_SPEED), intake));
 
         //OPERATOR CONTROLS
         operatorController
                 .y()
                 .whileTrue(new Shoot(indexer, shooter, 20, 10));
-
-        operatorController
-                .x()
-                .whileTrue(Commands.parallel(
-                                new AutoShootAndMoveCommand(drive, indexer, shooter),
-                                DriveCommands.joystickDriveAtAngle(drive, ()-> -driverController.getLeftY(), ()-> -driverController.getLeftX(), ()-> drive.getRotationToHubWithVelocity())
-                                ));
 
         operatorController.leftTrigger() // extend and run intake
                 .onTrue(
