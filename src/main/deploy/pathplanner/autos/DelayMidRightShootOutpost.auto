@@ -24,15 +24,48 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "DelayRightTrenchToOppositeHub"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OppositeHubRightBumpToShoot"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "DelayRightTrenchToOppositeHub"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "OppositeHubRightBumpToShoot"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intakefast"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -42,9 +75,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "FarShotToOutpost"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FarShotToOutpost"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "slapdown"
+                }
+              }
+            ]
           }
         },
         {

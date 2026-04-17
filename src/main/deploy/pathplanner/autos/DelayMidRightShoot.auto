@@ -11,7 +11,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.5
+                  "waitTime": 2.3
                 }
               },
               {
@@ -24,15 +24,42 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "DelayRightTrenchToOppositeHub"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OppositeHubRightBumpToShoot"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "DelayRightTrenchToOppositeHub"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "OppositeHubRightBumpToShoot"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intakefast"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
