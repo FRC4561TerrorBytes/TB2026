@@ -5,6 +5,8 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,7 +17,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 
@@ -26,8 +27,8 @@ public class ShooterIOReal implements ShooterIO {
     private final TalonFX flywheelRightBottomMotor = new TalonFX(Constants.FLYWHEEL_BOTTOM_RIGHT_ID);
     private final TalonFX hoodMotor = new TalonFX(Constants.HOOD_ID);
 
-    private final MotionMagicVelocityVoltage flywheelLeftControl = new MotionMagicVelocityVoltage(0);
-    private final MotionMagicVelocityVoltage flywheelRightControl = new MotionMagicVelocityVoltage(0);
+    private final VelocityTorqueCurrentFOC flywheelLeftControl = new VelocityTorqueCurrentFOC(0);
+    private final VelocityTorqueCurrentFOC flywheelRightControl = new VelocityTorqueCurrentFOC(0);
     private final MotionMagicVoltage hoodControl = new MotionMagicVoltage(0);
 
     private final StatusSignal<AngularVelocity> flywheelLeftTopVelocity;
@@ -66,10 +67,13 @@ public class ShooterIOReal implements ShooterIO {
         flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         
         var flywheelLeftSlot0Config = flywheelConfig.Slot0;
+        //IN THEORY KS IS LOWER WITH FOC
         flywheelLeftSlot0Config.kS = 0.3; // Add 0.25 V output to overcome static friction
         //RECALC SAYS 0.39 for kV with the new shooter changes
         flywheelLeftSlot0Config.kV = 0.1; // A velocity target of 1 rps results in 0.12 V output
+        //IN THEORY KA IS LOWER WITH FOC
         flywheelLeftSlot0Config.kA = 0.06; // An acceleration of 1 rps/s requires 0.01 V output
+        //RETURN PID ENTIRELY WITH FOC
         flywheelLeftSlot0Config.kP = 0.35; // An error of 1 rps results in 0.11 V output
         flywheelLeftSlot0Config.kI = 0.0; // no output for integrated error
         flywheelLeftSlot0Config.kD = 0.0; // no output for error derivative
