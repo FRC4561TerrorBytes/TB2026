@@ -44,6 +44,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "BoringHubStart",
+  "folder": "OutpostAndPreloadHubStart",
   "choreoAuto": true
 }
