@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "slapdown"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.3
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "slapdown"
+                }
+              }
+            ]
           }
         },
         {
@@ -23,9 +30,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.1
+            "pathName": "OppositeHubRightBumpToShoot"
           }
         },
         {
@@ -43,7 +50,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 0.7
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OutpostToShoot"
           }
         },
         {
@@ -56,6 +69,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "DelayHubToMid",
   "choreoAuto": true
 }
