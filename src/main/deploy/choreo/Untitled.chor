@@ -5,6 +5,34 @@
  "variables":{
   "expressions":{},
   "poses":{
+   "IntakeDepot":{
+    "x":{
+     "exp":"0.565 m",
+     "val":0.565
+    },
+    "y":{
+     "exp":"5.9788 m",
+     "val":5.9788
+    },
+    "heading":{
+     "exp":"3.1415 rad",
+     "val":3.1415
+    }
+   },
+   "LeftDepotShoot":{
+    "x":{
+     "exp":"1.4158 m",
+     "val":1.4158
+    },
+    "y":{
+     "exp":"5.8795 m",
+     "val":5.8795
+    },
+    "heading":{
+     "exp":"-0.5369 rad",
+     "val":-0.5369
+    }
+   },
    "LeftFirstSwipeEnd":{
     "x":{
      "exp":"2.342055082321167 m",
@@ -127,12 +155,12 @@
    }
   },
   "mass":{
-   "exp":"110 lbs",
-   "val":49.895160700000005
+   "exp":"135 lbs",
+   "val":61.23496995
   },
   "inertia":{
-   "exp":"7.5241755018 kg m ^ 2",
-   "val":7.5241755018
+   "exp":"8 kg m ^ 2",
+   "val":8.0
   },
   "gearing":{
    "exp":"6.03",
