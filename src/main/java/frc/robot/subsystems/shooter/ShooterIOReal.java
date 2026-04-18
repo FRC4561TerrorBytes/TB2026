@@ -115,7 +115,7 @@ public class ShooterIOReal implements ShooterIO {
         hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 13.1;
+        hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 14.1;
         hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
         // hoodConfig.MotorOutput.
 
