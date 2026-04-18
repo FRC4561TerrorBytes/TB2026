@@ -38,6 +38,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "OutpostAndPreloadHubStart",
+  "folder": "HubStart(Outpost&Preload)",
   "choreoAuto": true
 }
