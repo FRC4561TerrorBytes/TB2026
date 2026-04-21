@@ -74,7 +74,7 @@ public class ShooterIOReal implements ShooterIO {
         //IN THEORY KA IS LOWER WITH FOC
         flywheelLeftSlot0Config.kA = 0.06; // An acceleration of 1 rps/s requires 0.01 V output
         //RETURN PID ENTIRELY WITH FOC
-        flywheelLeftSlot0Config.kP = 0.35; // An error of 1 rps results in 0.11 V output
+        flywheelLeftSlot0Config.kP = 4.5; // An error of 1 rps results in 0.11 V output
         flywheelLeftSlot0Config.kI = 0.0; // no output for integrated error
         flywheelLeftSlot0Config.kD = 0.0; // no output for error derivative
 
