@@ -40,6 +40,10 @@ public class Extension extends SubsystemBase {
     return inputs.extensionSetpoint;
   }
 
+  public boolean atSetPoint(double tolerance) {
+    return Math.abs(inputs.extensionAngle - extensionSetpoint()) <= tolerance;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
