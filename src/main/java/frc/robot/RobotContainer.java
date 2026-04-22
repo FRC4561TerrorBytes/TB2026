@@ -321,7 +321,7 @@ public class RobotContainer {
         testingController.leftTrigger().onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
         testingController.b().onTrue(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension));
-        testingController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(62)));
+        testingController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(62), shooter));
 
     }
 
