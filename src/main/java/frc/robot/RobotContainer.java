@@ -168,7 +168,7 @@ public class RobotContainer {
         // Register NamedCommands for use in PathPlanner
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
-        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
+        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(1.0), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", RobotCommands.shootWithAgitate(drive, intake, extension, indexer, shooter).withTimeout(5.0));
         NamedCommands.registerCommand("shootpreload", RobotCommands.shootPreload(drive, indexer, shooter).withTimeout(2.5));
@@ -288,7 +288,7 @@ public class RobotContainer {
         //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
 
-        driverController.y().whileTrue(RobotCommands.agitateBalls(intake, extension));
+        driverController.y().whileTrue(RobotCommands.jostleBalls(intake, extension));
 
         driverController.povUp().whileTrue(Commands.run(() -> intake.setOutput(-Constants.INTAKE_SPEED), intake));
 

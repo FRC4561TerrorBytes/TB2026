@@ -75,6 +75,20 @@
      "val":-2.107963267948966
     }
    },
+   "MidofMidField":{
+    "x":{
+     "exp":"MidMid.x",
+     "val":8.289990425109863
+    },
+    "y":{
+     "exp":"MidMid.y",
+     "val":3.9566397666931152
+    },
+    "heading":{
+     "exp":"MidMid.heading",
+     "val":1.57
+    }
+   },
    "Outpost":{
     "x":{
      "exp":"0.603413462638855 m",

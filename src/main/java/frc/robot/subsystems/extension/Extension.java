@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.leds.Leds;
 
 
@@ -42,6 +43,10 @@ public class Extension extends SubsystemBase {
 
   public boolean atSetPoint(double tolerance) {
     return Math.abs(inputs.extensionAngle - extensionSetpoint()) <= tolerance;
+  }
+
+  public boolean extensionDown(double tolerance) {
+    return Math.abs(inputs.extensionAngle - Constants.EXTENSION_EXTENDED_POSITION) <= tolerance;
   }
 
   @Override

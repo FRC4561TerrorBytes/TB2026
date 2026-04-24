@@ -35,8 +35,9 @@ public class Pass extends Command {
   @Override
   public void execute() {
 
-    double flywheelRPS = shooter.getFlywheelShootSpeed(drive.getDistanceToPassPoint());
-    double hoodAngle = shooter.interpolateHoodAngle(drive.getDistanceToPassPoint());
+    double flywheelRPS = shooter.interpolatePassSpeed(drive.getDistanceToPassPoint());
+    //double hoodAngle = shooter.interpolateHoodAngle(drive.getDistanceToPassPoint());
+    double hoodAngle = 14.1;
 
     shooter.setFlywheelSpeed(flywheelRPS);
     shooter.setHoodAngle(hoodAngle);

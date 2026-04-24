@@ -54,6 +54,17 @@ public class RobotCommands {
         );
     }
 
+    public static Command jostleBalls(Intake intake, Extension extension){
+        return Commands.repeatingSequence(
+                        Commands.runOnce(()-> extension.setExtensionSetpoint(Constants.EXTENSION_AGITATE_POSITION), extension),
+                        Commands.runOnce(()-> intake.setOutput(0.0), intake),
+                        Commands.waitSeconds(0.5),
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
+                        Commands.runOnce(()-> intake.setOutput(0.3), intake),
+                        Commands.waitSeconds(0.5)
+                        );
+    }
+
     public static Command driverRumbleCommand(CommandXboxController driverController) {
         return Commands.startEnd(
                 () -> {

@@ -69,7 +69,8 @@ public class AutoShootCommand extends Command {
     @Override
     public void execute() {
         //setting targets for flywheel and hood
-        shooter.setFlywheelSpeed(shooter.getFlywheelShootSpeed(drive.getDistanceToHub()));
+        shootSpeedRPS = shooter.getFlywheelShootSpeed(drive.getDistanceToHub());
+        shooter.setFlywheelSpeed(shootSpeedRPS);
         shooter.setHoodAngle(shooter.interpolateHoodAngle(drive.getDistanceToHub()));
 
         //rotation calculations for drive
@@ -94,7 +95,7 @@ public class AutoShootCommand extends Command {
         //setting varaibles used to determine actions of the robot
         driveRotated = driveDebouncer.calculate(controller.atSetpoint());
         shooterReady = shooterDebouncer.calculate(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
-        moving = Math.hypot(linearVelocity.getX(), linearVelocity.getY()) > 0.3;
+        moving = Math.hypot(linearVelocity.getX(), linearVelocity.getY()) > 0.1;
 
         if(moving || !controller.atSetpoint()){
             drive.runVelocity(
@@ -110,7 +111,7 @@ public class AutoShootCommand extends Command {
         }
 
         if(shooterReady && driveRotated && !moving){
-            indexer.setThroughput(0.9, 1.0);
+            indexer.setThroughput(0.9, 0.9);
         }
         else{
             indexer.stop();

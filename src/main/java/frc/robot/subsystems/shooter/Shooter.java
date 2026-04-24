@@ -29,6 +29,7 @@ public class Shooter extends SubsystemBase{
   private final Alert shooterHoodDisconnectedAlert;
   private static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
   private static InterpolatingDoubleTreeMap shooterTimeMap = new InterpolatingDoubleTreeMap();
+  private static InterpolatingDoubleTreeMap passingMap = new InterpolatingDoubleTreeMap();
   public Shooter(ShooterIO io) {
     this.io = io;
     shooterLeftTopDisconnectedAlert = new Alert("Left Top Flywheel Disconnected", AlertType.kError);
@@ -93,6 +94,12 @@ public class Shooter extends SubsystemBase{
     shooterTimeMap.put(4.9, 1.43);
     shooterTimeMap.put(5.5, 1.41);
 
+    passingMap.put(6.0, 65.0);
+    passingMap.put(8.0, 70.0);
+    passingMap.put(9.6, 78.0);
+    passingMap.put(10.4, 85.0);
+    passingMap.put(12.0, 95.0);
+
   }
 
   public double interpolateHoodAngle(double distanceMeters){
@@ -114,6 +121,10 @@ public class Shooter extends SubsystemBase{
       return 58.0;
     }
     return 52.0;
+  }
+
+  public double interpolatePassSpeed(double distanceMeters){
+    return passingMap.get(distanceMeters);
   }
 
   public void setHoodAngle(double angle){

@@ -70,7 +70,7 @@ public class ShooterIOReal implements ShooterIO {
         //IN THEORY KS IS LOWER WITH FOC
         flywheelLeftSlot0Config.kS = 0.3; // Add 0.25 V output to overcome static friction
         //RECALC SAYS 0.39 for kV with the new shooter changes
-        flywheelLeftSlot0Config.kV = 0.1; // A velocity target of 1 rps results in 0.12 V output
+        flywheelLeftSlot0Config.kV = 0.175; // A velocity target of 1 rps results in 0.12 V output
         //IN THEORY KA IS LOWER WITH FOC
         flywheelLeftSlot0Config.kA = 0.06; // An acceleration of 1 rps/s requires 0.01 V output
         //RETURN PID ENTIRELY WITH FOC
