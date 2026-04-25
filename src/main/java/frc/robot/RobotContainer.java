@@ -185,8 +185,8 @@ public class RobotContainer {
         //whoever thought of that ^^^^ is huge brain
         
         // Set up SysId routines
-        autoChooser.addOption(
-                "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+       // autoChooser.addOption(
+         //       "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
         /*
          * autoChooser.addOption(
          * "Drive Simple FF Characterization",
@@ -204,10 +204,10 @@ public class RobotContainer {
          * "Drive SysId (Dynamic Reverse)",
          * drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
          */
-        autoChooser.addOption(
-                "LeaveAndStop",
-                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
-                        .withTimeout(4));
+       // autoChooser.addOption(
+       //         "LeaveAndStop",
+       //         Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
+       //                 .withTimeout(4));
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
