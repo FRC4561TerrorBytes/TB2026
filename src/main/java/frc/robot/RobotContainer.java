@@ -171,7 +171,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(1.0), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", RobotCommands.shootWithAgitate(drive, intake, extension, indexer, shooter).withTimeout(5.0));
+        NamedCommands.registerCommand("pass", new Pass(drive, indexer, shooter).withTimeout(5.0));
         NamedCommands.registerCommand("shootpreload", RobotCommands.shootPreload(drive, indexer, shooter).withTimeout(2.5));
+        NamedCommands.registerCommand("jostle", RobotCommands.jostleBalls(intake, extension).withTimeout(5.0));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
@@ -265,7 +267,7 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        driverController
+        driverController 
                 .rightTrigger()
                 .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
                 .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
