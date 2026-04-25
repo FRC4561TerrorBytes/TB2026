@@ -271,7 +271,8 @@ public class RobotContainer {
                 .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
-                .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false));
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
+                .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
 
         driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)).onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true)).onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 

@@ -75,17 +75,17 @@
      "val":-2.107963267948966
     }
    },
-   "MidofMidField":{
+   "MidOfMidfield":{
     "x":{
-     "exp":"MidMid.x",
-     "val":8.289990425109863
+     "exp":"8.27 m",
+     "val":8.27
     },
     "y":{
-     "exp":"MidMid.y",
-     "val":3.9566397666931152
+     "exp":"3.97 m",
+     "val":3.97
     },
     "heading":{
-     "exp":"MidMid.heading",
+     "exp":"1.57 rad",
      "val":1.57
     }
    },
