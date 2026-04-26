@@ -4,9 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [],
   "autoFolders": [
-    "HubStart(DelayToMid)",
     "DoubleSwoops",
-    "HubStart(Outpost&Preload)"
+    "Cool 3rd bot autos",
+    "Bummy preload auto"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

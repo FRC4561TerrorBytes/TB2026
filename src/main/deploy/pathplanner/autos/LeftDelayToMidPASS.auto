@@ -23,7 +23,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "DelayRightTrenchToOppositeHub"
+                  "pathName": "DelayLeftTrenchToOppositeHub"
                 }
               },
               {
@@ -42,7 +42,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "OppositeHubRightBumpToPass"
+                  "pathName": "OppositeHubLeftBumpToPass"
                 }
               },
               {
