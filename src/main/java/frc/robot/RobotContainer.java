@@ -168,10 +168,12 @@ public class RobotContainer {
         // Register NamedCommands for use in PathPlanner
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
-        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(0.7), intake));
+        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(1.0), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", RobotCommands.shootWithAgitate(drive, intake, extension, indexer, shooter).withTimeout(5.0));
+        NamedCommands.registerCommand("pass", new Pass(drive, indexer, shooter).withTimeout(5.0));
         NamedCommands.registerCommand("shootpreload", RobotCommands.shootPreload(drive, indexer, shooter).withTimeout(2.5));
+        NamedCommands.registerCommand("jostle", RobotCommands.jostleBalls(intake, extension).withTimeout(5.0));
         NamedCommands.registerCommand("hoodup", Commands.runOnce(() -> shooter.setHoodAngle(6), shooter));
         NamedCommands.registerCommand("slapdown", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION)));
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
@@ -183,8 +185,8 @@ public class RobotContainer {
         //whoever thought of that ^^^^ is huge brain
         
         // Set up SysId routines
-        autoChooser.addOption(
-                "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+       // autoChooser.addOption(
+         //       "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
         /*
          * autoChooser.addOption(
          * "Drive Simple FF Characterization",
@@ -202,10 +204,10 @@ public class RobotContainer {
          * "Drive SysId (Dynamic Reverse)",
          * drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
          */
-        autoChooser.addOption(
-                "LeaveAndStop",
-                Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
-                        .withTimeout(4));
+       // autoChooser.addOption(
+       //         "LeaveAndStop",
+       //         Commands.run(() -> drive.runVelocity(new ChassisSpeeds(-0.25, 0, 0)), drive)
+       //                 .withTimeout(4));
 
         SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -250,33 +252,29 @@ public class RobotContainer {
                 
         // DRIVER CONTROLS
         driverController
-                .leftTrigger() // extend and run intake
-                .onTrue(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
-                .toggleOnTrue(
-                        Commands.startRun(
-                                () -> Leds.getInstance().intakeRunning = true, 
-                                () -> intake.setOutput(Constants.INTAKE_SPEED), 
-                                intake)
-                        .alongWith(RobotCommands.driverRumbleCommand(driverController))
-                        .finallyDo(() -> Leds.getInstance().intakeRunning = false));
+                .leftTrigger()
+                .toggleOnTrue(Commands.sequence(
+                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
+                        Commands.waitUntil(() -> extension.atSetPoint(0.15)),
+                        Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake)));
 
         driverController
                 .b() // retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
-                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(0.8), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
+                                extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(Constants.INTAKE_SPEED), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
         driverController
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
-        driverController
+        driverController 
                 .rightTrigger()
                 .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
                 .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
-                .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false));
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
+                .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
 
         driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)).onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true)).onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
@@ -293,7 +291,7 @@ public class RobotContainer {
         //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
 
-        driverController.y().whileTrue(RobotCommands.agitateBallsTest(intake, extension));
+        driverController.y().whileTrue(RobotCommands.jostleBalls(intake, extension));
 
         driverController.povUp().whileTrue(Commands.run(() -> intake.setOutput(-Constants.INTAKE_SPEED), intake));
 
@@ -326,7 +324,7 @@ public class RobotContainer {
         testingController.leftTrigger().onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension));
         testingController.b().onTrue(Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION), extension));
-        testingController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(62)));
+        testingController.rightTrigger().whileTrue(Commands.run(() -> shooter.setFlywheelSpeed(62), shooter));
 
     }
 

@@ -6,6 +6,8 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -23,13 +25,20 @@ public class AutoShootCommand extends Command {
     public Drive drive;
     public Indexer indexer;
     public Shooter shooter;
-    public double distanceToHub;
 
     public double targetAngle;
     public double shootSpeedRPS = 70;
     PIDController controller;
     DoubleSupplier joystickX;
     DoubleSupplier joystickY;
+
+    public boolean moving = false;
+    public boolean driveRotated = false;
+    public boolean shooterReady = false;
+
+    private final Debouncer driveDebouncer = new Debouncer(0.1, DebounceType.kFalling);
+    private final Debouncer shooterDebouncer = new Debouncer(0.1, DebounceType.kFalling);
+
 
     public AutoShootCommand(Drive drive, Indexer indexer, Shooter shooter){
         this.drive = drive;
@@ -59,19 +68,16 @@ public class AutoShootCommand extends Command {
 
     @Override
     public void execute() {
-        distanceToHub = drive.getDistanceToHub();
-        shootSpeedRPS = shooter.getFlywheelShootSpeed(distanceToHub);
+        //setting targets for flywheel and hood
+        shootSpeedRPS = shooter.getFlywheelShootSpeed(drive.getDistanceToHub());
         shooter.setFlywheelSpeed(shootSpeedRPS);
+        shooter.setHoodAngle(shooter.interpolateHoodAngle(drive.getDistanceToHub()));
 
-        //getting hood angle from the table with interpolation
-        double hoodAngleInterpolated = shooter.interpolateHoodAngle(distanceToHub);
-        shooter.setHoodAngle(hoodAngleInterpolated);
-
+        //rotation calculations for drive
         double targetAngle = drive.getRotationToHub().getRadians();
-        Logger.recordOutput("AutoShoot/TargetAngleToFace", targetAngle);
-
         double rotationSpeed = MathUtil.clamp(controller.calculate(drive.getPose().getRotation().getRadians(), targetAngle), -drive.getMaxAngularSpeedRadPerSec(), drive.getMaxAngularSpeedRadPerSec());
 
+        //joystick inputs to keep robot moving
         double x = (joystickY.getAsDouble() * joystickY.getAsDouble()) * Math.signum(-joystickY.getAsDouble());
         double y = (joystickX.getAsDouble() * joystickX.getAsDouble()) * Math.signum(-joystickX.getAsDouble());
         Translation2d linearVelocity = DriveCommands.getLinearVelocityFromJoysticks(x, y);
@@ -80,25 +86,32 @@ public class AutoShootCommand extends Command {
             DriverStation.getAlliance().isPresent()
                 && DriverStation.getAlliance().get() == Alliance.Red;
         
+        //creating chassis speeds using both joystick and rotation to hub controller
         ChassisSpeeds speeeeeeeeds = new ChassisSpeeds(
                 linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(), 
                 linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), 
                 rotationSpeed);
 
-          drive.runVelocity(
+        //setting varaibles used to determine actions of the robot
+        driveRotated = driveDebouncer.calculate(controller.atSetpoint());
+        shooterReady = shooterDebouncer.calculate(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
+        moving = Math.hypot(linearVelocity.getX(), linearVelocity.getY()) > 0.1;
+
+        if(moving || !controller.atSetpoint()){
+            drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeeeeeeeds,
                   isFlipped
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
+        }
 
-        Logger.recordOutput("AutoShoot/linearVelocity", Math.hypot(linearVelocity.getX(), linearVelocity.getY()));
-        if(Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < 0.3 && controller.atSetpoint()){
+        if(!moving && driveRotated){
             drive.stopWithX();
         }
 
-        if(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint() && controller.atSetpoint() && Math.hypot(linearVelocity.getX(), linearVelocity.getY()) < 0.3){
-            indexer.setThroughput(0.9, 0.8);
+        if(shooterReady && driveRotated && !moving){
+            indexer.setThroughput(0.9, 0.9);
         }
         else{
             indexer.stop();
@@ -107,8 +120,12 @@ public class AutoShootCommand extends Command {
         Leds.getInstance().autoScoreAtRotationSetpoint = controller.atSetpoint();
         Leds.getInstance().autoScoreRotatePercent = 1.0 - (Math.abs(controller.getError())/Math.PI);
 
-        Logger.recordOutput("AutoShoot/DriveTrainFacingHub", controller.atSetpoint());
-        Logger.recordOutput("AutoShoot/ShooterReady", shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
+        Logger.recordOutput("AutoShoot/TargetAngleToFace", targetAngle);
+        Logger.recordOutput("AutoShoot/linearVelocity", Math.hypot(linearVelocity.getX(), linearVelocity.getY()));
+        Logger.recordOutput("AutoShoot/RAWDriveTrainFacingHub", controller.atSetpoint());
+        Logger.recordOutput("AutoShoot/DEBOUNCEDDriveTrainFacingHub", driveRotated);
+        Logger.recordOutput("AutoShoot/RAWShooterReady", shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
+        Logger.recordOutput("AutoShoot/DEBOUNCEDShooterReady", shooterReady);
     }
 
     @Override
