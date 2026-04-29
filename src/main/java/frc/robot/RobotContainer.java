@@ -255,6 +255,7 @@ public class RobotContainer {
                 .leftTrigger()
                 .toggleOnTrue(Commands.sequence(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
+                        RobotCommands.driverRumbleCommand(driverController),
                         Commands.waitUntil(() -> extension.atSetPoint(0.15)),
                         Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake)));
 
