@@ -168,7 +168,7 @@ public class RobotContainer {
         // Register NamedCommands for use in PathPlanner
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
-        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(1.0), intake));
+        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(0.5), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", RobotCommands.shootWithAgitate(drive, intake, extension, indexer, shooter).withTimeout(5.0));
         NamedCommands.registerCommand("pass", new Pass(drive, indexer, shooter).withTimeout(5.0));
