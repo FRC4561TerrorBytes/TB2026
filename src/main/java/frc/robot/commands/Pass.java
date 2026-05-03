@@ -41,9 +41,9 @@ public class Pass extends Command {
 
     shooter.setFlywheelSpeed(flywheelRPS);
     shooter.setHoodAngle(hoodAngle);
-
+    
       if(shooter.leftFlywheelUpToSpeed(flywheelRPS) && shooter.rightFlywheelUpToSpeed(flywheelRPS) && shooter.hoodAtSetpoint()){
-        indexer.setThroughput(0.9, 0.8);
+        indexer.setThroughput(0.9, 0.9);
       }
       else{
         indexer.stop();
