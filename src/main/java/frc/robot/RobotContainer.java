@@ -168,7 +168,7 @@ public class RobotContainer {
         // Register NamedCommands for use in PathPlanner
         // Set up auto routines
         NamedCommands.registerCommand("intake", Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
-        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(1.0), intake));
+        NamedCommands.registerCommand("intakefast", Commands.run(() -> intake.setOutput(0.9), intake));
         NamedCommands.registerCommand("stopintake", Commands.runOnce(() -> intake.setOutput(0), intake));
         NamedCommands.registerCommand("shoot", RobotCommands.shootWithAgitate(drive, intake, extension, indexer, shooter).withTimeout(5.0));
         NamedCommands.registerCommand("pass", new Pass(drive, indexer, shooter).withTimeout(5.0));
@@ -256,7 +256,7 @@ public class RobotContainer {
                 .toggleOnTrue(Commands.sequence(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension),
                         Commands.waitUntil(() -> extension.atSetPoint(0.15)),
-                        Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake)));
+                        Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake)).alongWith(RobotCommands.driverRumbleCommand(driverController)));
 
         driverController
                 .b() // retract intake
@@ -290,7 +290,7 @@ public class RobotContainer {
 
         //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
-
+        driverController.a().whileTrue(new Shoot(indexer, shooter, 52, 6.0));
         driverController.y().whileTrue(RobotCommands.jostleBalls(intake, extension));
 
         driverController.povUp().whileTrue(Commands.run(() -> intake.setOutput(-Constants.INTAKE_SPEED), intake));
