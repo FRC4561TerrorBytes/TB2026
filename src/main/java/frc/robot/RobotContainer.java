@@ -258,8 +258,7 @@ public class RobotContainer {
                         Commands.waitUntil(() -> extension.atSetPoint(0.15)),
                         Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake)).alongWith(RobotCommands.driverRumbleCommand(driverController)));
 
-        driverController
-                .b() // retract intake
+        driverController.b() //Retract intake
                 .onTrue(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
                                 extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(Constants.INTAKE_SPEED), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
