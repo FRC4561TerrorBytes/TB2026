@@ -24,27 +24,40 @@ def getButtonMapping(controller, button):
 
     return comment.strip()
 
+img = Image.open('controllerMapGenerator/XboxNavigation.png')
+font = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=48)
+titleFont = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=72)
+# Call draw Method to add 2D graphics in an image
+driver = ImageDraw.Draw(img)
+
+# Add Text to an image
+driver.text((630, 120), getButtonMapping('driverController','leftTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
+driver.text((1200, 120), getButtonMapping('driverController','rightTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
+driver.text((1450, 300), getButtonMapping('driverController','y'), fill=(0, 0, 0), font=font)
+driver.text((1450, 470), getButtonMapping('driverController','b'), fill=(0, 0, 0), font=font)
+driver.text((1450, 560), getButtonMapping('driverController','x'), fill=(0, 0, 0), font=font)
+#I1.text((1450, 820), getButtonMapping('driverController','a'), fill=(0, 0, 0), font=font)
+driver.text((10,500), "Drive - Translate", fill=(0, 0, 0), font=font, align="rm")
+driver.text((980,920), "Drive - Rotate", fill=(0, 0, 0), font=font, align="mm")
+driver.text((825, 0), "Driver", fill=(0, 0, 0), font=titleFont, align="mm")
+
+# Save the edited image
+img.save("controllerMapGenerator/driverMap.png")
 
 img = Image.open('controllerMapGenerator/XboxNavigation.png')
 font = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=48)
 titleFont = ImageFont.truetype("controllerMapGenerator/Electrolize-Regular.ttf", size=72)
 # Call draw Method to add 2D graphics in an image
-I1 = ImageDraw.Draw(img)
+operator = ImageDraw.Draw(img)
 
 # Add Text to an image
-I1.text((630, 120), getButtonMapping('driverController','leftTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
-I1.text((1200, 120), getButtonMapping('driverController','rightTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
-I1.text((1450, 300), getButtonMapping('driverController','y'), fill=(0, 0, 0), font=font)
-I1.text((1450, 470), getButtonMapping('driverController','b'), fill=(0, 0, 0), font=font)
-I1.text((1450, 560), getButtonMapping('driverController','x'), fill=(0, 0, 0), font=font)
-#I1.text((1450, 820), getButtonMapping('driverController','a'), fill=(0, 0, 0), font=font)
-I1.text((10,500), "Drive - Translate", fill=(0, 0, 0), font=font, align="rm")
-I1.text((980,920), "Drive - Rotate", fill=(0, 0, 0), font=font, align="mm")
-I1.text((825, 0), "Driver", fill=(0, 0, 0), font=titleFont, align="mm")
-
-
-# Display edited image
-img.show()
+operator.text((630, 120), getButtonMapping('operatorController','leftTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
+operator.text((1200, 120), getButtonMapping('operatorController','rightTrigger'), fill=(0, 0, 0), font=font, anchor="mm")
+operator.text((1450, 300), getButtonMapping('operatorController','y'), fill=(0, 0, 0), font=font)
+operator.text((1450, 470), getButtonMapping('operatorController','b'), fill=(0, 0, 0), font=font)
+operator.text((1450, 560), getButtonMapping('operatorController','x'), fill=(0, 0, 0), font=font)
+#I1.text((1450, 820), getButtonMapping('operatorController','a'), fill=(0, 0, 0), font=font)
 
 # Save the edited image
-img.save("controllerMapGenerator/driverMap.png")
+img.save("controllerMapGenerator/operatorMap.png")
+
