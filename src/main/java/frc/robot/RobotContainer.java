@@ -265,7 +265,7 @@ public class RobotContainer {
                                 extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(Constants.INTAKE_SPEED), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
         driverController
                 .x()
-                .whileTrue(new Shoot(indexer, shooter, 10, 5.0));
+                .whileTrue(new Shoot(indexer, shooter, 20, 5.0));
 
         // driverController 
         //         .rightTrigger()
@@ -291,7 +291,7 @@ public class RobotContainer {
         //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         //driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
         //driverController.a().whileTrue(new Shoot(indexer, shooter, 52, 6.0));
-        driverController.y().whileTrue(new Shoot(indexer, shooter, 85, 10));
+        driverController.y().and(driverController.rightTrigger()).whileTrue(new Shoot(indexer, shooter, 85, 12.2815));
 
         driverController.povUp().onTrue(Commands.runOnce(() -> shooter.nudge(0.5)));
         driverController.povDown().onTrue(Commands.runOnce(() -> shooter.nudge(-0.5)));
