@@ -236,7 +236,7 @@ public class RobotContainer {
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(shooter.lerpHood(drive::getDistanceToHub)));
+        shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter));
 
         //TRIGGERS
         new Trigger(
@@ -265,18 +265,18 @@ public class RobotContainer {
                                 extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(Constants.INTAKE_SPEED), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
         driverController
                 .x()
-                .whileTrue(Commands.run(() -> drive.stopWithX()));
+                .whileTrue(new Shoot(indexer, shooter, 10, 5.0));
 
-        driverController 
-                .rightTrigger()
-                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
-                .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
-                .onFalse(
-                        Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
-                .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
-                .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
+        // driverController 
+        //         .rightTrigger()
+        //         .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
+        //         .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
+        //         .onFalse(
+        //                 Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
+        //         .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
+        //         .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
 
-        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)).onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true)).onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
+        //driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)).onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true)).onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
         driverController
                 .rightStick()
@@ -289,12 +289,12 @@ public class RobotContainer {
                                 .ignoringDisable(true));
 
         //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
-        driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
-        driverController.a().whileTrue(new Shoot(indexer, shooter, 52, 6.0));
-        driverController.y().whileTrue(RobotCommands.jostleBalls(intake, extension));
+        //driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
+        //driverController.a().whileTrue(new Shoot(indexer, shooter, 52, 6.0));
+        driverController.y().whileTrue(new Shoot(indexer, shooter, 85, 10));
 
-        driverController.povUp().whileTrue(Commands.run(() -> intake.setOutput(-Constants.INTAKE_SPEED), intake));
-
+        driverController.povUp().onTrue(Commands.runOnce(() -> shooter.nudge(0.5)));
+        driverController.povDown().onTrue(Commands.runOnce(() -> shooter.nudge(-0.5)));
         //OPERATOR CONTROLS
         operatorController
                 .y()
