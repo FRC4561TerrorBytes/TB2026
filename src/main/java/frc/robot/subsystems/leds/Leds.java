@@ -207,7 +207,7 @@ public class Leds extends VirtualSubsystem {
           wave(fullSection, Color.kBlack, Color.kYellow, waveFastCycleLength, waveFastDuration);
         }
         else{
-          gradient(new Section(0, (int)(autoScoreRotatePercent*length)), disabledColor, Color.kGreen);
+          HSVgradient(new Section(0, (int)(autoScoreRotatePercent*length)), disabledColor, Color.kGreen);
           solid(new Section((int)(autoScoreRotatePercent*length), length), Color.kBlack);
         }
       }
@@ -371,12 +371,44 @@ public class Leds extends VirtualSubsystem {
     double greenDifference = c2.green - c1.green;
     double blueDifference = c2.blue - c1.blue;
 
+    // Calculate the total number of LEDs in this specific section
+    int sectionLength = section.end - section.start; 
+
     for(int i = section.start; i < section.end; i++){ 
-      double redValue = c1.red + redDifference * i / length;
-      double greenValue = c1.green + greenDifference * i / length;
-      double blueValue = c1.blue + blueDifference * i / length;
+      double redValue = c1.red + redDifference * i / sectionLength;
+      double greenValue = c1.green + greenDifference * i / sectionLength;
+      double blueValue = c1.blue + blueDifference * i / sectionLength;
 
       buffer.setLED(i, new Color(redValue, greenValue, blueValue));  
+    }
+  }
+
+  private void HSVgradient(Section section, Color c1, Color c2){
+    // Array to store output: [0]=Hue, [1]=Saturation, [2]=Value
+        float[] hsv1 = new float[3];
+        float[] hsv2 = new float[3];
+        java.awt.Color.RGBtoHSB((int)(c1.red*255), (int)(c1.green*255), (int)(c1.blue*255), hsv1);
+        java.awt.Color.RGBtoHSB((int)(c2.red*255), (int)(c2.green*255), (int)(c2.blue*255), hsv2);
+        hsv1[0] *= 180.0;
+        hsv2[0] *= 180.0;
+        hsv1[1] *= 255.0;
+        hsv2[1] *= 255.0;
+        hsv1[2] *= 255.0;
+        hsv2[2] *= 255.0;
+    float hueDifference = hsv2[0] - hsv1[0];
+    float saturationDifference = hsv2[1] - hsv1[1];
+    float valueDifference = hsv2[2] - hsv1[2];
+
+    // Calculate the total number of LEDs in this specific section
+    int sectionLength = section.end - section.start;
+    if (sectionLength == 0){
+      sectionLength = 1; // Prevent division by zero
+    }
+    for(int i = section.start; i < section.end; i++){ 
+      double hueValue = hsv1[0] + hueDifference * i / sectionLength;
+      double saturationValue = hsv1[1] + saturationDifference * i / sectionLength;
+      double valueValue = hsv1[2] + valueDifference * i / sectionLength;
+      buffer.setHSV(i, (int)hueValue, (int)saturationValue, (int)valueValue);
     }
   }
 
