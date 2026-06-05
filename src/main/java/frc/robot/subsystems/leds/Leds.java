@@ -185,7 +185,8 @@ public class Leds extends VirtualSubsystem {
 
     } 
     else if (DriverStation.isAutonomous()) {
-      wave(fullSection, Color.kGreen, Color.kPurple, waveFastCycleLength, waveFastDuration);
+      //wave(fullSection, Color.kGreen, Color.kPurple, waveFastCycleLength, waveFastDuration);
+      HSVgradient(fullSection, Color.kRed, Color.kGreen);
     } 
     else {
       //Default pattern for teleop
@@ -362,7 +363,7 @@ public class Leds extends VirtualSubsystem {
    * @param c1 - the color on the left side of the gradient
    * @param c2 - the color on the right side of the gradient  
    * 
-   * @return Gradient on LED strip - sets the LEDs in the section to a gradient between the two colors
+   * @return RGB Gradient on LED strip - sets the LEDs in the section to a gradient between the two colors
    */
   private void gradient(Section section, Color c1, Color c2){
     //HI MANBIR :D
@@ -374,27 +375,39 @@ public class Leds extends VirtualSubsystem {
     // Calculate the total number of LEDs in this specific section
     int sectionLength = section.end - section.start; 
 
+    //finds a color which is incrementally closer to the target color for each pixel.
     for(int i = section.start; i < section.end; i++){ 
       double redValue = c1.red + redDifference * i / sectionLength;
       double greenValue = c1.green + greenDifference * i / sectionLength;
       double blueValue = c1.blue + blueDifference * i / sectionLength;
-
       buffer.setLED(i, new Color(redValue, greenValue, blueValue));  
     }
   }
 
+  /**
+   * Creates a HSV gradient in a section between two colors. Brighter and less muddy middle colors than RGB gradient. 
+   * @param section - the section of the LEDs to apply the gradient to
+   * @param c1 - the color on the left side of the gradient
+   * @param c2 - the color on the right side of the gradient  
+   * 
+   * @return HSV Gradient on LED strip - sets the LEDs in the section to a gradient between the two colors
+   */
   private void HSVgradient(Section section, Color c1, Color c2){
     // Array to store output: [0]=Hue, [1]=Saturation, [2]=Value
         float[] hsv1 = new float[3];
         float[] hsv2 = new float[3];
+
+        //converting to HSV or HSB with java func bc wpilib can't do this
         java.awt.Color.RGBtoHSB((int)(c1.red*255), (int)(c1.green*255), (int)(c1.blue*255), hsv1);
         java.awt.Color.RGBtoHSB((int)(c2.red*255), (int)(c2.green*255), (int)(c2.blue*255), hsv2);
-        hsv1[0] *= 180.0;
-        hsv2[0] *= 180.0;
-        hsv1[1] *= 255.0;
-        hsv2[1] *= 255.0;
-        hsv1[2] *= 255.0;
-        hsv2[2] *= 255.0;
+
+        //changing values from between 0 and 1 to the normally used values
+        for( int i = 0; i < 3; i++){
+          hsv1[i] *= i==0 ? 180.0 : 255.0;
+          hsv2[i] *= i==0 ? 180.0 : 255.0;
+        }
+    
+    //calculating the difference in hue, saturation, and value between the two colors to use for the gradient
     float hueDifference = hsv2[0] - hsv1[0];
     float saturationDifference = hsv2[1] - hsv1[1];
     float valueDifference = hsv2[2] - hsv1[2];
@@ -404,6 +417,8 @@ public class Leds extends VirtualSubsystem {
     if (sectionLength == 0){
       sectionLength = 1; // Prevent division by zero
     }
+
+    //acc gradient code is similar to RGB gradient
     for(int i = section.start; i < section.end; i++){ 
       double hueValue = hsv1[0] + hueDifference * i / sectionLength;
       double saturationValue = hsv1[1] + saturationDifference * i / sectionLength;
