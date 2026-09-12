@@ -516,9 +516,24 @@ public class Drive extends SubsystemBase {
 
   @AutoLogOutput(key = "Passing/DistanceToPassPoint")
   public double getDistanceToPassPoint(){
-    double robotX = getPose().getX();
-    double hubX = AllianceFlipUtil.apply(FieldConstants.Hub.nearFace.getTranslation()).getX();
-    return Math.abs(robotX - hubX) + 2.5;
+  return getPose().getTranslation().getDistance(closestBump());
+  }
+
+  private Translation2d closestBump(){
+    Translation2d closestBump = AllianceFlipUtil.apply(FieldConstants.LeftBump.middle);
+    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.LeftBump.middle)) < getPose().getTranslation().getDistance(closestBump))
+    {
+      closestBump = AllianceFlipUtil.apply(FieldConstants.RightBump.middle);
+    }
+    return closestBump;
+  }
+
+  @AutoLogOutput(key = "Passing/RotationToNearestBump")
+  public Rotation2d getRotationToNearestBump(){
+    return new Rotation2d(
+      closestBump().getX()-getPose().getX(),
+      closestBump().getY()-getPose().getY()
+    );
   }
 
   @AutoLogOutput

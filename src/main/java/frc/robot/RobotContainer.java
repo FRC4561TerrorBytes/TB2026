@@ -276,7 +276,10 @@ public class RobotContainer {
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
 
-        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)).onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true)).onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
+        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)
+                .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftX(), () -> -driverController.getLeftY(), () -> drive.getRotationToNearestBump())))
+                .onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true))
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
         driverController
                 .rightStick()
