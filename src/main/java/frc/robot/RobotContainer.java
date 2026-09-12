@@ -13,9 +13,6 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
-import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -23,6 +20,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -63,9 +62,12 @@ import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.shooter.ShooterIOSim;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.RobotVisualizer;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -113,8 +115,13 @@ public class RobotContainer {
                 extension = new Extension(new ExtensionIOReal());
                 vision = new Vision(
                         drive::addVisionMeasurement,      
-                        new VisionIOLimelight(camera0Name, drive::getRotation),
-                        new VisionIOLimelight(camera1Name, drive::getRotation));
+                        // new VisionIOLimelight(camera0Name, drive::getRotation),
+                        // new VisionIOLimelight(camera1Name, drive::getRotation)
+                        new VisionIOPhotonVision(VisionConstants.cam0Name, VisionConstants.cam0Offsets),
+                        new VisionIOPhotonVision(VisionConstants.cam1Name, VisionConstants.cam1Offsets),
+                        new VisionIOPhotonVision(VisionConstants.cam2Name, VisionConstants.cam2Offsets),
+                        new VisionIOPhotonVision(VisionConstants.cam3Name, VisionConstants.cam3Offsets)
+                        );
                 shooter = new Shooter(
                         new ShooterIOReal());
                 indexer = new Indexer(new IndexerIOReal());
@@ -128,9 +135,14 @@ public class RobotContainer {
                         new ModuleIOSim(TunerConstants.FrontRight),
                         new ModuleIOSim(TunerConstants.BackLeft),
                         new ModuleIOSim(TunerConstants.BackRight));
-                vision = new Vision(drive::addVisionMeasurement, new VisionIO() {
-                }, new VisionIO() {
-                });
+                vision = new Vision(
+                        drive::addVisionMeasurement,
+                        
+                        new VisionIOPhotonVision(VisionConstants.cam0Name, VisionConstants.cam0Offsets),
+                        new VisionIOPhotonVision(VisionConstants.cam1Name, VisionConstants.cam1Offsets),
+                        new VisionIOPhotonVision(VisionConstants.cam2Name, VisionConstants.cam2Offsets),
+                        new VisionIOPhotonVision(VisionConstants.cam3Name, VisionConstants.cam3Offsets)
+                );
                 intake = new Intake(new IntakeIOSim()); // for actual code use intake IO sim
                 extension = new Extension(new ExtensionIOSim());
                 shooter = new Shooter(

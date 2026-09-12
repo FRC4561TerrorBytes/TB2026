@@ -17,6 +17,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
@@ -25,8 +27,36 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "limelight-left";
-  public static String camera1Name = "limelight";
+  // public static String camera0Name = "limelight-left";
+  // public static String camera1Name = "limelight";
+  public static String pi0Name = "photonpi1";
+  public static String pi1Name = "photonpi2";
+
+  public static String cam0Name = "thriftycam0";
+  public static String cam1Name = "thriftycam1";
+  public static String cam2Name = "thriftycam2";
+  public static String cam3Name = "thriftycam3";
+
+
+  public static Transform3d cam0Offsets = new Transform3d(
+    new Translation3d(0,0,0),
+    new Rotation3d(0,0,0)
+  );
+
+  public static Transform3d cam1Offsets = new Transform3d(
+    new Translation3d(0,0,0),
+    new Rotation3d(0,0,0)
+  );
+
+  public static Transform3d cam2Offsets = new Transform3d(
+    new Translation3d(0,0,0),
+    new Rotation3d(0,0,0)
+  );
+
+  public static Transform3d cam3Offsets = new Transform3d(
+    new Translation3d(0,0,0),
+    new Rotation3d(0,0,0)
+  );
 
   public static Pose3d[] cameraOffsets = {
     new Pose3d(
