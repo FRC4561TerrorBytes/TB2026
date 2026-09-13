@@ -66,6 +66,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.RobotVisualizer;
+import frc.robot.util.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -269,15 +270,24 @@ public class RobotContainer {
 
         driverController 
                 .rightTrigger()
-                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
+                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter)
+                        .onlyIf( () -> (drive.getPose().getX() < (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX() + 0.2))))
                 .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
+                .whileTrue(new Pass(drive, indexer, shooter)
+                        .alongWith(
+                                DriveCommands.joystickDriveAtAngle(drive, 
+                                () -> -driverController.getLeftX(), 
+                                () -> -driverController.getLeftY(), 
+                                () -> drive.getRotationToNearestBump()))
+                        .onlyIf( () -> (drive.getPose().getX() > (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX() + 0.2))))
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
 
-        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)
-                .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftX(), () -> -driverController.getLeftY(), () -> drive.getRotationToNearestBump())))
+        driverController.rightBumper()
+                .whileTrue(new Pass(drive, indexer, shooter)
+                        .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftX(), () -> -driverController.getLeftY(), () -> drive.getRotationToNearestBump())))
                 .onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
