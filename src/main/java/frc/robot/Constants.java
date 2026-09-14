@@ -62,6 +62,20 @@ public final class Constants {
   public static final double EXTENSION_EXTENDED_POSITION = 1;
   public static final double EXTENSION_RETRACTED_POSITION = 0;
 
+  public static final int ELEVATOR_1_ID = 0;
+  public static final int ELEVATOR_2_ID = 0;
+  public static final double ELEVATOR_1_GEAR_RATIO = 0;
+  public static final double ELEVATOR_2_GEAR_RATIO = 0;
+  public static final double ELEVATOR_SUPPLY_CURRENT_LIMIT = 20;
+  public static final double ELEVATOR_STATOR_CURRENT_LIMIT = 45;
+  public static final int ELEVATOR_CANCODER_1_ID = 0;
+  public static final int ELEVATOR_CANCODER_2_ID = 0;
+
+
+  public static final double ELEVATOR_EXTENDED_POSITION = 1;
+  public static final double ELEVATOR_RETRACTED_POSITION = 0;
+
+
   public static final int INDEXER_MOTOR_ID = 67; // Please look over these idk what the limits should be - Sam🔥
   public static final int INDEXER_STATOR_CURRENT_LIMIT = 20;
   public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 25;

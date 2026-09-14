@@ -39,33 +39,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOReal;
-import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.extension.Extension;
 import frc.robot.subsystems.extension.ExtensionIO;
 import frc.robot.subsystems.extension.ExtensionIOReal;
 import frc.robot.subsystems.extension.ExtensionIOSim;
-import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerIO;
-import frc.robot.subsystems.indexer.IndexerIOReal;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOReal;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIO;
-import frc.robot.subsystems.shooter.ShooterIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -81,11 +69,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Intake intake;
   private final Extension extension;
-  private final Shooter shooter;
-  private final Indexer indexer;
-  private final Climber climber;
+  private final Elevator elevator; 
 
   Rotation2d snapRotation;
   // Controller
@@ -106,22 +91,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        intake = 
-            new Intake(new IntakeIO(){});
         extension = 
             new Extension(new ExtensionIO(){});
+        elevator = 
+            new Elevator(new ElevatorIO(){});
         vision =
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOLimelight(camera0Name, drive::getRotation),
                 new VisionIOLimelight(camera1Name, drive::getRotation));
-        shooter =
-            new Shooter(
-              new ShooterIO(){});
-        indexer =
-            new Indexer(new IndexerIO(){});
-        climber =
-            new Climber(new ClimberIO(){});
         break;
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -133,17 +111,10 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = 
-            new Intake(new IntakeIOSim()); //for actual code use intake IO sim
         extension = 
             new Extension(new ExtensionIOSim());
-        shooter =
-            new Shooter(
-              new ShooterIO() {});
-        indexer =
-            new Indexer(new IndexerIO() {});
-        climber =
-            new Climber(new ClimberIOSim());
+        elevator =
+            new Elevator(new ElevatorIOSim());
         break;
       default:
         // Replayed robot, disable IO implementations
@@ -155,17 +126,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        intake = 
-            new Intake(new IntakeIO() {});
         extension = 
             new Extension(new ExtensionIO() {});
-        shooter =
-            new Shooter(
-              new ShooterIO() {});
-        indexer =
-            new Indexer(new IndexerIO() {});
-        climber =
-            new Climber(new ClimberIO() {});
+        elevator =
+            new Elevator(new ElevatorIO() {});
         break;
     }
 
@@ -220,8 +184,6 @@ public class RobotContainer {
     .and(intakeExtendedTrigger)
     .and(() -> DriverStation.isTeleop())
     .whileTrue(driverRumbleCommand());
-    indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
-    shooter.setDefaultCommand(Commands.run(()-> shooter.stop(), shooter));
     // Triggers
 
     // // Driver Controls
@@ -278,9 +240,7 @@ public class RobotContainer {
     return autoChooser.get();
   }
 
-  public void autoExit(){
-    climber.setIdleMode(NeutralModeValue.Coast);
-  }
+  public void autoExit(){}
 
   private Command driverRumbleCommand() {
     return Commands.startEnd(
