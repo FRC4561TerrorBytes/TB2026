@@ -39,7 +39,6 @@ public class ElevatorIOSim implements ElevatorIO{
       elevatorAppliedVolts = elevatorController.calculate(inputs.elevatorAngle, elevatorSetpoint);
     }
 
-    inputs.elevatorEncoderConnected = true;
     inputs.elevatorMotorConnected = true;
 
     elevatorMotorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));

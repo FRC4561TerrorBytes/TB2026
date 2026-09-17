@@ -64,12 +64,18 @@ public final class Constants {
 
   public static final int ELEVATOR_1_ID = 0;
   public static final int ELEVATOR_2_ID = 0;
-  public static final double ELEVATOR_1_GEAR_RATIO = 0;
-  public static final double ELEVATOR_2_GEAR_RATIO = 0;
   public static final double ELEVATOR_SUPPLY_CURRENT_LIMIT = 20;
   public static final double ELEVATOR_STATOR_CURRENT_LIMIT = 45;
   public static final int ELEVATOR_CANCODER_1_ID = 0;
   public static final int ELEVATOR_CANCODER_2_ID = 0;
+  public static final int ELEVATOR_CANCODER_1_TEETH = 18;
+  public static final int ELEVATOR_CANCODER_2_TEETH = 19;
+  public static final int ELEVATOR_CANCODER_1_KEY = 19;
+  public static final int ELEVATOR_CANCODER_2_KEY = 324;
+  public static final int ELEVATOR_MAX_STEPS = 342;
+  public static final double ELEVATOR_GEAR_RATIO = 1;
+  //in inches
+  public static final double ELEVATOR_MAX_RANGE = 64.9375;
 
 
   public static final double ELEVATOR_EXTENDED_POSITION = 1;
