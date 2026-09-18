@@ -521,8 +521,7 @@ public class Drive extends SubsystemBase {
 
   private Translation2d closestBump(){
     Translation2d closestBump = AllianceFlipUtil.apply(FieldConstants.LeftBump.middle);
-    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.LeftBump.middle)) < getPose().getTranslation().getDistance(closestBump))
-    {
+    if (getPose().getTranslation().getY() > AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY()) {
       closestBump = AllianceFlipUtil.apply(FieldConstants.RightBump.middle);
     }
     return closestBump;
@@ -531,8 +530,10 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "Passing/RotationToNearestBump")
   public Rotation2d getRotationToNearestBump(){
     return new Rotation2d(
-      closestBump().getX()-getPose().getX(),
-      closestBump().getY()-getPose().getY()
+      Math.atan(
+        (closestBump().getY() - getPose().getTranslation().getY()) / 
+        (closestBump().getX() - getPose().getTranslation().getX())
+      )
     );
   }
 
