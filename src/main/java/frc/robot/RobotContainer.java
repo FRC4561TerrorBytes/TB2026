@@ -270,16 +270,18 @@ public class RobotContainer {
 
         driverController 
                 .rightTrigger()
-                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter)
-                        .onlyIf( () -> (drive.getPose().getX() < (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX() + 0.2))))
-                .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
-                .whileTrue(new Pass(drive, indexer, shooter)
-                        .alongWith(
+                .whileTrue(Commands.either(
+                        RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter),
+                        new Pass(drive, indexer, shooter).alongWith(
                                 DriveCommands.joystickDriveAtAngle(drive, 
                                 () -> -driverController.getLeftX(), 
                                 () -> -driverController.getLeftY(), 
-                                () -> drive.getRotationToNearestBump()))
-                        .onlyIf( () -> (drive.getPose().getX() > (AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX() + 0.2))))
+                                () -> drive.getRotationToNearestBump())
+                                ),
+                        drive.passOrShoot()
+                        )
+                )
+                // if robot in midfield or opposite side, pass, if robot on same side, shoot
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))

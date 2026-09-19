@@ -67,9 +67,11 @@ import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 
 import java.lang.ModuleLayer.Controller;
+import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -520,12 +522,21 @@ public class Drive extends SubsystemBase {
   }
 
   private Translation2d closestBump(){
-    Translation2d closestBump = AllianceFlipUtil.apply(FieldConstants.LeftBump.middle);
+    Translation2d closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.LeftBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
     if (getPose().getTranslation().getY() > AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY()) {
-      closestBump = AllianceFlipUtil.apply(FieldConstants.RightBump.middle);
+      closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.RightBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
     }
     return closestBump;
   }
+
+  /**
+   * Returns a BooleanSupplier that returns true if the robot is on the correct side of the field to shoot.
+   * @return
+   */
+  public BooleanSupplier passOrShoot(){
+    return () -> (getPose().getTranslation().getX() < AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX() + 0.5);
+  }
+
 
   @AutoLogOutput(key = "Passing/RotationToNearestBump")
   public Rotation2d getRotationToNearestBump(){
