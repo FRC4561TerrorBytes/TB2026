@@ -521,9 +521,10 @@ public class Drive extends SubsystemBase {
   return getPose().getTranslation().getDistance(closestBump());
   }
 
+  @AutoLogOutput(key = "Passing/ClosestBump")
   private Translation2d closestBump(){
     Translation2d closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.LeftBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
-    if (getPose().getTranslation().getY() > AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getY()) {
+    if (getPose().getTranslation().getY() < FieldConstants.fieldWidth/2) {
       closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.RightBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
     }
     return closestBump;
@@ -533,19 +534,15 @@ public class Drive extends SubsystemBase {
    * Returns a BooleanSupplier that returns true if the robot is on the correct side of the field to shoot.
    * @return
    */
+  @AutoLogOutput(key = "Passing/PassOrShoot")
   public BooleanSupplier passOrShoot(){
-    return () -> (getPose().getTranslation().getX() < AllianceFlipUtil.apply(FieldConstants.LeftBump.middle).getX() + 0.5);
+    return () -> (AllianceFlipUtil.apply(getPose()).getTranslation().getX() < FieldConstants.LeftBump.middle.getX() + 0.5);
   }
 
 
   @AutoLogOutput(key = "Passing/RotationToNearestBump")
   public Rotation2d getRotationToNearestBump(){
-    return new Rotation2d(
-      Math.atan(
-        (closestBump().getY() - getPose().getTranslation().getY()) / 
-        (closestBump().getX() - getPose().getTranslation().getX())
-      )
-    );
+    return new Rotation2d(closestBump().getX() - getPose().getX(), closestBump().getY() - getPose().getY());
   }
 
   @AutoLogOutput
