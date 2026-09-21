@@ -525,7 +525,7 @@ public class Drive extends SubsystemBase {
   private Translation2d closestBump(){
     Translation2d closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.LeftBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
     if (getPose().getTranslation().getY() < FieldConstants.fieldWidth/2) {
-      closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.RightBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
+      closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.RightBump.middle.getX()), FieldConstants.RightBump.middle.getY());
     }
     return closestBump;
   }
