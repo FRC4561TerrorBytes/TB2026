@@ -296,6 +296,10 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> isTrenchAlign = !trenchAlign.get()))
                 .onFalse(Commands.runOnce(() -> isTrenchAlign = trenchAlign.get()));
 
+        driverController
+                .povLeft()
+                .whileTrue(Commands.run(() -> shooter.zeroHood()));
+
         driverController 
                 .rightTrigger()
                 .whileTrue(Commands.either(

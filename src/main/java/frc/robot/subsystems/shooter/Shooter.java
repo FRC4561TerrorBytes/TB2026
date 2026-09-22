@@ -59,7 +59,6 @@ public class Shooter extends SubsystemBase{
       !inputs.flywheelRightBottomConnected || 
       !inputs.hoodConnected;
     // This method will be called once per scheduler run
-    zeroHood();
   }
 
   private void setHoodAngleMap(){
@@ -171,12 +170,11 @@ public class Shooter extends SubsystemBase{
   }
 
   public Command zeroHood(){
-    return run(() -> io.setHoodVolts(4))
-        .until(() -> inputs.hoodCurrent >= Constants.HOOD_SUPPLY_CURRENT_LIMIT -2)
+    return run(() -> io.setHoodSpeed(0.2))
+        .until(() -> inputs.hoodCurrent >= Constants.HOOD_SUPPLY_CURRENT_LIMIT -6)
         .finallyDo(() -> {
-            io.setHoodVolts(4);
+            io.setHoodSpeed(0);
             io.zeroHoodAngle();
-            isHoodZeroed = true;
         });
   }
 
@@ -198,11 +196,11 @@ public class Shooter extends SubsystemBase{
     return new Pose3d(-0.084,0,0.39, new Rotation3d(0,(182*Math.PI)/180,0));
   }
 
-  public void zeroHoodAngle(){
+  private void zeroHoodAngle(){
     zeroHoodAngle();
   }
 
-  public void setHoodVolts(double volts){
-    setHoodVolts(volts);
+  public void setHoodSpeed(double speed){
+    setHoodSpeed(speed);
   }
 }
