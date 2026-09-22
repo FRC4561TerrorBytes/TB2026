@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
+import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase{
     
@@ -30,6 +31,7 @@ public class Shooter extends SubsystemBase{
   private static InterpolatingDoubleTreeMap hoodAngleMap = new InterpolatingDoubleTreeMap();
   private static InterpolatingDoubleTreeMap shooterTimeMap = new InterpolatingDoubleTreeMap();
   private static InterpolatingDoubleTreeMap passingMap = new InterpolatingDoubleTreeMap();
+  private boolean isHoodZeroed = false;
   public Shooter(ShooterIO io) {
     this.io = io;
     shooterLeftTopDisconnectedAlert = new Alert("Left Top Flywheel Disconnected", AlertType.kError);
@@ -57,6 +59,7 @@ public class Shooter extends SubsystemBase{
       !inputs.flywheelRightBottomConnected || 
       !inputs.hoodConnected;
     // This method will be called once per scheduler run
+    zeroHood();
   }
 
   private void setHoodAngleMap(){
@@ -167,6 +170,20 @@ public class Shooter extends SubsystemBase{
       return Commands.run(() -> this.setHoodAngle(interpolateHoodAngle(distance.getAsDouble())), this);
   }
 
+  public Command zeroHood(){
+    return run(() -> io.setHoodVolts(4))
+        .until(() -> inputs.hoodCurrent >= Constants.HOOD_SUPPLY_CURRENT_LIMIT -2)
+        .finallyDo(() -> {
+            io.setHoodVolts(4);
+            io.zeroHoodAngle();
+            isHoodZeroed = true;
+        });
+  }
+
+  public boolean isHoodZeroed(){
+    return isHoodZeroed;
+  }
+
   public void idleFlywheels(){
     io.setLeftFlywheelSpeed(20);
     io.setRightFlywheelSpeed(20);
@@ -179,5 +196,13 @@ public class Shooter extends SubsystemBase{
 
   public Pose3d getHoodPose(){
     return new Pose3d(-0.084,0,0.39, new Rotation3d(0,(182*Math.PI)/180,0));
+  }
+
+  public void zeroHoodAngle(){
+    zeroHoodAngle();
+  }
+
+  public void setHoodVolts(double volts){
+    setHoodVolts(volts);
   }
 }

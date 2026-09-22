@@ -53,6 +53,10 @@ public interface ShooterIO {
     
     public default void setHoodAngle(double angle) {}
 
+    public default void setHoodVolts(double volts){}
+
+    public default void zeroHoodAngle(){}
+
 }
 
 /*
