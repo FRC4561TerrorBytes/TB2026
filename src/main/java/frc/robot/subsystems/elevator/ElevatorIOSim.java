@@ -1,5 +1,7 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.google.gson.internal.TroubleshootingGuide;
 
 import edu.wpi.first.math.MathUtil;
@@ -9,6 +11,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.Constants;
 
 /** Add your docs here. */
 public class ElevatorIOSim implements ElevatorIO{
@@ -17,9 +20,16 @@ public class ElevatorIOSim implements ElevatorIO{
     private static final double ELEVATOR_KP = 1.8;
     private static final double ELEVATOR_KD = 0;
 
-    private static final DCMotor ELEVATOR_MOTOR = DCMotor.getKrakenX60(1);
+    private static final DCMotor ELEVATOR_MOTOR1 = DCMotor.getKrakenX60(1);
+    private static final DCMotor ELEVATOR_MOTOR2 = DCMotor.getKrakenX60(1);
 
-    private DCMotorSim elevatorMotorSim;
+    private static final CANcoder CANCODER1 = new CANcoder(Constants.ELEVATOR_CANCODER_1_ID);
+    private static final CANcoder CANCODER2 = new CANcoder(Constants.ELEVATOR_CANCODER_2_ID);
+
+    private DCMotorSim elevator1MotorSim;
+    private DCMotorSim elevator2MotorSim;
+    private CANcoderSimState cancoder1Sim;
+    private CANcoderSimState cancoder2Sim;
     
     private boolean closedLoop = true;
     private ProfiledPIDController elevatorController = 
@@ -29,8 +39,14 @@ public class ElevatorIOSim implements ElevatorIO{
     private double elevatorAppliedVolts;
 
     public ElevatorIOSim() {
-        elevatorMotorSim = 
-            new DCMotorSim(LinearSystemId.createDCMotorSystem(ELEVATOR_MOTOR, 0.000001, 1), ELEVATOR_MOTOR);
+        elevator1MotorSim = 
+            new DCMotorSim(LinearSystemId.createDCMotorSystem(ELEVATOR_MOTOR1, 0.000001, 1), ELEVATOR_MOTOR1);
+        elevator2MotorSim = 
+            new DCMotorSim(LinearSystemId.createDCMotorSystem(ELEVATOR_MOTOR2, 0.000001, 1), ELEVATOR_MOTOR2);
+        cancoder1Sim =
+            new CANcoderSimState(CANCODER1);
+        cancoder2Sim =
+            new CANcoderSimState(CANCODER2);
     }
 
      @Override
@@ -41,10 +57,12 @@ public class ElevatorIOSim implements ElevatorIO{
 
     inputs.elevatorMotorConnected = true;
 
-    elevatorMotorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
-    elevatorMotorSim.update(LOOP_PERIOD_SECS);
+    elevator1MotorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
+    elevator1MotorSim.update(LOOP_PERIOD_SECS);
+    elevator2MotorSim.setInputVoltage(MathUtil.clamp(elevatorAppliedVolts, -12.0, 12.0));
+    elevator2MotorSim.update(LOOP_PERIOD_SECS);
 
-    inputs.elevatorAngle = elevatorMotorSim.getAngularPositionRotations() / 1.0;
+    inputs.elevatorAngle = elevator1MotorSim.getAngularPositionRotations() / 1.0;
     inputs.elevatorSetpoint = this.elevatorSetpoint;
     inputs.elevatorVoltage = this.elevatorAppliedVolts;
   }
