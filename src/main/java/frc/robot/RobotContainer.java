@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoShootCommand; 
@@ -85,6 +86,8 @@ public class RobotContainer {
     private final Extension extension;
     private final Shooter shooter;
     private final Indexer indexer;
+
+    private double speedMult = 0.75;
     
 
     Rotation2d snapRotation;
@@ -230,9 +233,9 @@ public class RobotContainer {
         drive.setDefaultCommand(
                 DriveCommands.joystickDrive(
                         drive,
-                        () -> -driverController.getLeftY(),
-                        () -> -driverController.getLeftX(),
-                        () -> -driverController.getRightX()));
+                        () -> -driverController.getLeftY()*speedMult,
+                        () -> -driverController.getLeftX()*speedMult,
+                        () -> -driverController.getRightX()*0.5));
 
         intake.setDefaultCommand(Commands.run(() -> intake.setOutput(0), intake));
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
@@ -264,8 +267,19 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION),
                                 extension).andThen(Commands.sequence(Commands.runOnce(() -> intake.setOutput(Constants.INTAKE_SPEED), intake), Commands.waitSeconds(0.5), Commands.runOnce(() -> intake.setOutput(0.0), intake))));
         driverController
-                .x()
-                .whileTrue(new Shoot(indexer, shooter, 20, 5.0));
+                .rightTrigger()
+                .and(driverController.x().negate())
+                .whileTrue(new Shoot(indexer, shooter, 40, 5.0));
+                
+        driverController
+                .rightTrigger()
+                .and(driverController.x())
+                .whileTrue(new Shoot(indexer, shooter, 40, 5.0));
+
+        driverController
+                .a()
+                .onTrue(Commands.runOnce(()-> speedMult=1))
+                .onFalse(Commands.runOnce(()-> speedMult=0.75));
 
         // driverController 
         //         .rightTrigger()
