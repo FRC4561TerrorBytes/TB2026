@@ -259,9 +259,6 @@ public class RobotContainer {
         indexer.setDefaultCommand(Commands.run(() -> indexer.stop(), indexer));
         shooter.setDefaultCommand(Commands.runOnce(() -> shooter.stop(), shooter).andThen(shooter.lerpHood(drive::getDistanceToHub)));
 
-        new Trigger(() -> DriverStation.isEnabled() && !shooter.isHoodZeroed())
-            .onTrue(shooter.zeroHood());
-
         //TRIGGERS
         new Trigger(
             () ->

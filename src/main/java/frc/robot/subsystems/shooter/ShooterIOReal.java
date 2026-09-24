@@ -262,14 +262,6 @@ public class ShooterIOReal implements ShooterIO {
         hoodMotor.setControl(hoodControl.withPosition(position));
     }
 
-    public void zeroHoodAngle(){
-        hoodMotor.setPosition(0);
-    }
-
-    public void setHoodVolts(double volts){
-        hoodMotor.setVoltage(volts);
-    }
-
     public void stopflywheelLeft(){
         flywheelLeftTopMotor.set(0); 
         flywheelLeftBottomMotor.set(0);
