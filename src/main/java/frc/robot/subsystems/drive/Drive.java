@@ -23,6 +23,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
@@ -67,9 +68,12 @@ import frc.robot.util.AllianceFlipUtil;
 import frc.robot.util.LocalADStarAK;
 
 import java.lang.ModuleLayer.Controller;
+import java.lang.reflect.Field;
+import java.text.FieldPosition;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -516,9 +520,31 @@ public class Drive extends SubsystemBase {
 
   @AutoLogOutput(key = "Passing/DistanceToPassPoint")
   public double getDistanceToPassPoint(){
-    double robotX = getPose().getX();
-    double hubX = AllianceFlipUtil.apply(FieldConstants.Hub.nearFace.getTranslation()).getX();
-    return Math.abs(robotX - hubX) + 2.5;
+  return getPose().getTranslation().getDistance(closestBump());
+  }
+
+  @AutoLogOutput(key = "Passing/ClosestBump")
+  private Translation2d closestBump(){
+    Translation2d closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.LeftBump.middle.getX()), FieldConstants.LeftBump.middle.getY());
+    if (getPose().getTranslation().getY() < FieldConstants.fieldWidth/2) {
+      closestBump = new Translation2d (AllianceFlipUtil.applyX(FieldConstants.RightBump.middle.getX()), FieldConstants.RightBump.middle.getY());
+    }
+    return closestBump;
+  }
+
+  /**
+   * Returns a BooleanSupplier that returns true if the robot is on the correct side of the field to shoot.
+   * @return
+   */
+  @AutoLogOutput(key = "Passing/PassOrShoot")
+  public BooleanSupplier passOrShoot(){
+    return () -> (AllianceFlipUtil.apply(getPose()).getTranslation().getX() < FieldConstants.LeftBump.middle.getX() + 0.5);
+  }
+
+
+  @AutoLogOutput(key = "Passing/RotationToNearestBump")
+  public Rotation2d getRotationToNearestBump(){
+    return new Rotation2d(closestBump().getX() - getPose().getX(), closestBump().getY() - getPose().getY());
   }
 
   @AutoLogOutput
@@ -540,6 +566,59 @@ public class Drive extends SubsystemBase {
     .andThen(()->stop());
   }
 
+  @AutoLogOutput
+  public boolean isTrenchAlignDistance(){
+    //closest to field
+    //(5.2,0.65) blue right
+    //(5.2,7.425) blue left
+    //(11.4,7.425) red left
+    //(11.4,0.65) red left
+
+    //furthest from field
+    //(4,0.65) blue right
+    //(4,7.425) blue left
+    //(12.55,7.425) red left
+    //(12.55,0.65) red left
+    double xTol = 1.5;
+    double yTol = 1;
+
+    Pose2d alliancePose = AllianceFlipUtil.apply(getPose());
+
+    if(alliancePose.getY() <= 0.65 + yTol && alliancePose.getY() >= 0.65 - yTol){
+      if(alliancePose.getX() <= 5.2 + xTol && alliancePose.getX() >= 4.0 - xTol){
+        return true;
+      } else if(alliancePose.getX() <= 12.55 + xTol && alliancePose.getX() >= 11.4 - xTol)
+        return true;
+
+    } else if(alliancePose.getY() <= 7.425 + yTol && alliancePose.getY() >= 7.425- yTol){
+      if(alliancePose.getX() <= 12.55 + xTol && alliancePose.getX() >= 11.4 - xTol){
+        return true;
+      } else if(alliancePose.getX() <= 5.2 + xTol && alliancePose.getX() >= 4.0 - xTol)
+        return true;
+    }
+
+    return false;
+  }
+
+  @AutoLogOutput
+  public double trenchAlignY(){
+    //closest to field
+    //(5.2,0.65) blue right
+    //(5.2,7.425) blue left
+    //(11.4,7.425) red left
+    //(11.4,0.65) red left
+
+    //furthest from field
+    //(4,0.65) blue right
+    //(4,7.425) blue left
+    //(12.55,7.425) red left
+    //(12.55,0.65) red left
+    double yTol = 1;
+    if(this.getPose().getY() <= 0.65 + yTol && this.getPose().getY() >= 0.65 - yTol)
+      return 0.65;
+
+      return 7.425;
+  }
 
 
   @AutoLogOutput

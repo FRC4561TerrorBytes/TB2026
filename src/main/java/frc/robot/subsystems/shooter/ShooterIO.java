@@ -52,7 +52,6 @@ public interface ShooterIO {
     public default boolean rightFlywheelUpToSpeed(double rotationsPerSecond) {return false;}
     
     public default void setHoodAngle(double angle) {}
-
 }
 
 /*

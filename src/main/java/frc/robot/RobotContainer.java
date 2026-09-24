@@ -18,6 +18,7 @@ import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -66,6 +67,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.RobotVisualizer;
+import frc.robot.util.AllianceFlipUtil;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -95,6 +97,12 @@ public class RobotContainer {
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
+    private static final LoggedDashboardChooser<Boolean> xGammaChooser = new LoggedDashboardChooser<>("X JoyStick Gamma (Squared Input)");
+    private static final LoggedDashboardChooser<Boolean> yGammaChooser= new LoggedDashboardChooser<>("Y JoyStick Gamma (Squared Input)");
+    private static final LoggedDashboardChooser<Boolean> rotationGammaChooser = new LoggedDashboardChooser<>("Rotation JoyStick Gamma (Squared Input)");
+
+    private static final LoggedDashboardChooser<Boolean> trenchAlign = new LoggedDashboardChooser<>("Automatic Trench Align Always Active");
+    public static boolean isTrenchAlign = false;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -179,6 +187,19 @@ public class RobotContainer {
         NamedCommands.registerCommand("retractintake", Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_RETRACTED_POSITION)));
         NamedCommands.registerCommand("spinupflywheels", Commands.run(() -> shooter.setFlywheelSpeed(40), shooter));
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+        yGammaChooser.addDefaultOption("Disabled", false);
+        yGammaChooser.addOption("Enabled", true);
+
+        xGammaChooser.addDefaultOption("Disabled", false);
+        xGammaChooser.addOption("Enabled", true);
+
+        rotationGammaChooser.addDefaultOption("Disabled", false);
+        rotationGammaChooser.addOption("Enabled", true);
+
+        trenchAlign.addDefaultOption("Disabled", false);
+        trenchAlign.addOption("Enabled", true);
+        
 
         // if (code no work) {code work}
         //else {make code work}
@@ -267,16 +288,35 @@ public class RobotContainer {
                 .x()
                 .whileTrue(Commands.run(() -> drive.stopWithX()));
 
+        driverController
+                .rightStick()
+                .onTrue(Commands.runOnce(() -> isTrenchAlign = !trenchAlign.get()))
+                .onFalse(Commands.runOnce(() -> isTrenchAlign = trenchAlign.get()));
+
         driverController 
                 .rightTrigger()
-                .whileTrue(RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter))
-                .whileTrue(Commands.run(() -> Leds.getInstance().autoScoring = true))
+                .whileTrue(Commands.either(
+                        RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter),
+                        new Pass(drive, indexer, shooter).alongWith(
+                                DriveCommands.joystickDriveAtAngle(drive, 
+                                () -> -driverController.getLeftY(), 
+                                () -> -driverController.getLeftX(), 
+                                () -> drive.getRotationToNearestBump())
+                                ),
+                        drive.passOrShoot()
+                        )
+                )
+                // if robot in midfield or opposite side, pass, if robot on same side, shoot
                 .onFalse(
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
 
-        driverController.rightBumper().whileTrue(new Pass(drive, indexer, shooter)).onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true)).onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
+        driverController.rightBumper()
+                .whileTrue(new Pass(drive, indexer, shooter)
+                        .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(), () -> drive.getRotationToNearestBump())))
+                .onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true))
+                .onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
         driverController
                 .rightStick()
@@ -310,6 +350,8 @@ public class RobotContainer {
                                 intake)
                         .alongWith(RobotCommands.driverRumbleCommand(driverController))
                         .finallyDo(() -> Leds.getInstance().intakeRunning = false));
+
+        trenchAlign.onChange(val -> isTrenchAlign = val);
         
         operatorController
                 .rightTrigger()
@@ -336,6 +378,18 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser.get();
     }
+
+        public static boolean getXGammaState() {
+                return xGammaChooser.get() == null? false : xGammaChooser.get();
+        }
+
+        public static boolean getYGammaState() {
+                return yGammaChooser.get() == null? false : yGammaChooser.get();
+        }
+
+        public static boolean getRotationGammaState() {
+                return rotationGammaChooser.get() == null? false : rotationGammaChooser.get();
+        }
 
     public void autoExit() {
        

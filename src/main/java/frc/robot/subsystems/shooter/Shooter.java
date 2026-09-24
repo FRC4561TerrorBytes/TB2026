@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.leds.Leds;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
+import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase{
     
