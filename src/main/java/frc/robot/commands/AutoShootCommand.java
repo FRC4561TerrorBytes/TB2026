@@ -113,11 +113,11 @@ public class AutoShootCommand extends Command {
 
         if(shooterReady && driveRotated && !moving){
             indexer.setThroughput(0.9, 0.9);
-            shooting = false;
+            shooting = true;
         }
         else{
             indexer.stop();
-            shooting = true;
+            shooting = false;
         }
 
 
