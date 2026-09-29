@@ -296,7 +296,7 @@ public class RobotContainer {
         driverController 
                 .rightTrigger()
                 .whileTrue(Commands.either(
-                        RobotCommands.shootWithAgitate(drive, driverController::getLeftX, driverController::getLeftY, intake, extension, indexer, shooter),
+                        RobotCommands.shootWithJostle(drive, driverController::getLeftX, driverController::getLeftY, intake, extension, indexer, shooter),
                         new Pass(drive, indexer, shooter).alongWith(
                                 DriveCommands.joystickDriveAtAngle(drive, 
                                 () -> -driverController.getLeftY(), 

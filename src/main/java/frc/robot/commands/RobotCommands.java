@@ -31,8 +31,8 @@ public class RobotCommands {
         return new AutoShootCommand(drive, indexer, shooter);
     }
 
-    public static Command shootWithAgitate(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
-        return Commands.parallel(new AutoShootCommand(drive, xSupplier, ySupplier, indexer, shooter), agitateBalls(intake, extension));
+    public static Command shootWithJostle(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
+        return Commands.parallel(new AutoShootCommand(drive, xSupplier, ySupplier, indexer, shooter), jostleBalls(intake, extension));
     }
     public static Command shootWithAgitate(Drive drive, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
         return Commands.parallel(new AutoShootCommand(drive, indexer, shooter), agitateBalls(intake, extension));
