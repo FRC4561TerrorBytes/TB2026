@@ -296,7 +296,7 @@ public class RobotContainer {
         driverController 
                 .rightTrigger()
                 .whileTrue(Commands.either(
-                        RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter),
+                        RobotCommands.shootWithAgitate(drive, driverController::getLeftX, driverController::getLeftY, intake, extension, indexer, shooter),
                         new Pass(drive, indexer, shooter).alongWith(
                                 DriveCommands.joystickDriveAtAngle(drive, 
                                 () -> -driverController.getLeftY(), 
@@ -311,11 +311,6 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
-        driverController
-                .rightTrigger()
-                .and(() -> AutoShootCommand.shooting)
-                .whileTrue(RobotCommands.jostleBalls(intake, extension));
-
         driverController.rightBumper()
                 .whileTrue(new Pass(drive, indexer, shooter)
                         .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(), () -> drive.getRotationToNearestBump())))

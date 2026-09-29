@@ -35,7 +35,6 @@ public class AutoShootCommand extends Command {
     public boolean moving = false;
     public boolean driveRotated = false;
     public boolean shooterReady = false;
-    public static boolean shooting = false;
 
     private final Debouncer driveDebouncer = new Debouncer(0.1, DebounceType.kFalling);
     private final Debouncer shooterDebouncer = new Debouncer(0.1, DebounceType.kFalling);
@@ -113,18 +112,14 @@ public class AutoShootCommand extends Command {
 
         if(shooterReady && driveRotated && !moving){
             indexer.setThroughput(0.9, 0.9);
-            shooting = true;
         }
         else{
             indexer.stop();
-            shooting = false;
         }
-
 
         Leds.getInstance().autoScoreAtRotationSetpoint = controller.atSetpoint();
         Leds.getInstance().autoScoreRotatePercent = 1.0 - (Math.abs(controller.getError())/Math.PI);
 
-        Logger.recordOutput("AutoShoot/Shooting", shooting);
         Logger.recordOutput("AutoShoot/TargetAngleToFace", targetAngle);
         Logger.recordOutput("AutoShoot/linearVelocity", Math.hypot(linearVelocity.getX(), linearVelocity.getY()));
         Logger.recordOutput("AutoShoot/RAWDriveTrainFacingHub", controller.atSetpoint());
