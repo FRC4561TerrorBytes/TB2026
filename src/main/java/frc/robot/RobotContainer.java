@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
@@ -25,6 +26,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -100,7 +102,7 @@ public class RobotContainer {
     private static final LoggedDashboardChooser<Boolean> xGammaChooser = new LoggedDashboardChooser<>("X JoyStick Gamma (Squared Input)");
     private static final LoggedDashboardChooser<Boolean> yGammaChooser= new LoggedDashboardChooser<>("Y JoyStick Gamma (Squared Input)");
     private static final LoggedDashboardChooser<Boolean> rotationGammaChooser = new LoggedDashboardChooser<>("Rotation JoyStick Gamma (Squared Input)");
-
+    public static final LoggedDashboardChooser<Double> kSpeedAt12Volts = new LoggedDashboardChooser<>("Speed at 12 Volts ()"); 
     private static final LoggedDashboardChooser<Boolean> trenchAlign = new LoggedDashboardChooser<>("Automatic Trench Align Always Active");
     public static boolean isTrenchAlign = false;
 
@@ -199,6 +201,8 @@ public class RobotContainer {
 
         trenchAlign.addDefaultOption("Disabled", false);
         trenchAlign.addOption("Enabled", true);
+
+        kSpeedAt12Volts.addDefaultOption("Normal", TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
         
 
         // if (code no work) {code work}
