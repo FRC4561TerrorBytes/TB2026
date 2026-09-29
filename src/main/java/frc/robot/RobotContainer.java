@@ -311,6 +311,10 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
+        driverController
+                .rightTrigger()
+                .and(() -> AutoShootCommand.shooting)
+                .whileTrue(RobotCommands.jostleBalls(intake, extension));
 
         driverController.rightBumper()
                 .whileTrue(new Pass(drive, indexer, shooter)
