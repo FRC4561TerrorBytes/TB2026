@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.camera0Name;
 import static frc.robot.subsystems.vision.VisionConstants.camera1Name;
 
@@ -25,6 +26,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -100,7 +102,7 @@ public class RobotContainer {
     private static final LoggedDashboardChooser<Boolean> xGammaChooser = new LoggedDashboardChooser<>("X JoyStick Gamma (Squared Input)");
     private static final LoggedDashboardChooser<Boolean> yGammaChooser= new LoggedDashboardChooser<>("Y JoyStick Gamma (Squared Input)");
     private static final LoggedDashboardChooser<Boolean> rotationGammaChooser = new LoggedDashboardChooser<>("Rotation JoyStick Gamma (Squared Input)");
-
+    public static final LoggedDashboardChooser<Double> kSpeedAt12Volts = new LoggedDashboardChooser<>("Speed at 12 Volts ()"); 
     private static final LoggedDashboardChooser<Boolean> trenchAlign = new LoggedDashboardChooser<>("Automatic Trench Align Always Active");
     public static boolean isTrenchAlign = false;
 
@@ -199,6 +201,8 @@ public class RobotContainer {
 
         trenchAlign.addDefaultOption("Disabled", false);
         trenchAlign.addOption("Enabled", true);
+
+        kSpeedAt12Volts.addDefaultOption("Normal", TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
         
 
         // if (code no work) {code work}
@@ -296,7 +300,7 @@ public class RobotContainer {
         driverController 
                 .rightTrigger()
                 .whileTrue(Commands.either(
-                        RobotCommands.shoot(drive, driverController::getLeftX, driverController::getLeftY, indexer, shooter),
+                        RobotCommands.shootWithJostle(drive, driverController::getLeftX, driverController::getLeftY, intake, extension, indexer, shooter),
                         new Pass(drive, indexer, shooter).alongWith(
                                 DriveCommands.joystickDriveAtAngle(drive, 
                                 () -> -driverController.getLeftY(), 
@@ -311,10 +315,13 @@ public class RobotContainer {
                         Commands.runOnce(() -> extension.setExtensionSetpoint(Constants.EXTENSION_EXTENDED_POSITION), extension))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().autoScoring = false))
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
-
         driverController.rightBumper()
                 .whileTrue(new Pass(drive, indexer, shooter)
-                        .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(), () -> drive.getRotationToNearestBump())))
+                        .alongWith(
+                                DriveCommands.joystickDriveAtAngle(
+                                        drive, () -> -driverController.getLeftY(), 
+                                        () -> -driverController.getLeftX(), 
+                                        () -> drive.getRotationToNearestBump())))
                 .onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
@@ -328,7 +335,6 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-        //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
         driverController.a().whileTrue(new Shoot(indexer, shooter, 52, 6.0));
         driverController.y().whileTrue(RobotCommands.jostleBalls(intake, extension));

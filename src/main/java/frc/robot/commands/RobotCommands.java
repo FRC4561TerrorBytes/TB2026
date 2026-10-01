@@ -20,9 +20,6 @@ public class RobotCommands {
      * Locks Drivetrain to orbit the hub while spinning up shooter. Once shooter is up to speed the command waits for joysticks to stop, then shoots. 
      * @return
      */
-    public static Command shoot(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Indexer indexer, Shooter shooter){
-        return new AutoShootCommand(drive, xSupplier, ySupplier, indexer, shooter);
-    }
 
     /** Autoaligns the robot to the hub then locks wheels while shooting. */
     public static Command shootNoJoysticks(Drive drive, Indexer indexer, Shooter shooter){
@@ -34,6 +31,9 @@ public class RobotCommands {
         return new AutoShootCommand(drive, indexer, shooter);
     }
 
+    public static Command shootWithJostle(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
+        return Commands.parallel(new AutoShootCommand(drive, xSupplier, ySupplier, indexer, shooter), jostleBalls(intake, extension));
+    }
     public static Command shootWithAgitate(Drive drive, Intake intake, Extension extension, Indexer indexer, Shooter shooter){
         return Commands.parallel(new AutoShootCommand(drive, indexer, shooter), agitateBalls(intake, extension));
     }

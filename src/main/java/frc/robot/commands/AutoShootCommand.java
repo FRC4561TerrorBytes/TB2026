@@ -92,7 +92,7 @@ public class AutoShootCommand extends Command {
                 linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(), 
                 rotationSpeed);
 
-        //setting varaibles used to determine actions of the robot
+        //setting variables used to determine actions of the robot
         driveRotated = driveDebouncer.calculate(controller.atSetpoint());
         shooterReady = shooterDebouncer.calculate(shooter.leftFlywheelUpToSpeed(shootSpeedRPS) && shooter.rightFlywheelUpToSpeed(shootSpeedRPS) && shooter.hoodAtSetpoint());
         moving = Math.hypot(linearVelocity.getX(), linearVelocity.getY()) > 0.1;
