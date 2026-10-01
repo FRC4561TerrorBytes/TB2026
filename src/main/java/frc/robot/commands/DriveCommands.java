@@ -92,8 +92,8 @@ public class DriveCommands {
           double ySup = ySupplier.getAsDouble();
           double omegaSup = omegaSupplier.getAsDouble();
 
-          double x = RobotContainer.getXGammaState() ? Math.copySign(xSup * xSup, xSup) : xSup;
-          double y = RobotContainer.getYGammaState() ? Math.copySign(ySup * ySup, ySup) : ySup;
+          double x = xSup * xSup * xSup;
+          double y = ySup * ySup * ySup;
 
           Translation2d linearVelocity = getLinearVelocityFromJoysticks(x, y);
 
@@ -111,9 +111,7 @@ public class DriveCommands {
             angleController.reset(drive.getRotation().getRadians());
 
             double omega = omegaSup;
-            if (RobotContainer.getRotationGammaState()) {
-              omega = Math.copySign(omega * omega, omega);
-            }
+            omega = omega * omega * omega; 
             omega = MathUtil.applyDeadband(omega, DEADBAND);
             
             omegaRadPerSec = omega * drive.getMaxAngularSpeedRadPerSec();
@@ -166,8 +164,8 @@ public class DriveCommands {
               double xSup = xSupplier.getAsDouble();
               double ySup = ySupplier.getAsDouble();
               
-              double x = RobotContainer.getXGammaState() ? Math.copySign(xSup * xSup, xSup) : xSup;
-              double y = RobotContainer.getYGammaState() ? Math.copySign(ySup * ySup, ySup) : ySup;
+              double x = xSup * xSup * xSup;
+              double y = ySup * ySup * ySup;
 
               Translation2d linearVelocity =
                   getLinearVelocityFromJoysticks(x, y);

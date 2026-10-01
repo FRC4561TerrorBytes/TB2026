@@ -317,7 +317,11 @@ public class RobotContainer {
                 .onFalse(Commands.run(() -> intake.setOutput(Constants.INTAKE_SPEED), intake));
         driverController.rightBumper()
                 .whileTrue(new Pass(drive, indexer, shooter)
-                        .alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(), () -> drive.getRotationToNearestBump())))
+                        .alongWith(
+                                DriveCommands.joystickDriveAtAngle(
+                                        drive, () -> -driverController.getLeftY(), 
+                                        () -> -driverController.getLeftX(), 
+                                        () -> drive.getRotationToNearestBump())))
                 .onTrue(Commands.runOnce(() -> Leds.getInstance().passing = true))
                 .onFalse(Commands.runOnce(() -> Leds.getInstance().passing = false));
 
@@ -331,7 +335,6 @@ public class RobotContainer {
                                 drive)
                                 .ignoringDisable(true));
 
-        //driverController.y().whileTrue(Commands.run(() -> indexer.setThroughput(-0.4, -0.4)));
         driverController.povDown().toggleOnTrue(Commands.run(() -> shooter.setHoodAngle(0)));
         driverController.a().whileTrue(new Shoot(indexer, shooter, 52, 6.0));
         driverController.y().whileTrue(RobotCommands.jostleBalls(intake, extension));
