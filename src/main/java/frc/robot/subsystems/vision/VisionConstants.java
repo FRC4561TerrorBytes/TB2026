@@ -13,6 +13,8 @@
 
 package frc.robot.subsystems.vision;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -36,6 +38,11 @@ public class VisionConstants {
   public static String cam1Name = "thriftycam1";
   public static String cam2Name = "thriftycam2";
   public static String cam3Name = "thriftycam3";
+
+  public static PhotonCamera cam0 = new PhotonCamera(cam0Name);
+  public static PhotonCamera cam1 = new PhotonCamera(cam1Name);
+  public static PhotonCamera cam2 = new PhotonCamera(cam2Name);
+  public static PhotonCamera cam3 = new PhotonCamera(cam3Name);
 
 
   public static Transform3d cam0Offsets = new Transform3d(
