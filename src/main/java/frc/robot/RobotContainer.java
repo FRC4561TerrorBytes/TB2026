@@ -194,6 +194,8 @@ public class RobotContainer {
         speedLimit.addOption("85%", 0.85);
         speedLimit.addOption("70%", 0.7);
         speedLimit.addOption("55%", 0.55);
+        speedLimit.addOption("40%", 0.4);
+        speedLimit.addOption("25%", 0.25);
         
 
         // if (code no work) {code work}
