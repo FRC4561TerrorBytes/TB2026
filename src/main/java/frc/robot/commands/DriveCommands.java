@@ -97,32 +97,38 @@ public class DriveCommands {
 
           Translation2d linearVelocity = getLinearVelocityFromJoysticks(x, y);
 
-          double xVelocity = linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec();
-          double yVelocity = linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec();
+          double xVelocity = linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() * RobotContainer.getSpeedLimit() /*limits max speed*/;
+          double yVelocity = linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() * RobotContainer.getSpeedLimit()/*limits max speed*/;
           double omegaRadPerSec;
 
-          if (RobotContainer.isTrenchAlign && drive.isTrenchAlignDistance()) {
+          if (RobotContainer.getTrenchAlign() && drive.isTrenchAlignDistance()) {
             yVelocity = yController.calculate(drive.getPose().getY(), drive.trenchAlignY());
             
-            double targetAngle = Math.abs(drive.getRotation().getRadians()) > (Math.PI / 2.0) ? Math.PI : 0.0;
-            omegaRadPerSec = angleController.calculate(drive.getRotation().getRadians(), targetAngle);
+            // double targetAngle = Math.abs(drive.getRotation().getRadians()) > (Math.PI / 2.0) ? Math.PI : 0.0;
+            // omegaRadPerSec = angleController.calculate(drive.getRotation().getRadians(), targetAngle);
           } else {
             yController.reset();
-            angleController.reset(drive.getRotation().getRadians());
+            // angleController.reset(drive.getRotation().getRadians());
 
-            double omega = omegaSup;
+            // double omega = omegaSup;
+            // omega = omega * omega * omega; 
+            // omega = MathUtil.applyDeadband(omega, DEADBAND);
+            
+            // omegaRadPerSec = omega * drive.getMaxAngularSpeedRadPerSec();
+          }
+
+          double omega = omegaSup;
             omega = omega * omega * omega; 
             omega = MathUtil.applyDeadband(omega, DEADBAND);
             
-            omegaRadPerSec = omega * drive.getMaxAngularSpeedRadPerSec();
-          }
+            omegaRadPerSec = omega * drive.getMaxAngularSpeedRadPerSec() * RobotContainer.getSpeedLimit()/*limits max rotation*/;
 
           ChassisSpeeds speeds = new ChassisSpeeds(xVelocity, yVelocity, omegaRadPerSec);
 
           boolean isFlipped = DriverStation.getAlliance().isPresent()
               && DriverStation.getAlliance().get() == Alliance.Red;
 
-          if (isFlipped && RobotContainer.isTrenchAlign && drive.isTrenchAlignDistance()) {
+          if (isFlipped && RobotContainer.getTrenchAlign() && drive.isTrenchAlignDistance()) {
             speeds.vyMetersPerSecond = -speeds.vyMetersPerSecond;
           }
 
