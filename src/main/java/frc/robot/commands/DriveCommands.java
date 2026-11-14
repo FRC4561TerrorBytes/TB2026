@@ -92,8 +92,8 @@ public class DriveCommands {
           double ySup = ySupplier.getAsDouble();
           double omegaSup = omegaSupplier.getAsDouble();
 
-          double x = xSup * xSup * xSup;
-          double y = ySup * ySup * ySup;
+          double x = Math.copySign(xSup * xSup, Math.signum(xSup));
+          double y = Math.copySign(ySup * ySup, Math.signum(ySup));;
 
           Translation2d linearVelocity = getLinearVelocityFromJoysticks(x, y);
 
@@ -111,7 +111,7 @@ public class DriveCommands {
             angleController.reset(drive.getRotation().getRadians());
 
             double omega = omegaSup;
-            omega = omega * omega * omega; 
+            omega = Math.copySign(omega*omega, Math.signum(omega)) ;
             omega = MathUtil.applyDeadband(omega, DEADBAND);
             
             omegaRadPerSec = omega * drive.getMaxAngularSpeedRadPerSec();
